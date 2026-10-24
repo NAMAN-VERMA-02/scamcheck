@@ -3,7 +3,9 @@
 Goal: test the guidelines and the tooling on **real, properly sourced** messages before collecting at scale.
 Pilot items are never synthetic.
 
-## Roles (at least three people)
+## Roles (at least four people)
+
+Any item that needs adjudication involves four distinct people: its collector, A1, A2, and an adjudicator who is none of them. Role assignment: `docs/templates/role_assignment_template.csv`; readiness: [PILOT_READINESS.md](PILOT_READINESS.md).
 
 | Role | Does | Must not |
 |---|---|---|
