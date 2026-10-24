@@ -1,0 +1,30 @@
+# Raw, unredacted data never leaves the local machine.
+data/raw/
+data/private/
+
+# Secrets and keys
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+*credentials*.json
+secrets.*
+
+# Python / tooling
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+build/
+dist/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
