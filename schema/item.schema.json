@@ -15,6 +15,7 @@
           "type": "string"
         },
         "parent_id": {
+          "pattern": "^[a-z]{2,4}-[0-9]{3,6}$",
           "title": "Parent Id",
           "type": "string"
         }
@@ -203,6 +204,7 @@
         "consent_id": {
           "anyOf": [
             {
+              "pattern": "^c-[0-9]{4,6}$",
               "type": "string"
             },
             {
@@ -324,6 +326,7 @@
         "seed_id": {
           "anyOf": [
             {
+              "pattern": "^[a-z]{2,4}-[0-9]{3,6}$",
               "type": "string"
             },
             {
@@ -436,7 +439,7 @@
   "additionalProperties": false,
   "properties": {
     "id": {
-      "pattern": "^[a-z]{2,4}-[0-9A-Za-z_-]+$",
+      "pattern": "^[a-z]{2,4}-[0-9]{3,6}$",
       "title": "Id",
       "type": "string"
     },
@@ -555,6 +558,7 @@
     "campaign_id": {
       "anyOf": [
         {
+          "pattern": "^g-[0-9a-f]{10}$",
           "type": "string"
         },
         {

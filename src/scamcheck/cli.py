@@ -12,10 +12,11 @@ from pathlib import Path
 
 from .data.grouping import DEFAULT_REVIEW_LOW, DEFAULT_THRESHOLD, group_items, load_decisions
 from .data.io import load_items, write_items
-from .data.pilot import (ADJ_COLUMNS, SHEET_COLUMNS, apply_adjudication, export_sheet, import_sheet, pseudo_id,
-                         read_csv, resolve, write_csv)
+from .data.pii import scan_item
+from .data.pilot import (ADJ_COLUMNS, SHEET_COLUMNS, CsvEncodingError, apply_adjudication, export_sheet,
+                         import_sheet, intake_from_rows, pseudo_id, read_csv, resolve, write_csv)
 from .data.report import build_report
-from .data.schema import Item
+from .data.schema import RECORDED_PERMISSIONS, Item, load_register
 from .data.split import check_leakage, split_items
 
 
@@ -27,6 +28,20 @@ def _load_or_exit(path: str):
             print(f"  ERROR {e}", file=sys.stderr)
         sys.exit(1)
     return res
+
+
+class UsageError(Exception):
+    """A mistake in how the command was called or in its input files; reported without a traceback."""
+
+
+def _load_manifest(path: str) -> dict:
+    try:
+        m = json.loads(Path(path).read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        raise UsageError(f"manifest {path} is not valid JSON ({e.msg}); regenerate it with `scamcheck split`")
+    if not (isinstance(m, dict) and isinstance(m.get("items"), list) and isinstance(m.get("params"), dict)):
+        raise UsageError(f"manifest {path} is not a `scamcheck split` manifest (needs 'items' and 'params')")
+    return m
 
 
 def _write_json(path: str, obj) -> None:
@@ -48,6 +63,7 @@ def cmd_group(a) -> int:
     res = _load_or_exit(a.file)
     grouped, pairs = group_items(res.items, a.threshold, a.review_low, load_decisions(a.decisions))
     write_items(Path(a.out), grouped)
+    Path(a.review).parent.mkdir(parents=True, exist_ok=True)
     with open(a.review, "w", encoding="utf-8", newline="\n") as f:
         for p in pairs:
             f.write(json.dumps(p.to_json()) + "\n")
@@ -59,6 +75,8 @@ def cmd_group(a) -> int:
 
 def cmd_split(a) -> int:
     res = _load_or_exit(a.file)
+    if any(it.campaign_id is None for it in res.items):
+        raise UsageError(f"{a.file} has items without campaign_id; run `scamcheck group` first and split its --out file")
     manifest = split_items(res.items, seed=a.seed, allow_synthetic_in_test=a.allow_synthetic_in_test)
     _write_json(a.out, manifest)
     print(f"split counts {manifest['counts']}, excluded {len(manifest['excluded'])} → {a.out}")
@@ -67,7 +85,7 @@ def cmd_split(a) -> int:
 
 def cmd_check_leakage(a) -> int:
     res = _load_or_exit(a.file)
-    manifest = json.loads(Path(a.manifest).read_text(encoding="utf-8"))
+    manifest = _load_manifest(a.manifest)
     problems = check_leakage(res.items, manifest, a.threshold, load_decisions(a.decisions))
     for p in problems:
         print(f"LEAK  {p}")
@@ -77,7 +95,7 @@ def cmd_check_leakage(a) -> int:
 
 def cmd_report(a) -> int:
     res = _load_or_exit(a.file)
-    manifest = json.loads(Path(a.manifest).read_text(encoding="utf-8")) if a.manifest else None
+    manifest = _load_manifest(a.manifest) if a.manifest else None
     pairs = None
     if a.review and Path(a.review).exists():
         pairs = [json.loads(l) for l in Path(a.review).read_text(encoding="utf-8").splitlines() if l.strip()]
@@ -109,6 +127,38 @@ def _audit(a, inputs: list[str], outputs: list[str], **extra) -> None:
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
 
+def _pii_gate(a, before: list, after: list) -> list[str] | None:
+    """New possible-PII warnings introduced by this step (all fields scanned). None means: stop, nothing written."""
+    old = {w for it in before for w in scan_item(it)}
+    new = [w for it in after for w in scan_item(it) if w not in old]
+    for w in new:
+        print(f"WARN  {w}", file=sys.stderr)
+    if new and not a.allow_pii_warnings:
+        print("nothing written; fix redaction, or re-run with --allow-pii-warnings after a human checked each one",
+              file=sys.stderr)
+        return None
+    return new
+
+
+def cmd_pilot_intake(a) -> int:
+    if Path(a.out).exists():
+        raise UsageError(f"{a.out} already exists; intake never overwrites (it may hold annotations)")
+    items, basis, errors = intake_from_rows(read_csv(Path(a.csv)))
+    for e in errors:
+        print(f"ERROR {e}", file=sys.stderr)
+    if errors:
+        print("nothing written; fix the intake CSV and re-run", file=sys.stderr)
+        return 1
+    pii = _pii_gate(a, [], items)
+    if pii is None:
+        return 1
+    write_items(Path(a.out), items)
+    write_csv(Path(a.basis_out), [{"id": k, "basis": v} for k, v in sorted(basis.items())], ["id", "basis"])
+    _audit(a, [a.csv], [a.out, a.basis_out], items=len(items), pii_warnings=len(pii))
+    print(f"{len(items)} item(s) → {a.out}; basis for {len(basis)} → {a.basis_out}")
+    return 0
+
+
 def cmd_pilot_sheet(a) -> int:
     res = _load_or_exit(a.file)
     rows = export_sheet(res.items, a.annotator, a.seed)
@@ -126,16 +176,21 @@ def cmd_pilot_import(a) -> int:
     if errors:
         print("nothing imported; fix the sheet and re-run", file=sys.stderr)
         return 1
+    pii = _pii_gate(a, res.items, items)  # annotator notes are free text too
+    if pii is None:
+        return 1
     write_items(Path(a.out), items)
     added = sum(len(n.annotations) - len(o.annotations) for n, o in zip(items, res.items))
-    _audit(a, [a.file, a.sheet], [a.out], annotator=a.annotator, guideline=a.guideline, annotations_added=added)
+    _audit(a, [a.file, a.sheet], [a.out], annotator=a.annotator, guideline=a.guideline, annotations_added=added,
+           pii_warnings=len(pii))
     print(f"imported {added} annotation(s) from {a.annotator} → {a.out}")
     return 0
 
 
 def cmd_pilot_resolve(a) -> int:
     res = _load_or_exit(a.file)
-    items, adj = resolve(res.items)
+    basis = {r["id"]: r["basis"] for r in read_csv(Path(a.basis))} if a.basis else {}
+    items, adj = resolve(res.items, basis=basis)
     write_items(Path(a.out), items)
     write_csv(Path(a.adjudication), adj, ADJ_COLUMNS)
     agreed = sum(n.gold is not None and o.gold is None for n, o in zip(items, res.items))
@@ -152,8 +207,11 @@ def cmd_pilot_adjudicate(a) -> int:
     if errors:
         print("nothing applied; fix the sheet and re-run", file=sys.stderr)
         return 1
+    pii = _pii_gate(a, res.items, items)  # adjudication rationales are free text too
+    if pii is None:
+        return 1
     write_items(Path(a.out), items)
-    _audit(a, [a.file, a.sheet], [a.out], adjudicator=a.adjudicator)
+    _audit(a, [a.file, a.sheet], [a.out], adjudicator=a.adjudicator, pii_warnings=len(pii))
     print(f"adjudications applied → {a.out}")
     return 0
 
@@ -171,7 +229,10 @@ def cmd_schema(a) -> int:
     generated = json.dumps(Item.model_json_schema(), indent=2) + "\n"
     path = Path(a.out)
     if a.check:
-        ok = path.exists() and path.read_text(encoding="utf-8") == generated
+        if not path.exists():
+            print(f"{path} does not exist; run from the repository root or pass --out <path to item.schema.json>")
+            return 1
+        ok = path.read_text(encoding="utf-8") == generated
         print("schema up to date" if ok else f"{path} is stale; run `scamcheck schema --out {path}`")
         return 0 if ok else 1
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -221,6 +282,15 @@ def main(argv: list[str] | None = None) -> int:
         s.set_defaults(fn=fn)
 
     log_default = "data/pilot/audit_log.jsonl"
+    s = sub.add_parser("pilot-intake", help="convert the collector's intake CSV into unlabelled items")
+    s.add_argument("csv")
+    s.add_argument("--out", required=True, help="items JSONL to create (never overwritten)")
+    s.add_argument("--basis-out", required=True, help="CSV of id,basis for pilot-resolve --basis")
+    s.add_argument("--allow-pii-warnings", action="store_true",
+                   help="write even if redaction warnings remain (only after a human checked each one)")
+    s.add_argument("--log", default=log_default)
+    s.set_defaults(fn=cmd_pilot_intake)
+
     s = sub.add_parser("pilot-sheet", help="blind annotation sheet (CSV) for one annotator")
     s.add_argument("file")
     s.add_argument("--annotator", required=True)
@@ -235,6 +305,8 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--annotator", required=True)
     s.add_argument("--guideline", required=True, help="guideline version used, e.g. g1")
     s.add_argument("--out", required=True)
+    s.add_argument("--allow-pii-warnings", action="store_true",
+                   help="import even if notes look like they contain identifiers (only after a human checked)")
     s.add_argument("--log", default=log_default)
     s.set_defaults(fn=cmd_pilot_import)
 
@@ -242,6 +314,7 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("file")
     s.add_argument("--out", required=True)
     s.add_argument("--adjudication", required=True)
+    s.add_argument("--basis", help="id,basis CSV written by pilot-intake")
     s.add_argument("--log", default=log_default)
     s.set_defaults(fn=cmd_pilot_resolve)
 
@@ -250,6 +323,8 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--sheet", required=True)
     s.add_argument("--adjudicator", required=True)
     s.add_argument("--out", required=True)
+    s.add_argument("--allow-pii-warnings", action="store_true",
+                   help="apply even if rationales look like they contain identifiers (only after a human checked)")
     s.add_argument("--log", default=log_default)
     s.set_defaults(fn=cmd_pilot_adjudicate)
 
@@ -264,7 +339,21 @@ def main(argv: list[str] | None = None) -> int:
     s.set_defaults(fn=cmd_schema)
 
     a = p.parse_args(argv)
-    return a.fn(a)
+    try:
+        register = Path("data/source_register.csv")  # run from the repository root, like every other path
+        if register.exists():
+            load_register(register)
+        else:
+            RECORDED_PERMISSIONS.clear()  # no register → no permission counts as granted
+        return a.fn(a)
+    except FileNotFoundError as e:
+        print(f"error: file not found: {e.filename}", file=sys.stderr)
+    except PermissionError as e:  # on Windows, a CSV open in Excel is locked
+        print(f"error: cannot access {e.filename}; close it in Excel or any other program and re-run",
+              file=sys.stderr)
+    except (UsageError, CsvEncodingError) as e:
+        print(f"error: {e}", file=sys.stderr)
+    return 2
 
 
 if __name__ == "__main__":

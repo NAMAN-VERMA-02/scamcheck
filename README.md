@@ -6,20 +6,40 @@ splits and a dataset quality report. There is no detector yet and **no performan
 
 Design rationale and milestones: [docs/PLAN.md](docs/PLAN.md). Engineering audit: [docs/AUDIT.md](docs/AUDIT.md).
 Annotation: [docs/ANNOTATION_GUIDELINES.md](docs/ANNOTATION_GUIDELINES.md) and the pilot procedure
-[docs/PILOT_WORKFLOW.md](docs/PILOT_WORKFLOW.md) (`scamcheck pilot-sheet / pilot-import / pilot-resolve /
-pilot-adjudicate / pseudo-id`).
+[docs/PILOT_WORKFLOW.md](docs/PILOT_WORKFLOW.md) (`scamcheck pilot-intake / pilot-sheet / pilot-import /
+pilot-resolve / pilot-adjudicate / pseudo-id`). Candidate data sources and their verified licences:
+[docs/DATA_SOURCES.md](docs/DATA_SOURCES.md); every source used is listed in `data/source_register.csv`.
+No real messages are in this repository yet.
 
 ## Setup
 
-Requires Python 3.11+.
+Requires Python 3.11+. Run every command from the repository root.
 
 ```bash
 python -m venv .venv
-.venv/Scripts/activate          # Windows (Git Bash: source .venv/Scripts/activate); macOS/Linux: source .venv/bin/activate
+```
+
+Activate it:
+
+| Shell | Command |
+|---|---|
+| PowerShell | `.venv\Scripts\Activate.ps1` |
+| cmd.exe | `.venv\Scripts\activate.bat` |
+| Git Bash | `source .venv/Scripts/activate` |
+| macOS/Linux | `source .venv/bin/activate` |
+
+```bash
 pip install -e ".[dev]"
 ```
 
-Dependencies: `pydantic>=2.5` (runtime), `pytest>=8` (dev). Nothing else, and nothing is downloaded at runtime.
+Dependencies: `pydantic>=2.5,<3` (runtime), `pytest>=8` (dev). Nothing else, and nothing is downloaded at runtime.
+To reproduce the exact versions the test suite last passed with, use the lock file as a constraint:
+`pip install -c requirements-lock.txt -e ".[dev]"`. This matters because `scamcheck schema --check` compares against
+JSON Schema output from pydantic, which a new pydantic release could change.
+
+**Windows: keep the checkout path short** (e.g. `C:\Projects\scamcheck`). With long-path support disabled (the
+Windows default), creating a venv inside a deeply nested folder fails while installing pip, because pip's files
+exceed the 260-character path limit.
 
 No install? Run from the checkout with `PYTHONPATH=src python -m scamcheck.cli ...` and `PYTHONPATH=src python -m pytest`.
 
@@ -79,20 +99,32 @@ shared scam domains or lineage).
 ## Adding properly sourced examples
 
 Never commit raw messages. `data/raw/` is gitignored; only redacted items go in `data/annotated/`.
+**No source is approved yet and no real data has been collected.** The pilot follows
+[docs/PILOT_WORKFLOW.md](docs/PILOT_WORKFLOW.md), whose start condition includes a legal review of consent-v1.
 
 1. **Check the source is usable before collecting anything.**
-   - *Donated* (you, family, classmates): the donor is 18+, read the consent text (to be written in
-     `docs/DATA_POLICY.md`), and agreed. Record a `consent_id`; set `licence` to the consent form version (e.g. `consent-v1`).
+   - *Donated* (you, family, classmates): the donor is 18+, read the consent text (`docs/PILOT_WORKFLOW.md`,
+     pending legal review), and agreed. Record a `consent_id` (`c-NNNN`); set `licence` to the consent form version
+     (e.g. `consent-v1`) and `licence_verified: false`. Donations are never releasable or test-eligible until their
+     consent version is listed in `APPROVED_CONSENT_VERSIONS` (`schema.py`), which happens only after the legal review
+     is recorded in `data/source_register.csv`.
    - *Public dataset*: read its licence page yourself. Record the SPDX id and the URL; set `licence_verified: true` only
      after you have read it. Spam corpora are not scam corpora; check that labels mean what we need.
-   - *Official advisory* (bank, police, regulator notice quoting a scam text): record the URL and the page's terms.
-   - Unknown licence → `licence: "unknown"`, `licence_verified: false`. Such items may help during development but
-     are blocked from `test` and from any release. Only licences in `ACCEPTED_LICENCES` (`schema.py`) validate;
-     add one there only after reading its terms.
+   - *Official advisory* (bank, police, regulator notice quoting a scam text): store text only under an accepted open
+     licence or a recorded written permission (`licence: "permission-NNNN"`, with conditions in the source register).
+     Unclear rights → reference-only; the schema rejects advisory items with `licence: "unknown"`.
+   - Unknown licence (other source types) → `licence: "unknown"`, `licence_verified: false`. Such items may help during
+     development but are blocked from `test` and from any release. Only licences in `ACCEPTED_LICENCES` (`schema.py`)
+     validate; add one there only after reading its terms.
+   - Record ids use the format `prefix-NNNN` (`dn-0001`, `oa-0042`); the schema rejects ids that are not.
    - Do not scrape or bulk-download anything whose terms you have not checked.
-2. **Redact** before the text leaves your machine: real people's names, phone numbers, account/card digits, OTPs,
-   addresses → `<NAME>`, `<PHONE>`, `<ACCT>`, `<OTP>`, `<ADDRESS>`. Scammer phone numbers and UPI ids are also
-   replaced (they may belong to mule-account victims). Keep scam URL domains, defanged: `hxxps://evil[.]in/x`.
+2. **Redact** every field before it leaves your machine, using the placeholder table and
+   [REDACTION_CHECKLIST.md](docs/templates/REDACTION_CHECKLIST.md): names, phones, emails, UPI ids, account and card
+   numbers, OTPs, ID numbers and addresses → `<NAME>`, `<PHONE>`, `<EMAIL>`, `<UPI>`, `<ACCT>`, `<CARD>`, `<OTP>`,
+   `<ID>`, `<ADDRESS>`. This includes `sender.value` (the schema rejects real sender numbers) and URL query strings.
+   Scammer phone numbers and UPI ids are also replaced (they may belong to mule-account victims). Keep scam URL
+   domains, defanged: `hxxps://evil[.]in/x`. The automated check (`scamcheck validate`, `pilot-intake`) scans every
+   field but cannot detect names or addresses, so the human check by a second person is mandatory.
    Record `redaction: {"version": "r1", "checked_by": "<second person>"}`. Record each scammer phone/UPI/email as a
    token in `scammer_ids` with `scamcheck pseudo-id PHONE "<number>"` (needs `SCAMCHECK_PSEUDO_KEY`, kept outside the
    repo) so campaigns stay linkable after redaction.

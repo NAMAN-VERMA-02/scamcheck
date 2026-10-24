@@ -9,6 +9,7 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from .normalise import content_hash
+from .pii import pii_warnings, scan_item  # noqa: F401  (pii_warnings re-exported for existing callers)
 from .schema import Item
 
 
@@ -50,10 +51,11 @@ def _warnings(items: list[Item]) -> list[str]:
     by_hash: dict[str, list[Item]] = {}
     for it in items:
         by_hash.setdefault(content_hash(it.text), []).append(it)
+        out += scan_item(it)
         if it.gold is None:
             out.append(f"{it.id}: no gold label yet (excluded from splits)")
-        if not it.provenance.releasable:
-            out.append(f"{it.id}: licence not verified (excluded from test split, not releasable)")
+        if (reason := it.provenance.release_blocker) is not None:
+            out.append(f"{it.id}: {reason} (excluded from test split, not releasable)")
         for ref in (it.synthetic and it.synthetic.seed_id, it.adversarial and it.adversarial.parent_id):
             if ref and ref not in ids:
                 out.append(f"{it.id}: lineage reference {ref!r} is not in this file, so it cannot be grouped with it")
