@@ -1,0 +1,126 @@
+{
+  "smoke_version": "llm-smoke-1",
+  "prompt_version": "zero-shot-v1",
+  "prompt_id": "zero-shot-v1:b413ed4f7af7",
+  "inputs": "built-in synthetic demo examples only",
+  "ran_at": "2026-10-25T17:09:00+00:00",
+  "status": "ok",
+  "model_id": "openai-compatible:qwen2.5:3b",
+  "config": {
+    "endpoint": "http://127.0.0.1:11434/v1/chat/completions",
+    "endpoint_is_local": true,
+    "model": "qwen2.5:3b",
+    "timeout_s": 180.0,
+    "temperature": 0,
+    "api_key_set": false
+  },
+  "statuses": {
+    "ok": 9
+  },
+  "latency_ms": {
+    "n": 9,
+    "median": 16039,
+    "max": 99559
+  },
+  "cases": [
+    {
+      "example_id": "ex-kyc-en",
+      "language": "english",
+      "status": "ok",
+      "error_type": null,
+      "label": "scam",
+      "b3_verdict": "LIKELY_SCAM",
+      "grounded_quotes": 1,
+      "dropped_quotes": 0,
+      "latency_ms": 99559
+    },
+    {
+      "example_id": "ex-upi-hi",
+      "language": "hinglish",
+      "status": "ok",
+      "error_type": null,
+      "label": "scam",
+      "b3_verdict": "LIKELY_SCAM",
+      "grounded_quotes": 1,
+      "dropped_quotes": 0,
+      "latency_ms": 32049
+    },
+    {
+      "example_id": "ex-arrest-en",
+      "language": "english",
+      "status": "ok",
+      "error_type": null,
+      "label": "scam",
+      "b3_verdict": "LIKELY_SCAM",
+      "grounded_quotes": 1,
+      "dropped_quotes": 0,
+      "latency_ms": 19037
+    },
+    {
+      "example_id": "ex-otp-legit-en",
+      "language": "english",
+      "status": "ok",
+      "error_type": null,
+      "label": "scam",
+      "b3_verdict": "LIKELY_SCAM",
+      "grounded_quotes": 1,
+      "dropped_quotes": 0,
+      "latency_ms": 13919
+    },
+    {
+      "example_id": "ex-otp-legit-hi",
+      "language": "hinglish",
+      "status": "ok",
+      "error_type": null,
+      "label": "scam",
+      "b3_verdict": "LIKELY_SCAM",
+      "grounded_quotes": 1,
+      "dropped_quotes": 0,
+      "latency_ms": 16039
+    },
+    {
+      "example_id": "ex-debit-en",
+      "language": "english",
+      "status": "ok",
+      "error_type": null,
+      "label": "not_scam",
+      "b3_verdict": "NO_STRONG_SIGNALS",
+      "grounded_quotes": 1,
+      "dropped_quotes": 0,
+      "latency_ms": 16056
+    },
+    {
+      "example_id": "ex-hidden-en",
+      "language": "english",
+      "status": "ok",
+      "error_type": null,
+      "label": "scam",
+      "b3_verdict": "LIKELY_SCAM",
+      "grounded_quotes": 1,
+      "dropped_quotes": 0,
+      "latency_ms": 7670
+    },
+    {
+      "example_id": "ex-inject-en",
+      "language": "english",
+      "status": "ok",
+      "error_type": null,
+      "label": "not_scam",
+      "b3_verdict": "NO_STRONG_SIGNALS",
+      "grounded_quotes": 1,
+      "dropped_quotes": 0,
+      "latency_ms": 12189
+    },
+    {
+      "example_id": "ex-ambiguous-en",
+      "language": "english",
+      "status": "ok",
+      "error_type": null,
+      "label": "unsure",
+      "b3_verdict": "UNCLEAR",
+      "grounded_quotes": 1,
+      "dropped_quotes": 0,
+      "latency_ms": 9891
+    }
+  ]
+}
