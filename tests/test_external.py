@@ -48,9 +48,9 @@ def register(path, verified):
     with open(ROOT / "data/source_register.csv", encoding="utf-8-sig", newline="") as f:
         rows = list(csv.DictReader(f))
     for r in rows:
-        if r["source_id"] == ext.SOURCE_ID and verified:
-            r["licence_verified_by"] = "Test Person"
-            r["status"] = ext.REGISTER_STATUS + ": test only"
+        if r["source_id"] == ext.SOURCE_ID:
+            r["licence_verified_by"] = "Test Person" if verified else ""
+            r["status"] = ext.REGISTER_STATUS + ": test only" if verified else "BLOCKED: not verified"
     with open(path, "w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0]))
         w.writeheader()
@@ -78,9 +78,13 @@ def test_selection_rule(text, expected):
     assert ext.is_hinglish(text) is expected
 
 
-def test_real_register_is_not_authorised_by_this_change():
-    with pytest.raises(ext.ExternalCheckError, match=ext.REGISTER_STATUS):
-        ext.check_register(ROOT / "data/source_register.csv")
+def test_real_register_authorises_this_check_and_nothing_else():
+    auth = ext.check_register(ROOT / "data/source_register.csv")
+    assert auth["licence_verified_by"] and auth["status"].startswith(ext.REGISTER_STATUS)
+    assert "not for test split or training" in auth["status"]
+    from scamcheck.data import schema
+    assert schema.load_register(ROOT / "data/source_register.csv") == set()   # no permission-NNNN granted
+    assert schema.APPROVED_CONSENT_VERSIONS == set()                          # no consent version approved
 
 
 def test_plan_requires_licence_verification(setup, tmp_path):
@@ -124,7 +128,7 @@ def test_run_once_writes_results_without_text_and_refuses_a_second_run(setup, mo
     assert b4["scam_recall"]["n"] == 6 and b4["false_alarm_rate_legitimate"]["n"] == 4
     assert b4["dangerous_miss_rate"]["k"] == 0                   # rule-only B4 never reassures
     assert set(res["systems"]) == set(ext.SYSTEMS)
-    assert all(set(e) == {"row", "label", "verdict", "signals"} for e in res["b4_errors"])
+    assert all(set(e) == {"row", "label", "verdict", "signals"} for e in res["errors"]["B4-engine"])
     assert not any(t in written(setup) for t in ALL_TEXTS)
     assert "**RUN** once" in setup["log"].read_text(encoding="utf-8")
     with pytest.raises(ext.ExternalCheckError, match="already run once"):
@@ -170,7 +174,58 @@ def test_plan_committed_uses_git(tmp_path):
     assert not ext.plan_committed(tmp_path, p)                   # changed after commit
 
 
-def test_cli_stops_with_a_reason_against_the_real_register(setup, capsys):
+def test_cli_stops_with_a_reason_without_authorisation(setup, capsys, tmp_path):
+    unverified = register(tmp_path / "unverified.csv", verified=False)
     assert main(["external-plan", "--raw", str(setup["raw"]), "--plan", str(setup["plan"]),
-                 "--log", str(setup["log"])]) == 2
+                 "--log", str(setup["log"]), "--register", str(unverified)]) == 2
     assert ext.REGISTER_STATUS in capsys.readouterr().err and not setup["plan"].exists()
+
+
+class FakeModel:
+    """Local-looking adapter whose /api/tags lookup fails, so no digest is recorded."""
+
+    def __init__(self, model_id="openai-compatible:fake-3b", label="unsure"):
+        self.model_id, self.model, self.timeout, self.api_key = model_id, "fake-3b", 60.0, None
+        self.url = "http://127.0.0.1:9/v1/chat/completions"
+        self.label, self.calls = label, 0
+
+    def complete(self, system, user):
+        self.calls += 1
+        return json.dumps({"label": self.label, "evidence": []})
+
+
+def test_plan_pins_the_model_and_run_adds_b3_and_b4_with_model(setup, monkeypatch):
+    model = FakeModel(label="not_scam")
+    p = ext.write_plan(setup["raw"], ROOT, setup["register"], setup["plan"], setup["log"], TODAY, model)
+    assert p["model"]["model_id"] == "openai-compatible:fake-3b" and p["model"]["digest"] is None
+    assert p["systems"][-2:] == list(ext.MODEL_SYSTEMS)
+    assert any("B4-engine+llm vs B3-llm" in r for r in p["pre_stated_reading"])
+    monkeypatch.setattr(ext, "plan_committed", lambda root, path: True)
+    res = ext.run_check(setup["raw"], ROOT, setup["register"], setup["plan"], setup["out"], setup["log"], TODAY,
+                        model)
+    assert {"B3-llm", "B4-engine+llm"} <= set(res["systems"])
+    assert res["meta"]["model_calls"] == model.calls == 10            # one call per message, shared by B3 and B4
+    assert res["comparisons"]["B4-engine+llm vs B3-llm"]["role"] == "primary"
+    assert all(set(r) == {"status", "label", "error_type", "grounded_quotes", "dropped_quotes"}
+               for r in res["model_rows"].values())
+    # A model that says not_scam lets B4 reassure only where every check is quiet; B3 reassures on everything.
+    b3 = res["systems"]["B3-llm"]["metrics"]["overall"]
+    assert b3["dangerous_miss_rate"]["k"] == 6
+    assert not any(t in written(setup) for t in ALL_TEXTS)
+
+
+@pytest.mark.parametrize("given,match", [(None, "names a model but none"),
+                                         (FakeModel("openai-compatible:other"), "not the planned")])
+def test_run_refuses_a_different_or_missing_model(setup, monkeypatch, given, match):
+    ext.write_plan(setup["raw"], ROOT, setup["register"], setup["plan"], setup["log"], TODAY, FakeModel())
+    monkeypatch.setattr(ext, "plan_committed", lambda root, path: True)
+    with pytest.raises(ext.ExternalCheckError, match=match):
+        ext.run_check(setup["raw"], ROOT, setup["register"], setup["plan"], setup["out"], setup["log"], TODAY, given)
+
+
+def test_run_refuses_a_model_the_plan_did_not_name(setup, monkeypatch):
+    plan(setup)
+    monkeypatch.setattr(ext, "plan_committed", lambda root, path: True)
+    with pytest.raises(ext.ExternalCheckError, match="has no model"):
+        ext.run_check(setup["raw"], ROOT, setup["register"], setup["plan"], setup["out"], setup["log"], TODAY,
+                      FakeModel())

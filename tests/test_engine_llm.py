@@ -105,3 +105,14 @@ def test_from_env_is_off_by_default_and_validates_scheme(monkeypatch):
     assert from_env() is None
     with pytest.raises(ValueError):
         OpenAICompatibleAdapter("file:///etc/passwd", "m")
+
+
+def test_cached_adapter_calls_once_per_prompt_and_replays_failures():
+    from scamcheck.engine.llm import CachedAdapter
+    ok = CachedAdapter(Fake(reply("unsure")))
+    a, b = classify(ok, "same text"), classify(ok, "same text")
+    assert a == b and ok.calls == 1 and len(ok.inner.sent) == 1
+    classify(ok, "other text")
+    assert ok.calls == 2
+    bad = CachedAdapter(Fake(exc=TimeoutError()))
+    assert classify(bad, "x").status == classify(bad, "x").status == "timeout" and bad.calls == 1

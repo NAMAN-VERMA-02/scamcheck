@@ -22,15 +22,22 @@ import hashlib
 import json
 import re
 import subprocess
+import time
+import urllib.request
 from collections import Counter
 from datetime import date
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from ..data.io import load_items
 from ..data.normalise import content_hash, jaccard, shingles
 from ..data.pii import pii_kinds
 from ..engine import collect_signals
+from ..engine.llm import PROMPT_ID, CachedAdapter, classify
+from ..engine.parse import parse
+from ..engine.redact import redact
 from .baselines import build_systems
+from .llm_smoke import _config as model_config
 from .metrics import Row, paired_difference, summarise
 
 SOURCE_ID = "src-bolewara-hinglish"
@@ -55,9 +62,10 @@ _DEVANAGARI = re.compile("[ऀ-ॿ]")
 
 # Code and data whose hash is frozen by the plan; any change makes external-run refuse.
 FROZEN = ("src/scamcheck/engine", "src/scamcheck/eval/baselines.py", "src/scamcheck/eval/metrics.py",
-          "src/scamcheck/eval/external.py", "src/scamcheck/data/normalise.py",
+          "src/scamcheck/eval/external.py", "src/scamcheck/eval/llm_smoke.py", "src/scamcheck/data/normalise.py",
           "benchmarks/synthetic/items.grouped.jsonl", "benchmarks/synthetic/manifest.json")
 SYSTEMS = ("B0-unclear", "B0-scam", "B1-rules", "B2-tfidf-lr", "B4-engine")
+MODEL_SYSTEMS = ("B3-llm", "B4-engine+llm")  # only when the plan pins a model
 
 
 class ExternalCheckError(Exception):
@@ -155,7 +163,26 @@ def _log(log: Path, line: str) -> None:
         f.write(line + "\n")
 
 
-def make_plan(raw: Path, root: Path, register: Path, today: date) -> dict:
+def model_digest(model) -> str | None:
+    """Ollama's content digest for the pinned model, so a re-pulled or replaced model is detected. Local only."""
+    parts = urlsplit(getattr(model, "url", "") or "")
+    if parts.hostname not in ("localhost", "127.0.0.1", "::1"):
+        return None
+    try:
+        with urllib.request.urlopen(f"{parts.scheme}://{parts.netloc}/api/tags", timeout=5) as resp:
+            tags = json.loads(resp.read().decode("utf-8"))
+    except (OSError, ValueError):
+        return None
+    name = getattr(model, "model", None)
+    return next((m.get("digest") for m in tags.get("models", []) if m.get("name") in (name, f"{name}:latest")), None)
+
+
+def _model_record(model) -> dict:
+    return {"model_id": model.model_id, "prompt_id": PROMPT_ID, "config": model_config(model),
+            "digest": model_digest(model)}
+
+
+def make_plan(raw: Path, root: Path, register: Path, today: date, model=None) -> dict:
     authorisation = check_register(register)
     rows = load_rows(raw)
     selected = select(rows)
@@ -168,6 +195,23 @@ def make_plan(raw: Path, root: Path, register: Path, today: date) -> dict:
     pii = Counter(k for s in selected for k in pii_kinds(s["text"]))
     commit = _git(root, "rev-parse", "HEAD")
     groups = campaigns([s["text"] for s in selected])
+    reading = [
+        "Synthetic and small: report as an external-author check only, never as real-world accuracy.",
+        "Scam recall (n=35) is interpretable under protocol §5 (n >= 30); legitimate rates (n=28) are counts only.",
+        "B4-engine runs in rule-only mode, so it cannot return NO_STRONG_SIGNALS; its legitimate items can only be "
+        "LIKELY_SCAM (false alarm) or UNCLEAR.",
+        "A B4-engine recall clearly below its own-author synthetic recall (9/12) would indicate the rules are fitted "
+        "to their author's phrasing; 'clearly' means the two Wilson intervals do not overlap.",
+        "No rule, threshold, prompt or code is changed in response to the result; findings feed the next rule-pack "
+        "version, which needs a different evaluation set.",
+    ]
+    if model is not None:
+        reading += [
+            "Primary comparison (protocol §6): B4-engine+llm vs B3-llm on dangerous misses and false alarms, paired "
+            "campaign bootstrap at 97.5%; a difference is claimed only if its interval excludes 0.",
+            "The model is a small local model chosen for privacy and hardware, not for accuracy; B3's result describes "
+            "this model and prompt only, not LLMs in general.",
+        ]
     return {
         "check": "external-author synthetic check (not real-world evidence, not a protocol test run)",
         "planned_on": today.isoformat(),
@@ -182,38 +226,32 @@ def make_plan(raw: Path, root: Path, register: Path, today: date) -> dict:
                       "identifier_shapes_seen": dict(sorted(pii.items()))},
         "frozen": {"files": list(FROZEN), "sha256": freeze_hash(root),
                    "git_commit": commit.stdout.strip() if commit.returncode == 0 else None},
-        "systems": list(SYSTEMS),
+        "model": _model_record(model) if model is not None else None,
+        "systems": list(SYSTEMS) + (list(MODEL_SYSTEMS) if model is not None else []),
         "b2_training": "train split of benchmarks/synthetic (frozen above); never the external rows",
         "seed": SEED,
         "primary": ["scam_recall", "dangerous_miss_rate", "false_alarm_rate_legitimate"],
-        "pre_stated_reading": [
-            "Synthetic and small: report as an external-author check only, never as real-world accuracy.",
-            "Scam recall (n=35) is interpretable under protocol §5 (n >= 30); legitimate rates (n=28) are counts only.",
-            "B4 runs in rule-only mode, so it cannot return NO_STRONG_SIGNALS; its legitimate items can only be "
-            "LIKELY_SCAM (false alarm) or UNCLEAR.",
-            "A B4 recall clearly below its own-author synthetic recall (9/12) would indicate the rules are fitted to "
-            "their author's phrasing; 'clearly' means the two Wilson intervals do not overlap.",
-            "No rule, threshold or code is changed in response to the result; findings feed the next rule-pack "
-            "version, which needs a different evaluation set.",
-        ],
+        "pre_stated_reading": reading,
     }
 
 
-def write_plan(raw: Path, root: Path, register: Path, plan_path: Path, log: Path, today: date) -> dict:
+def write_plan(raw: Path, root: Path, register: Path, plan_path: Path, log: Path, today: date, model=None) -> dict:
     if plan_path.exists():
         raise ExternalCheckError(f"{plan_path} already exists; a plan is written once")
-    plan = make_plan(raw, root, register, today)
+    plan = make_plan(raw, root, register, today, model)
     plan_path.parent.mkdir(parents=True, exist_ok=True)
     plan_path.write_text(json.dumps(plan, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     s = plan["selection"]
     _log(log, f"| {today.isoformat()} | `{DATASET}` @ {REVISION[:12]} (SYNTHETIC, external author; Hinglish part "
               f"{s['counts']['scam']} scam / {s['counts']['legitimate']} legitimate) | all selected rows | "
-              f"{', '.join(SYSTEMS)} | frozen {plan['frozen']['sha256'][:12]} | **PLANNED** external-author check; "
-              f"plan `{plan_path.as_posix()}`. Must be committed before `external-run`; runs once. |")
+              f"{', '.join(plan['systems'])} | frozen {plan['frozen']['sha256'][:12]} | **PLANNED** external-author "
+              f"check{'; model ' + plan['model']['model_id'] if plan['model'] else ''}; plan `{plan_path.as_posix()}`. "
+              "Must be committed before `external-run`; runs once. |")
     return plan
 
 
-def run_check(raw: Path, root: Path, register: Path, plan_path: Path, out_dir: Path, log: Path, today: date) -> dict:
+def run_check(raw: Path, root: Path, register: Path, plan_path: Path, out_dir: Path, log: Path, today: date,
+              model=None) -> dict:
     results_path = out_dir / "results.json"
     if results_path.exists():
         raise ExternalCheckError(f"{results_path} exists: this check has already run once and is not repeated")
@@ -231,47 +269,89 @@ def run_check(raw: Path, root: Path, register: Path, plan_path: Path, out_dir: P
         raise ExternalCheckError("the selected rows differ from the plan")
     if freeze_hash(root) != plan["frozen"]["sha256"]:
         raise ExternalCheckError("frozen code or training data changed since the plan; the check cannot run")
+    planned = plan.get("model")
+    if bool(planned) != (model is not None):
+        raise ExternalCheckError("the plan " + ("names a model but none is configured" if planned else
+                                                "has no model but one was given") + "; run exactly as planned")
+    if planned:
+        if model.model_id != planned["model_id"]:
+            raise ExternalCheckError(f"configured model {model.model_id} is not the planned {planned['model_id']}")
+        if planned["digest"] and model_digest(model) != planned["digest"]:
+            raise ExternalCheckError("the local model's digest changed since the plan (re-pulled or replaced)")
 
     items = load_items(root / "benchmarks/synthetic/items.grouped.jsonl").items
     manifest = json.loads((root / "benchmarks/synthetic/manifest.json").read_text(encoding="utf-8"))
     split_of = {r["id"]: r["split"] for r in manifest["items"]}
     train = [it for it in items if split_of.get(it.id) == "train" and it.gold.label != "ambiguous"]
-    systems = [s for s in build_systems([it.text for it in train], [it.gold.label == "scam" for it in train], SEED)
-               if s.name in SYSTEMS]
+    texts, labels = [it.text for it in train], [it.gold.label == "scam" for it in train]
+    systems = [s for s in build_systems(texts, labels, SEED) if s.name in SYSTEMS]
+    cached = None
+    if planned:
+        cached = CachedAdapter(model)  # B3 and B4+llm see the same answer for each message
+        for s in build_systems(texts, labels, SEED, cached):
+            if s.name == "B3-llm":
+                systems.append(s)
+            elif s.name == "B4-engine":
+                s.name = "B4-engine+llm"
+                systems.append(s)
     groups = campaigns([s["text"] for s in selected])
     rows_of, results = {}, {}
+    started = time.perf_counter()
     for s in systems:
         rows = rows_of[s.name] = [Row(f"row-{x['row']}", x["label"], None, "hinglish", g, s.predict(x["text"]))
                                   for x, g in zip(selected, groups)]
         results[s.name] = {"description": s.description, "metrics": summarise(rows, SEED),
                            "predictions": {r.id: r.verdict for r in rows}}
-    b4 = {r.id: r.verdict for r in rows_of["B4-engine"]}
-    errors = []
-    for x in selected:
-        v = b4[f"row-{x['row']}"]
-        if (x["label"] == "scam" and v != "LIKELY_SCAM") or (x["label"] == "legitimate" and v == "LIKELY_SCAM"):
-            errors.append({"row": x["row"], "label": x["label"], "verdict": v,
-                           "signals": sorted({sig.id for sig in collect_signals(x["text"])[2]})})
+    elapsed = time.perf_counter() - started
+
+    def errors_for(name: str) -> list[dict]:
+        verdicts, out = {r.id: r.verdict for r in rows_of[name]}, []
+        for x in selected:
+            v = verdicts[f"row-{x['row']}"]
+            if (x["label"] == "scam" and v != "LIKELY_SCAM") or (x["label"] == "legitimate" and v == "LIKELY_SCAM"):
+                out.append({"row": x["row"], "label": x["label"], "verdict": v,
+                            "signals": sorted({sig.id for sig in collect_signals(x["text"])[2]})})
+        return out
+
+    comparisons = {f"B4-engine vs {n}": {"role": "exploratory", **paired_difference(rows_of["B4-engine"], rows_of[n],
+                                                                                     SEED)}
+                   for n in ("B1-rules", "B2-tfidf-lr")}
+    model_rows = None
+    if planned:
+        comparisons["B4-engine+llm vs B3-llm"] = {"role": "primary", **paired_difference(
+            rows_of["B4-engine+llm"], rows_of["B3-llm"], SEED, level=0.975)}
+        comparisons["B4-engine vs B3-llm"] = {"role": "exploratory", **paired_difference(
+            rows_of["B4-engine"], rows_of["B3-llm"], SEED)}
+        # Per-row model outcome from the cache (no new calls). Labels and counts only: quotes are message text.
+        model_rows = {}
+        for x in selected:
+            r = classify(cached, redact(parse(x["text"]).text)[0])
+            model_rows[f"row-{x['row']}"] = {"status": r.status, "label": r.label, "error_type": r.error_type,
+                                             "grounded_quotes": len(r.evidence), "dropped_quotes": r.dropped_evidence}
     out = {
         "meta": {"data_label": "EXTERNAL-AUTHOR SYNTHETIC CHECK. Hand-written by the dataset author, not by the rule "
                                "author; still synthetic and small. Not real-world accuracy.",
                  "plan_sha256": _sha(plan_path.read_bytes()), "ran_on": today.isoformat(),
-                 "dataset": plan["dataset"], "frozen": plan["frozen"], "n": len(selected),
-                 "campaigns": len(set(groups))},
+                 "dataset": plan["dataset"], "frozen": plan["frozen"], "model": planned, "n": len(selected),
+                 "campaigns": len(set(groups)), "model_calls": cached.calls if cached else 0,
+                 "wall_seconds": round(elapsed, 1)},
         "systems": results,
-        "comparisons": {f"B4-engine vs {n}": paired_difference(rows_of["B4-engine"], rows_of[n], SEED)
-                        for n in ("B1-rules", "B2-tfidf-lr")},
-        "b4_errors": errors,   # row indices and signal ids only, never text
+        "comparisons": comparisons,
+        "model_rows": model_rows,
+        "errors": {name: errors_for(name) for name in ("B4-engine", "B4-engine+llm") if name in rows_of},
     }
     out_dir.mkdir(parents=True, exist_ok=True)
     results_path.write_text(json.dumps(out, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     (out_dir / "results.md").write_text(to_markdown(out), encoding="utf-8", newline="\n")
-    o = results["B4-engine"]["metrics"]["overall"]
+    summary = "; ".join(
+        f"{n} recall {results[n]['metrics']['overall']['scam_recall']['k']}/"
+        f"{results[n]['metrics']['overall']['scam_recall']['n']}, false alarms "
+        f"{results[n]['metrics']['overall']['false_alarm_rate_legitimate']['k']}/"
+        f"{results[n]['metrics']['overall']['false_alarm_rate_legitimate']['n']}"
+        for n in ("B4-engine", "B3-llm", "B4-engine+llm") if n in results)
     _log(log, f"| {today.isoformat()} | `{DATASET}` @ {REVISION[:12]} (SYNTHETIC, external author) | all selected "
-              f"rows ({len(selected)}) | {', '.join(SYSTEMS)} | frozen {plan['frozen']['sha256'][:12]} | **RUN** once "
-              f"as planned. B4 recall {o['scam_recall']['k']}/{o['scam_recall']['n']}, false alarms "
-              f"{o['false_alarm_rate_legitimate']['k']}/{o['false_alarm_rate_legitimate']['n']}. "
-              f"Results `{results_path.as_posix()}`. |")
+              f"rows ({len(selected)}) | {', '.join(results)} | frozen {plan['frozen']['sha256'][:12]} | **RUN** once "
+              f"as planned. {summary}. Results `{results_path.as_posix()}`. |")
     return out
 
 
@@ -293,15 +373,25 @@ def to_markdown(res: dict) -> str:
         o = s["metrics"]["overall"]
         lines.append(f"| {name} | {pct(o['scam_recall'])} | {pct(o['dangerous_miss_rate'])} | "
                      f"{pct(o['false_alarm_rate_legitimate'])} | {pct(o['unclear_rate_non_ambiguous'])} |")
-    lines += ["", "## Paired comparisons (B4 − other, campaign bootstrap, 95%)", ""]
+    lines += ["", "## Paired comparisons (first − second, campaign bootstrap; negative favours the first)", ""]
     for label, c in res["comparisons"].items():
         if "skipped" in c:
-            lines.append(f"- {label}: skipped — {c['skipped']}")
+            lines.append(f"- {label} ({c['role']}): skipped — {c['skipped']}")
         else:
-            lines.append(f"- {label}: " + "; ".join(
+            lines.append(f"- {label} ({c['role']}, {c['level'] * 100:g}%): " + "; ".join(
                 f"{k} {v['diff'] * 100:+.1f} pts [{v['lo'] * 100:+.1f}, {v['hi'] * 100:+.1f}] → {v['conclusion']}"
                 for k, v in c.items() if isinstance(v, dict)))
-    lines += ["", "## B4 misses and false alarms (row index, signals that fired)", ""]
-    lines += [f"- row {e['row']} ({e['label']}): {e['verdict']}; signals: {', '.join(e['signals']) or 'none'}"
-              for e in res["b4_errors"]] or ["- none"]
+    if m.get("model"):
+        md = m["model"]
+        statuses = Counter(r["status"] for r in (res.get("model_rows") or {}).values())
+        lines += ["", "## Model", "",
+                  f"- `{md['model_id']}` (digest `{(md.get('digest') or 'n/a')[:19]}`), prompt `{md['prompt_id']}`, "
+                  f"timeout {md['config'].get('timeout_s')} s, endpoint local: {md['config'].get('endpoint_is_local')}",
+                  f"- {m['model_calls']} model calls, shared by B3 and B4+llm; statuses: "
+                  + ", ".join(f"{k} {v}" for k, v in sorted(statuses.items())),
+                  f"- wall time for all systems: {m['wall_seconds']} s"]
+    for name, errs in res["errors"].items():
+        lines += ["", f"## {name} misses and false alarms (row index, signals that fired)", ""]
+        lines += [f"- row {e['row']} ({e['label']}): {e['verdict']}; signals: {', '.join(e['signals']) or 'none'}"
+                  for e in errs] or ["- none"]
     return "\n".join(lines) + "\n"

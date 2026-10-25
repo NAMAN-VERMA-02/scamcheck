@@ -44,8 +44,14 @@ curl -L -o data/raw/external/bolewara-hinglish-scam-text-dataset.json "https://h
 ## Step 3 — plan (freezes everything, writes no text)
 
 ```bash
-scamcheck external-plan
+scamcheck external-plan                 # rule-only systems, or, with a model configured (SCAMCHECK_LLM_*):
+scamcheck external-plan --with-llm      # also B3 and B4-with-model; pins the model id and its Ollama digest
 ```
+
+With `--with-llm`, B3 and B4-with-model share one cached answer per message, so their paired comparison (the
+protocol's primary B4 vs B3) measures the systems, not model noise. `external-run` then needs the same model id
+and, when recorded, the same digest. Per-row model outcomes are stored as status, label and quote counts only.
+Quotes themselves are message text and are never written.
 
 It writes `reports/external/bolewara/plan.json` and appends a **PLANNED** row to `reports/test_runs.md`. The plan
 records:
