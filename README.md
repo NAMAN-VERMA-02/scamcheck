@@ -23,7 +23,10 @@ Original plan: [docs/PLAN.md](docs/PLAN.md). Audit: [docs/AUDIT.md](docs/AUDIT.m
 [docs/ANNOTATION_GUIDELINES.md](docs/ANNOTATION_GUIDELINES.md), pilot procedure
 [docs/PILOT_WORKFLOW.md](docs/PILOT_WORKFLOW.md), readiness [docs/PILOT_READINESS.md](docs/PILOT_READINESS.md).
 Sources and licences: [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md) and `data/source_register.csv`.
-Project summary: [docs/PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md).
+Project summary: [docs/PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md). Evaluation protocol (pre-registered):
+[docs/EVALUATION_PROTOCOL.md](docs/EVALUATION_PROTOCOL.md). Datasheet: [docs/DATASHEET.md](docs/DATASHEET.md).
+Robustness review guideline: [docs/ROBUSTNESS_REVIEW.md](docs/ROBUSTNESS_REVIEW.md). Deployment readiness:
+[docs/DEPLOYMENT_READINESS.md](docs/DEPLOYMENT_READINESS.md).
 
 ## Architecture in one picture
 
@@ -196,8 +199,45 @@ How to read this, honestly:
 - B2 ranks well (AUC 0.97), but 64 training items never push its probabilities past the pre-set thresholds, so it
   abstains on everything. The thresholds were not retuned after seeing test results.
 
+- Paired campaign bootstrap, B4 − B1 on dangerous misses: −25.0 points, 95% interval [−50.0, 0.0], so
+  **inconclusive**, not "better". The primary comparison, B4 vs B3, has not been run because no model is
+  configured.
+
+Rules for interpreting real results are fixed in advance in
+[docs/EVALUATION_PROTOCOL.md](docs/EVALUATION_PROTOCOL.md). It covers the research questions, primary metrics,
+dev-only threshold selection, test-set restrictions, subgroup minimums (rates with n < 30 are marked † and not
+interpreted), sample sizes, and when a result must be called inconclusive.
+
 Full report: [reports/benchmark/synthetic/benchmark.md](reports/benchmark/synthetic/benchmark.md). Run log:
 [reports/test_runs.md](reports/test_runs.md).
+
+### Temporal hold-out
+
+```bash
+scamcheck split items.grouped.jsonl --out manifest.json --temporal-cutoff 2027-03-31
+```
+
+- Every campaign with any item collected after the cutoff goes **wholly** to `test`. Campaigns that straddle the
+  cutoff are listed in the manifest.
+- Future campaigns that are not test-eligible are excluded, never moved into training.
+- Earlier campaigns are split train/dev, still by campaign.
+- `check-leakage` independently re-checks that no train/dev item shares a campaign with post-cutoff data.
+- The command fails with a reason, and writes no manifest, when nothing falls after (or before) the cutoff, no
+  future campaign is test-eligible, or either side lacks scam or legitimate items.
+- The synthetic benchmark cannot be split this way: every item has one collection date, and the command says so.
+
+### LLM baseline smoke test
+
+```bash
+scamcheck llm-smoke --out reports/llm_smoke/latest.json
+```
+
+- Sends **only the built-in synthetic examples** to the configured endpoint. There is no option to pass other text.
+- Records model id, prompt version and hash, endpoint (without credentials or query), timeout, per-example status,
+  exception class (never its message), grounded and dropped quotes, and latency.
+- No endpoint configured → `"status": "skipped"`, exit 0, nothing sent. Any failed call → `completed_with_errors`,
+  exit 1.
+- It checks plumbing, not accuracy; no score is computed. It has not yet been run against a real model.
 
 ## Robustness Lab (seeded mutation testing)
 
@@ -213,25 +253,34 @@ How it works (`src/scamcheck/eval/mutate.py`):
   deterministically, so any single variant can be rebuilt from its record.
 - Every record stores `variant_id`, `parent_id`, `seed`, `transform`, `generator_version`, `output_sha256` and a
   status. Default seeds are 11, 23 and 37 (`--seeds` to change).
-- **Meaning-preserving** transforms (whitespace, punctuation, character spacing, zero-width, confusables, full-width,
-  casing, typo, Hinglish spelling, Devanagari mixing, defang style) inherit the parent label, and verdict consistency
-  is measured.
+- **Meaning-preserving by design** transforms are: whitespace, punctuation, character spacing, zero-width,
+  confusables, full-width, casing, typo, Hinglish spelling, Devanagari mixing and defang style. Verdict consistency
+  is measured on them because it needs no label. **None inherits the parent label** (`unvalidated_family`) until
+  human review validates the family: at least 30 reviewed variants, every one judged meaning-preserving. See
+  [docs/ROBUSTNESS_REVIEW.md](docs/ROBUSTNESS_REVIEW.md), `scamcheck review-sheet` and `scamcheck review-import`.
 - **Meaning-changing or ambiguous** transforms (prompt-injection suffix, link removal, English→Hinglish code-switch)
-  are `needs_human_review`. They appear only as verdict counts until a reviewer supplies labels with
-  `--reviews decisions.jsonl` (`{"variant_id": "...", "label": "scam"}` per line).
+  are `needs_human_review`. They appear only as verdict counts until a reviewer labels each variant.
+- Until reviews exist, label-based numbers ("scam → `NO_STRONG_SIGNALS`") are n/a. The report instead shows
+  clearly marked *provisional* parent-based rows: verdict movement away from a scam parent, whose variant label is
+  unconfirmed.
 - Outputs identical to the parent are excluded and counted. Parents come only from `dev`/`test`, never `train`, so
   B2 never sees a variant of its own training data. A test checks this lineage.
 - Randomness exists only here. `analyse()` is deterministic.
 
 ### Example results — SYNTHETIC adversarial fixtures (46 parents × 3 seeds)
 
-1,725 generated · 307 excluded (no change) · 1,199 label-inherited · 219 awaiting human review · 0 reviewed.
+1,725 generated · 307 excluded (no change) · 1,199 in unvalidated families (no label) · 219 awaiting human review
+· **0 human review decisions**, so 0 labels inherited.
 
-| System | Consistency (meaning-preserving) | Scam → `NO_STRONG_SIGNALS` | Scam detections lost | Seed spread |
+All values below are **provisional**: no family has been validated yet.
+
+| System | Consistency (preserving by design) | Parent-scam variants → `NO_STRONG_SIGNALS` | Parent-scam detections lost | Seed spread |
 |---|---|---|---|---|
 | B1-rules | 96.8% (1160/1199) | 6.2% (34/544) | 11.0% (35/319) | 96.5–97.0% |
 | B2-tfidf-lr | 100% — constant verdict, trivially consistent | 0% | n/a | — |
 | B4-engine | 97.1% (1164/1199) | 0.0% (0/544) | 7.6% (35/463) | 96.8–97.5% |
+
+Label-based versions of the last two columns (confirmed scam variants) are n/a until reviews exist.
 
 The lab found real weaknesses:
 
@@ -281,16 +330,20 @@ per-category false-alarm rate). Every public number must trace to a committed re
   still cause misses (see the Robustness report). The confusables table is a selected subset.
 - `registered_domain` uses a short list of multi-label suffixes, not the full Public Suffix List.
 - B2's fixed thresholds make it abstain at this data size. B3 has not been run; no model was configured.
-- No rate limiting: the API is a local research tool, not a public service. Add rate limiting before exposing it.
+- No rate limiting, spend cap, TLS or privacy notice: the API is a local research tool, not a public service. See
+  [docs/DEPLOYMENT_READINESS.md](docs/DEPLOYMENT_READINESS.md).
+- Robustness labels await human review (0 decisions so far); B2's dev-only threshold rule (protocol §3) applies once
+  real dev data exists.
 - Near-duplicate search is O(n²) pairwise Jaccard: fine for a few thousand items; switch to MinHash/LSH beyond that.
 - With very small strata the greedy group split cannot hit the 60/15/25 ratios (most singleton strata land in `train`).
 - κ is computed on the first two annotations of each item, assuming the same two people annotate throughout.
-- No temporal hold-out yet (PLAN.md §5 step 7); `collected_at` is stored so it can be added.
+- Temporal hold-out uses `collected_at` (when the project collected an item), not when the message was received.
 
 ## Future work (only where evidence justifies it)
 
 1. Run the pilot once consent-v1 is reviewed, then report B0–B4 on real `dev` data.
-2. Add human review for the 219 needs-review variants, and measure prompt-injection flips with confirmed labels.
+2. Have two reviewers who did not write the transforms review 30 variants per family (`docs/ROBUSTNESS_REVIEW.md`),
+   then report label-based robustness, including prompt-injection flips.
 3. Address the measured gaps: punctuation-tolerant windows and Hinglish spelling normalisation, each re-measured in
    the Robustness Lab.
 4. Configure B3 and use the optional Promptfoo red-team config (`promptfoo/`) against it, with synthetic inputs only.

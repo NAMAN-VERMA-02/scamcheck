@@ -51,10 +51,20 @@ export default function RobustnessLab() {
       <dl className="tiles">
         <div><dt>Generated</dt><dd>{c.generated}</dd></div>
         <div><dt>Excluded (no change)</dt><dd>{c.excluded_no_change}</dd></div>
+        <div><dt>Unvalidated family (no label)</dt><dd>{c.unvalidated_family ?? 0}</dd></div>
         <div><dt>Label inherited</dt><dd>{c.label_inherited}</dd></div>
         <div><dt>Needs human review</dt><dd>{c.needs_human_review}</dd></div>
         <div><dt>Human reviewed</dt><dd>{c.human_reviewed}</dd></div>
       </dl>
+
+      {systems.some(([, s]) => s.consistency_provisional) && (
+        <p className="note" role="note">
+          <strong>Provisional.</strong> No mutation family has been validated by human review yet
+          (guideline <code>{data.meta.review_guideline}</code>: at least {data.meta.min_family_reviews} reviewed
+          variants, all judged meaning-preserving). Consistency below is label-free but may include variants whose
+          meaning changed; label-based rows stay n/a until reviews exist.
+        </p>
+      )}
 
       <div className="table-wrap">
         <table className="table">
@@ -63,8 +73,9 @@ export default function RobustnessLab() {
             <tr>
               <th scope="col">System</th>
               <th scope="col">Verdict consistency ↑</th>
-              <th scope="col">Scam → NO_STRONG_SIGNALS ↓</th>
-              <th scope="col">Scam detections lost ↓</th>
+              <th scope="col">Scam → NO_STRONG_SIGNALS ↓ (confirmed labels)</th>
+              <th scope="col">Parent-scam variants → NO_STRONG_SIGNALS ↓ (provisional)</th>
+              <th scope="col">Parent-scam detections lost ↓ (provisional)</th>
               <th scope="col">Seed spread</th>
             </tr>
           </thead>
@@ -77,8 +88,31 @@ export default function RobustnessLab() {
                 </th>
                 <td><RateBar r={s.consistency_preserving} /></td>
                 <td><RateBar r={s.scam_flip_to_no_strong_signals} goodLow /></td>
-                <td><RateBar r={s.scam_lost_detection} goodLow /></td>
+                <td><RateBar r={s.parent_scam_moved_to_no_strong_signals} goodLow /></td>
+                <td><RateBar r={s.parent_scam_detection_lost} goodLow /></td>
                 <td>{s.seed_variation ? `${(s.seed_variation.min * 100).toFixed(1)}–${(s.seed_variation.max * 100).toFixed(1)}%` : "n/a"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="table-wrap">
+        <table className="table compact">
+          <caption>Mutation families: human review status</caption>
+          <thead>
+            <tr>
+              <th scope="col">Family</th><th scope="col">Preserving by design</th><th scope="col">Status</th>
+              <th scope="col">Reviewed (yes / no / unsure)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(data.meta.families ?? {}).map(([name, f]) => (
+              <tr key={name}>
+                <th scope="row">{name}</th>
+                <td>{f.preserving_by_design ? "yes" : "no"}</td>
+                <td>{f.status.replaceAll("_", " ")}</td>
+                <td>{f.reviewed} ({f.yes} / {f.no} / {f.unsure})</td>
               </tr>
             ))}
           </tbody>

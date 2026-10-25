@@ -9,7 +9,7 @@ import scamcheck.eval.baselines as baselines
 from scamcheck.data.io import load_items
 from scamcheck.data.split import check_leakage
 from scamcheck.eval.benchmark import run_benchmark
-from scamcheck.eval.metrics import Row, auc, bootstrap, summarise, wilson
+from scamcheck.eval.metrics import Row, auc, bootstrap, paired_difference, summarise, wilson
 
 ROOT = Path(__file__).parents[1]
 BENCH = ROOT / "benchmarks" / "synthetic"
@@ -115,3 +115,38 @@ def test_committed_reports_are_reproducible(bench, tmp_path):
         for k in ("dataset", "manifest"):
             d["meta"][k].pop("path")
     assert committed == fresh
+
+
+def test_small_samples_are_flagged_not_interpretable():
+    assert wilson(3, 29)["interpretable"] is False and wilson(3, 30)["interpretable"] is True
+    assert wilson(0, 0)["interpretable"] is False
+
+
+def _paired(n_campaigns, a_verdict, b_verdict):
+    a = [Row(f"s{i}", "scam", "x", "english", f"c{i}", a_verdict) for i in range(n_campaigns)] + \
+        [Row(f"l{i}", "legitimate", "y", "english", f"d{i}", "UNCLEAR") for i in range(n_campaigns)]
+    b = [r.__class__(r.id, r.label, r.category, r.language, r.campaign,
+                     b_verdict if r.label == "scam" else r.verdict) for r in a]
+    return a, b
+
+
+def test_paired_difference_conclusions():
+    a, b = _paired(15, "UNCLEAR", "NO_STRONG_SIGNALS")
+    res = paired_difference(a, b, seed=3, resamples=300)
+    assert res["dangerous_miss_rate"]["diff"] == -1.0 and res["dangerous_miss_rate"]["conclusion"] == "a_lower"
+    assert res["false_alarm_rate_legitimate"]["conclusion"] == "inconclusive"   # identical → never "equivalent"
+    assert paired_difference(a, b, seed=3, resamples=300) == res                  # seeded
+    assert "skipped" in paired_difference(*_paired(5, "UNCLEAR", "UNCLEAR"), seed=1)
+    with pytest.raises(ValueError):
+        paired_difference(a, b[:-1], seed=1)
+
+
+def test_benchmark_reports_paired_comparisons_and_marks_missing_primary(bench):
+    items, manifest = bench
+    res = run_benchmark(items, manifest, split="test", seed=13, dataset_path=BENCH / "items.grouped.jsonl",
+                        manifest_path=BENCH / "manifest.json")
+    assert set(res["comparisons"]) == {"B4-engine vs B1-rules", "B4-engine vs B2-tfidf-lr"}
+    assert all(c["role"] == "exploratory" for c in res["comparisons"].values())
+    from scamcheck.eval.benchmark import to_markdown
+    md = to_markdown(res)
+    assert "B4-engine vs B3-llm (primary): not run" in md and "†" in md

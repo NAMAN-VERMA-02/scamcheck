@@ -18,6 +18,8 @@
       "urls": "urls-2026.10.1",
       "prompt": "zero-shot-v1:b413ed4f7af7"
     },
+    "review_guideline": "mr1",
+    "min_family_reviews": 30,
     "transforms": [
       {
         "name": "whitespace",
@@ -129,24 +131,180 @@
         ]
       }
     ],
+    "families": {
+      "whitespace": {
+        "preserving_by_design": true,
+        "status": "pending",
+        "reviewed": 0,
+        "yes": 0,
+        "no": 0,
+        "unsure": 0,
+        "conflict": 0,
+        "meaning_change_upper_95": null
+      },
+      "punctuation": {
+        "preserving_by_design": true,
+        "status": "pending",
+        "reviewed": 0,
+        "yes": 0,
+        "no": 0,
+        "unsure": 0,
+        "conflict": 0,
+        "meaning_change_upper_95": null
+      },
+      "char_spacing": {
+        "preserving_by_design": true,
+        "status": "pending",
+        "reviewed": 0,
+        "yes": 0,
+        "no": 0,
+        "unsure": 0,
+        "conflict": 0,
+        "meaning_change_upper_95": null
+      },
+      "zero_width": {
+        "preserving_by_design": true,
+        "status": "pending",
+        "reviewed": 0,
+        "yes": 0,
+        "no": 0,
+        "unsure": 0,
+        "conflict": 0,
+        "meaning_change_upper_95": null
+      },
+      "confusables": {
+        "preserving_by_design": true,
+        "status": "pending",
+        "reviewed": 0,
+        "yes": 0,
+        "no": 0,
+        "unsure": 0,
+        "conflict": 0,
+        "meaning_change_upper_95": null
+      },
+      "fullwidth_nfkc": {
+        "preserving_by_design": true,
+        "status": "pending",
+        "reviewed": 0,
+        "yes": 0,
+        "no": 0,
+        "unsure": 0,
+        "conflict": 0,
+        "meaning_change_upper_95": null
+      },
+      "casing": {
+        "preserving_by_design": true,
+        "status": "pending",
+        "reviewed": 0,
+        "yes": 0,
+        "no": 0,
+        "unsure": 0,
+        "conflict": 0,
+        "meaning_change_upper_95": null
+      },
+      "typo": {
+        "preserving_by_design": true,
+        "status": "pending",
+        "reviewed": 0,
+        "yes": 0,
+        "no": 0,
+        "unsure": 0,
+        "conflict": 0,
+        "meaning_change_upper_95": null
+      },
+      "hinglish_spelling": {
+        "preserving_by_design": true,
+        "status": "pending",
+        "reviewed": 0,
+        "yes": 0,
+        "no": 0,
+        "unsure": 0,
+        "conflict": 0,
+        "meaning_change_upper_95": null
+      },
+      "script_mix_devanagari": {
+        "preserving_by_design": true,
+        "status": "pending",
+        "reviewed": 0,
+        "yes": 0,
+        "no": 0,
+        "unsure": 0,
+        "conflict": 0,
+        "meaning_change_upper_95": null
+      },
+      "url_defang_style": {
+        "preserving_by_design": true,
+        "status": "pending",
+        "reviewed": 0,
+        "yes": 0,
+        "no": 0,
+        "unsure": 0,
+        "conflict": 0,
+        "meaning_change_upper_95": null
+      },
+      "prompt_injection": {
+        "preserving_by_design": false,
+        "status": "meaning_changing",
+        "reviewed": 0,
+        "yes": 0,
+        "no": 0,
+        "unsure": 0,
+        "conflict": 0,
+        "meaning_change_upper_95": null
+      },
+      "drop_link": {
+        "preserving_by_design": false,
+        "status": "meaning_changing",
+        "reviewed": 0,
+        "yes": 0,
+        "no": 0,
+        "unsure": 0,
+        "conflict": 0,
+        "meaning_change_upper_95": null
+      },
+      "code_switch": {
+        "preserving_by_design": false,
+        "status": "meaning_changing",
+        "reviewed": 0,
+        "yes": 0,
+        "no": 0,
+        "unsure": 0,
+        "conflict": 0,
+        "meaning_change_upper_95": null
+      }
+    },
     "counts": {
       "generated": 1725,
       "excluded_no_change": 307,
-      "label_inherited": 1199,
+      "unvalidated_family": 1199,
+      "label_inherited": 0,
       "needs_human_review": 219,
-      "human_reviewed": 0
+      "human_reviewed": 0,
+      "reviewed_no_label": 0,
+      "review_conflict": 0,
+      "reviews": 0
     }
   },
   "systems": {
     "B1-rules": {
       "description": "Rule pack only; rule silence → NO_STRONG_SIGNALS",
       "constant_verdict": false,
+      "consistency_provisional": true,
       "consistency_preserving": {
         "k": 1160,
         "n": 1199,
         "rate": 0.9675,
         "lo": 0.9558,
-        "hi": 0.9761
+        "hi": 0.9761,
+        "interpretable": true
+      },
+      "consistency_validated_only": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "lo": null,
+        "hi": null,
+        "interpretable": false
       },
       "consistency_by_transform": {
         "casing": {
@@ -154,77 +312,88 @@
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "char_spacing": {
           "k": 126,
           "n": 138,
           "rate": 0.913,
           "lo": 0.8542,
-          "hi": 0.9496
+          "hi": 0.9496,
+          "interpretable": true
         },
         "confusables": {
           "k": 137,
           "n": 137,
           "rate": 1.0,
           "lo": 0.9727,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "fullwidth_nfkc": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "hinglish_spelling": {
           "k": 52,
           "n": 57,
           "rate": 0.9123,
           "lo": 0.8106,
-          "hi": 0.9619
+          "hi": 0.9619,
+          "interpretable": true
         },
         "punctuation": {
           "k": 128,
           "n": 138,
           "rate": 0.9275,
           "lo": 0.8717,
-          "hi": 0.9602
+          "hi": 0.9602,
+          "interpretable": true
         },
         "script_mix_devanagari": {
           "k": 50,
           "n": 54,
           "rate": 0.9259,
           "lo": 0.8245,
-          "hi": 0.9708
+          "hi": 0.9708,
+          "interpretable": true
         },
         "typo": {
           "k": 92,
           "n": 100,
           "rate": 0.92,
           "lo": 0.85,
-          "hi": 0.9589
+          "hi": 0.9589,
+          "interpretable": true
         },
         "url_defang_style": {
           "k": 23,
           "n": 23,
           "rate": 1.0,
           "lo": 0.8569,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": false
         },
         "whitespace": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "zero_width": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         }
       },
       "consistency_by_language": {
@@ -233,14 +402,16 @@
           "n": 541,
           "rate": 0.976,
           "lo": 0.9593,
-          "hi": 0.9859
+          "hi": 0.9859,
+          "interpretable": true
         },
         "hinglish": {
           "k": 632,
           "n": 658,
           "rate": 0.9605,
           "lo": 0.9427,
-          "hi": 0.9729
+          "hi": 0.9729,
+          "interpretable": true
         }
       },
       "consistency_by_seed": {
@@ -249,21 +420,24 @@
           "n": 399,
           "rate": 0.9674,
           "lo": 0.9451,
-          "hi": 0.9809
+          "hi": 0.9809,
+          "interpretable": true
         },
         "23": {
           "k": 387,
           "n": 401,
           "rate": 0.9651,
           "lo": 0.9423,
-          "hi": 0.9791
+          "hi": 0.9791,
+          "interpretable": true
         },
         "37": {
           "k": 387,
           "n": 399,
           "rate": 0.9699,
           "lo": 0.9482,
-          "hi": 0.9827
+          "hi": 0.9827,
+          "interpretable": true
         }
       },
       "seed_variation": {
@@ -272,18 +446,36 @@
         "stdev": 0.002
       },
       "scam_flip_to_no_strong_signals": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "lo": null,
+        "hi": null,
+        "interpretable": false
+      },
+      "scam_lost_detection": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "lo": null,
+        "hi": null,
+        "interpretable": false
+      },
+      "parent_scam_moved_to_no_strong_signals": {
         "k": 34,
         "n": 544,
         "rate": 0.0625,
         "lo": 0.0451,
-        "hi": 0.0861
+        "hi": 0.0861,
+        "interpretable": true
       },
-      "scam_lost_detection": {
+      "parent_scam_detection_lost": {
         "k": 35,
         "n": 319,
         "rate": 0.1097,
         "lo": 0.08,
-        "hi": 0.1488
+        "hi": 0.1488,
+        "interpretable": true
       },
       "needs_review_verdicts": {
         "code_switch": {
@@ -308,7 +500,7 @@
           "transform": "punctuation",
           "seed": 11,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -318,7 +510,7 @@
           "transform": "punctuation",
           "seed": 11,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -328,7 +520,7 @@
           "transform": "char_spacing",
           "seed": 11,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -338,7 +530,7 @@
           "transform": "typo",
           "seed": 11,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -348,7 +540,7 @@
           "transform": "char_spacing",
           "seed": 11,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -358,7 +550,7 @@
           "transform": "char_spacing",
           "seed": 11,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "UNCLEAR",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -368,7 +560,7 @@
           "transform": "punctuation",
           "seed": 11,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -378,7 +570,7 @@
           "transform": "char_spacing",
           "seed": 11,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -388,7 +580,7 @@
           "transform": "hinglish_spelling",
           "seed": 11,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -398,7 +590,7 @@
           "transform": "hinglish_spelling",
           "seed": 11,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -408,7 +600,7 @@
           "transform": "script_mix_devanagari",
           "seed": 11,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -418,7 +610,7 @@
           "transform": "punctuation",
           "seed": 11,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -428,7 +620,7 @@
           "transform": "typo",
           "seed": 11,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -438,7 +630,7 @@
           "transform": "punctuation",
           "seed": 23,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -448,7 +640,7 @@
           "transform": "typo",
           "seed": 23,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -458,7 +650,7 @@
           "transform": "char_spacing",
           "seed": 23,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -468,7 +660,7 @@
           "transform": "typo",
           "seed": 23,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -478,7 +670,7 @@
           "transform": "punctuation",
           "seed": 23,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -488,7 +680,7 @@
           "transform": "char_spacing",
           "seed": 23,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -498,7 +690,7 @@
           "transform": "script_mix_devanagari",
           "seed": 23,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -508,7 +700,7 @@
           "transform": "char_spacing",
           "seed": 23,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "UNCLEAR",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -518,7 +710,7 @@
           "transform": "typo",
           "seed": 23,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -528,7 +720,7 @@
           "transform": "char_spacing",
           "seed": 23,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -538,7 +730,7 @@
           "transform": "hinglish_spelling",
           "seed": 23,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -548,7 +740,7 @@
           "transform": "punctuation",
           "seed": 23,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -558,7 +750,7 @@
           "transform": "hinglish_spelling",
           "seed": 23,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -568,7 +760,7 @@
           "transform": "script_mix_devanagari",
           "seed": 23,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -578,7 +770,7 @@
           "transform": "char_spacing",
           "seed": 37,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -588,7 +780,7 @@
           "transform": "char_spacing",
           "seed": 37,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -598,7 +790,7 @@
           "transform": "punctuation",
           "seed": 37,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -608,7 +800,7 @@
           "transform": "typo",
           "seed": 37,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "UNCLEAR",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -618,7 +810,7 @@
           "transform": "char_spacing",
           "seed": 37,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -628,7 +820,7 @@
           "transform": "punctuation",
           "seed": 37,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "UNCLEAR",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -638,7 +830,7 @@
           "transform": "char_spacing",
           "seed": 37,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -648,7 +840,7 @@
           "transform": "typo",
           "seed": 37,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -658,7 +850,7 @@
           "transform": "hinglish_spelling",
           "seed": 37,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -668,7 +860,7 @@
           "transform": "script_mix_devanagari",
           "seed": 37,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -678,7 +870,7 @@
           "transform": "punctuation",
           "seed": 37,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         },
@@ -688,7 +880,7 @@
           "transform": "typo",
           "seed": 37,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "NO_STRONG_SIGNALS"
         }
@@ -697,12 +889,22 @@
     "B2-tfidf-lr": {
       "description": "Char n-gram TF-IDF + logistic regression, trained on train split only",
       "constant_verdict": true,
+      "consistency_provisional": true,
       "consistency_preserving": {
         "k": 1199,
         "n": 1199,
         "rate": 1.0,
         "lo": 0.9968,
-        "hi": 1.0
+        "hi": 1.0,
+        "interpretable": true
+      },
+      "consistency_validated_only": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "lo": null,
+        "hi": null,
+        "interpretable": false
       },
       "consistency_by_transform": {
         "casing": {
@@ -710,77 +912,88 @@
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "char_spacing": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "confusables": {
           "k": 137,
           "n": 137,
           "rate": 1.0,
           "lo": 0.9727,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "fullwidth_nfkc": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "hinglish_spelling": {
           "k": 57,
           "n": 57,
           "rate": 1.0,
           "lo": 0.9369,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "punctuation": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "script_mix_devanagari": {
           "k": 54,
           "n": 54,
           "rate": 1.0,
           "lo": 0.9336,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "typo": {
           "k": 100,
           "n": 100,
           "rate": 1.0,
           "lo": 0.963,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "url_defang_style": {
           "k": 23,
           "n": 23,
           "rate": 1.0,
           "lo": 0.8569,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": false
         },
         "whitespace": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "zero_width": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         }
       },
       "consistency_by_language": {
@@ -789,14 +1002,16 @@
           "n": 541,
           "rate": 1.0,
           "lo": 0.9929,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "hinglish": {
           "k": 658,
           "n": 658,
           "rate": 1.0,
           "lo": 0.9942,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         }
       },
       "consistency_by_seed": {
@@ -805,21 +1020,24 @@
           "n": 399,
           "rate": 1.0,
           "lo": 0.9905,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "23": {
           "k": 401,
           "n": 401,
           "rate": 1.0,
           "lo": 0.9905,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "37": {
           "k": 399,
           "n": 399,
           "rate": 1.0,
           "lo": 0.9905,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         }
       },
       "seed_variation": {
@@ -829,17 +1047,35 @@
       },
       "scam_flip_to_no_strong_signals": {
         "k": 0,
-        "n": 544,
-        "rate": 0.0,
-        "lo": 0.0,
-        "hi": 0.007
+        "n": 0,
+        "rate": null,
+        "lo": null,
+        "hi": null,
+        "interpretable": false
       },
       "scam_lost_detection": {
         "k": 0,
         "n": 0,
         "rate": null,
         "lo": null,
-        "hi": null
+        "hi": null,
+        "interpretable": false
+      },
+      "parent_scam_moved_to_no_strong_signals": {
+        "k": 0,
+        "n": 544,
+        "rate": 0.0,
+        "lo": 0.0,
+        "hi": 0.007,
+        "interpretable": true
+      },
+      "parent_scam_detection_lost": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "lo": null,
+        "hi": null,
+        "interpretable": false
       },
       "needs_review_verdicts": {
         "code_switch": {
@@ -857,12 +1093,22 @@
     "B4-engine": {
       "description": "Evidence-first engine in rule-only mode (no model configured: abstains unless a HIGH signal)",
       "constant_verdict": false,
+      "consistency_provisional": true,
       "consistency_preserving": {
         "k": 1164,
         "n": 1199,
         "rate": 0.9708,
         "lo": 0.9597,
-        "hi": 0.9789
+        "hi": 0.9789,
+        "interpretable": true
+      },
+      "consistency_validated_only": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "lo": null,
+        "hi": null,
+        "interpretable": false
       },
       "consistency_by_transform": {
         "casing": {
@@ -870,77 +1116,88 @@
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "char_spacing": {
           "k": 129,
           "n": 138,
           "rate": 0.9348,
           "lo": 0.8807,
-          "hi": 0.9653
+          "hi": 0.9653,
+          "interpretable": true
         },
         "confusables": {
           "k": 137,
           "n": 137,
           "rate": 1.0,
           "lo": 0.9727,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "fullwidth_nfkc": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "hinglish_spelling": {
           "k": 52,
           "n": 57,
           "rate": 0.9123,
           "lo": 0.8106,
-          "hi": 0.9619
+          "hi": 0.9619,
+          "interpretable": true
         },
         "punctuation": {
           "k": 128,
           "n": 138,
           "rate": 0.9275,
           "lo": 0.8717,
-          "hi": 0.9602
+          "hi": 0.9602,
+          "interpretable": true
         },
         "script_mix_devanagari": {
           "k": 50,
           "n": 54,
           "rate": 0.9259,
           "lo": 0.8245,
-          "hi": 0.9708
+          "hi": 0.9708,
+          "interpretable": true
         },
         "typo": {
           "k": 93,
           "n": 100,
           "rate": 0.93,
           "lo": 0.8625,
-          "hi": 0.9657
+          "hi": 0.9657,
+          "interpretable": true
         },
         "url_defang_style": {
           "k": 23,
           "n": 23,
           "rate": 1.0,
           "lo": 0.8569,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": false
         },
         "whitespace": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "zero_width": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         }
       },
       "consistency_by_language": {
@@ -949,14 +1206,16 @@
           "n": 541,
           "rate": 0.9778,
           "lo": 0.9616,
-          "hi": 0.9873
+          "hi": 0.9873,
+          "interpretable": true
         },
         "hinglish": {
           "k": 635,
           "n": 658,
           "rate": 0.965,
           "lo": 0.9481,
-          "hi": 0.9766
+          "hi": 0.9766,
+          "interpretable": true
         }
       },
       "consistency_by_seed": {
@@ -965,21 +1224,24 @@
           "n": 399,
           "rate": 0.9699,
           "lo": 0.9482,
-          "hi": 0.9827
+          "hi": 0.9827,
+          "interpretable": true
         },
         "23": {
           "k": 388,
           "n": 401,
           "rate": 0.9676,
           "lo": 0.9453,
-          "hi": 0.981
+          "hi": 0.981,
+          "interpretable": true
         },
         "37": {
           "k": 389,
           "n": 399,
           "rate": 0.9749,
           "lo": 0.9545,
-          "hi": 0.9863
+          "hi": 0.9863,
+          "interpretable": true
         }
       },
       "seed_variation": {
@@ -989,17 +1251,35 @@
       },
       "scam_flip_to_no_strong_signals": {
         "k": 0,
+        "n": 0,
+        "rate": null,
+        "lo": null,
+        "hi": null,
+        "interpretable": false
+      },
+      "scam_lost_detection": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "lo": null,
+        "hi": null,
+        "interpretable": false
+      },
+      "parent_scam_moved_to_no_strong_signals": {
+        "k": 0,
         "n": 544,
         "rate": 0.0,
         "lo": 0.0,
-        "hi": 0.007
+        "hi": 0.007,
+        "interpretable": true
       },
-      "scam_lost_detection": {
+      "parent_scam_detection_lost": {
         "k": 35,
         "n": 463,
         "rate": 0.0756,
         "lo": 0.0549,
-        "hi": 0.1033
+        "hi": 0.1033,
+        "interpretable": true
       },
       "needs_review_verdicts": {
         "code_switch": {
@@ -1022,7 +1302,7 @@
           "transform": "punctuation",
           "seed": 11,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1032,7 +1312,7 @@
           "transform": "punctuation",
           "seed": 11,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1042,7 +1322,7 @@
           "transform": "char_spacing",
           "seed": 11,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1052,7 +1332,7 @@
           "transform": "typo",
           "seed": 11,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1062,7 +1342,7 @@
           "transform": "char_spacing",
           "seed": 11,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1072,7 +1352,7 @@
           "transform": "punctuation",
           "seed": 11,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1082,7 +1362,7 @@
           "transform": "char_spacing",
           "seed": 11,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1092,7 +1372,7 @@
           "transform": "hinglish_spelling",
           "seed": 11,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1102,7 +1382,7 @@
           "transform": "hinglish_spelling",
           "seed": 11,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1112,7 +1392,7 @@
           "transform": "script_mix_devanagari",
           "seed": 11,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1122,7 +1402,7 @@
           "transform": "punctuation",
           "seed": 11,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1132,7 +1412,7 @@
           "transform": "typo",
           "seed": 11,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1142,7 +1422,7 @@
           "transform": "punctuation",
           "seed": 23,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1152,7 +1432,7 @@
           "transform": "typo",
           "seed": 23,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1162,7 +1442,7 @@
           "transform": "char_spacing",
           "seed": 23,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1172,7 +1452,7 @@
           "transform": "typo",
           "seed": 23,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1182,7 +1462,7 @@
           "transform": "punctuation",
           "seed": 23,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1192,7 +1472,7 @@
           "transform": "char_spacing",
           "seed": 23,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1202,7 +1482,7 @@
           "transform": "script_mix_devanagari",
           "seed": 23,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1212,7 +1492,7 @@
           "transform": "typo",
           "seed": 23,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1222,7 +1502,7 @@
           "transform": "char_spacing",
           "seed": 23,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1232,7 +1512,7 @@
           "transform": "hinglish_spelling",
           "seed": 23,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1242,7 +1522,7 @@
           "transform": "punctuation",
           "seed": 23,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1252,7 +1532,7 @@
           "transform": "hinglish_spelling",
           "seed": 23,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1262,7 +1542,7 @@
           "transform": "script_mix_devanagari",
           "seed": 23,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1272,7 +1552,7 @@
           "transform": "char_spacing",
           "seed": 37,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1282,7 +1562,7 @@
           "transform": "char_spacing",
           "seed": 37,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1292,7 +1572,7 @@
           "transform": "punctuation",
           "seed": 37,
           "language": "english",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1302,7 +1582,7 @@
           "transform": "punctuation",
           "seed": 37,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1312,7 +1592,7 @@
           "transform": "char_spacing",
           "seed": 37,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1322,7 +1602,7 @@
           "transform": "typo",
           "seed": 37,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1332,7 +1612,7 @@
           "transform": "hinglish_spelling",
           "seed": 37,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1342,7 +1622,7 @@
           "transform": "script_mix_devanagari",
           "seed": 37,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1352,7 +1632,7 @@
           "transform": "punctuation",
           "seed": 37,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         },
@@ -1362,7 +1642,7 @@
           "transform": "typo",
           "seed": 37,
           "language": "hinglish",
-          "label": "scam",
+          "status": "unvalidated_family",
           "parent_verdict": "LIKELY_SCAM",
           "variant_verdict": "UNCLEAR"
         }
@@ -1376,9 +1656,9 @@
       "seed": 11,
       "variant_id": "mv-01250549331d",
       "parent_id": "sy-0001",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "Dear customer, your HDFC netbanking will be suspended today. Update PAN at hxxps://hdfc-pan-update[.]xyz/login",
       "variant_text": "Dear \t customer, your HDFC netbanking  will \t be suspended\ntoday.\nUpdate  PAN\nat\nhxxps://hdfc-pan-update[.]xyz/login",
       "parent_verdict": "LIKELY_SCAM",
@@ -1390,9 +1670,9 @@
       "seed": 11,
       "variant_id": "mv-e76a36db9b0f",
       "parent_id": "sy-0005",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "Income tax refund of Rs 15,490 approved. Submit your bank details at hxxps://incometax-refund[.]site/claim",
       "variant_text": "Income  tax  refund of Rs  15,490\napproved. \t Submit  your bank details \t at \t hxxps://incometax-refund[.]site/claim",
       "parent_verdict": "LIKELY_SCAM",
@@ -1404,9 +1684,9 @@
       "seed": 11,
       "variant_id": "mv-cfe549fb8f66",
       "parent_id": "sy-0012",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "You have received a cashback of Rs 2,000. Approve the request in your UPI app to receive the amount.",
       "variant_text": "You  have received a  cashback \t of Rs  2,000. \t Approve \t the request in \t your \t UPI app\nto receive the amount.",
       "parent_verdict": "LIKELY_SCAM",
@@ -1418,9 +1698,9 @@
       "seed": 11,
       "variant_id": "mv-50a8bf75e4f4",
       "parent_id": "sy-0012",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "You have received a cashback of Rs 2,000. Approve the request in your UPI app to receive the amount.",
       "variant_text": "You! have received a cashback of Rs 2,000. Approve the request in your... UPI app to receive - the amount.",
       "parent_verdict": "LIKELY_SCAM",
@@ -1432,9 +1712,9 @@
       "seed": 11,
       "variant_id": "mv-fab5f3085642",
       "parent_id": "sy-0013",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "Refund of Rs 1,499 initiated. Enter your UPI PIN on the next screen to get the refund credited.",
       "variant_text": "Refund of Rs 1,499 initiated. Enter your UPI PIN on the, next... screen to get the refund, credited.",
       "parent_verdict": "LIKELY_SCAM",
@@ -1446,9 +1726,9 @@
       "seed": 11,
       "variant_id": "mv-65e1b3e2f736",
       "parent_id": "sy-0030",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "hinglish",
-      "label": "scam",
+      "label": null,
       "parent_text": "Aapke account mein Rs 10,000 cashback aaya hai. Paisa lene ke liye UPI PIN daaliye.",
       "variant_text": "Aapke account mein Rs 10,000 cashback aaya hai. Paisa - lene! ke liye - UPI PIN daaliye.",
       "parent_verdict": "LIKELY_SCAM",
@@ -1460,9 +1740,9 @@
       "seed": 11,
       "variant_id": "mv-2b65d103bcfa",
       "parent_id": "sy-0016",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "Join our VIP trading group on Telegram. Guaranteed 40% profit every week. hxxps://t[.]me/<HANDLE>",
       "variant_text": "Join our VIP trading group on Telegram. G u a r a n t e e d 40% profit every week. hxxps://t[.]me/<HANDLE>",
       "parent_verdict": "LIKELY_SCAM",
@@ -1474,9 +1754,9 @@
       "seed": 11,
       "variant_id": "mv-e41aecc2abe2",
       "parent_id": "sy-0028",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "hinglish",
-      "label": "scam",
+      "label": null,
       "parent_text": "Priya grahak, aapka PAN card link nahi hai, aapka account block ho jayega. Turant hxxp://pan-link-update[.]top par jaye.",
       "variant_text": "Priya grahak, aapka PAN card link nahi hai, aapka account b-l-o-c-k ho jayega. Turant hxxp://pan-link-update[.]top par jaye.",
       "parent_verdict": "LIKELY_SCAM",
@@ -1488,9 +1768,9 @@
       "seed": 11,
       "variant_id": "mv-86719a38e136",
       "parent_id": "sy-0033",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "hinglish",
-      "label": "scam",
+      "label": null,
       "parent_text": "Main Delhi Police se bol raha hoon. Aapke Aadhaar se drugs wala parcel pakda gaya hai, video call par aaiye warna giraftar honge.",
       "variant_text": "Main Delhi P.o.l.i.c.e se bol raha hoon. Aapke Aadhaar se drugs wala parcel pakda gaya hai, video call par aaiye warna giraftar honge.",
       "parent_verdict": "LIKELY_SCAM",
@@ -1502,9 +1782,9 @@
       "seed": 11,
       "variant_id": "mv-df263f520552",
       "parent_id": "sy-0001",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "Dear customer, your HDFC netbanking will be suspended today. Update PAN at hxxps://hdfc-pan-update[.]xyz/login",
       "variant_text": "Dear customer, your HDFC ne⁠tbanking will be suspended today. Upda⁠te PAN at hxxps://hdfc-pan-update[.]xyz/login",
       "parent_verdict": "LIKELY_SCAM",
@@ -1516,9 +1796,9 @@
       "seed": 11,
       "variant_id": "mv-2f15aa0eeee0",
       "parent_id": "sy-0005",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "Income tax refund of Rs 15,490 approved. Submit your bank details at hxxps://incometax-refund[.]site/claim",
       "variant_text": "Income tax re﻿fund of Rs 15,490 approved. Submit your bank details at hxxps://incometax-refund[.]site/claim",
       "parent_verdict": "LIKELY_SCAM",
@@ -1530,9 +1810,9 @@
       "seed": 11,
       "variant_id": "mv-337d8818e22a",
       "parent_id": "sy-0012",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "You have received a cashback of Rs 2,000. Approve the request in your UPI app to receive the amount.",
       "variant_text": "You have received a cashb​ack of Rs 2,000. Approve the request in your UP﻿I app to receive the amount.",
       "parent_verdict": "LIKELY_SCAM",
@@ -1544,9 +1824,9 @@
       "seed": 11,
       "variant_id": "mv-44e235e6117f",
       "parent_id": "sy-0001",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "Dear customer, your HDFC netbanking will be suspended today. Update PAN at hxxps://hdfc-pan-update[.]xyz/login",
       "variant_text": "Dear customer, your HDFС netbanking will be suspended tоday. Uрdate PAN at hxxps://hdfc-pan-update[.]xyz/login",
       "parent_verdict": "LIKELY_SCAM",
@@ -1558,9 +1838,9 @@
       "seed": 11,
       "variant_id": "mv-85d767c58f21",
       "parent_id": "sy-0005",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "Income tax refund of Rs 15,490 approved. Submit your bank details at hxxps://incometax-refund[.]site/claim",
       "variant_text": "Income tax rеfund of Rs 15,490 approved. Submit your bank details at hxxps://incometax-refund[.]site/claim",
       "parent_verdict": "LIKELY_SCAM",
@@ -1572,9 +1852,9 @@
       "seed": 11,
       "variant_id": "mv-40850b56a32e",
       "parent_id": "sy-0012",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "You have received a cashback of Rs 2,000. Approve the request in your UPI app to receive the amount.",
       "variant_text": "You have received a cashbaсk of Rs 2,000. Approve the request in your UРI app to receive the amount.",
       "parent_verdict": "LIKELY_SCAM",
@@ -1586,9 +1866,9 @@
       "seed": 11,
       "variant_id": "mv-66b665f12098",
       "parent_id": "sy-0001",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "Dear customer, your HDFC netbanking will be suspended today. Update PAN at hxxps://hdfc-pan-update[.]xyz/login",
       "variant_text": "Ｄｅａｒ customer, your HDFC netbanking will be suspended ｔｏｄａｙ. Update PAN at hxxps://hdfc-pan-update[.]xyz/login",
       "parent_verdict": "LIKELY_SCAM",
@@ -1600,9 +1880,9 @@
       "seed": 11,
       "variant_id": "mv-68e23ee4b9d8",
       "parent_id": "sy-0005",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "Income tax refund of Rs 15,490 approved. Submit your bank details at hxxps://incometax-refund[.]site/claim",
       "variant_text": "Income tax ｒｅｆｕｎｄ of Rs 15,490 approved. Submit your bank details at hxxps://incometax-refund[.]site/claim",
       "parent_verdict": "LIKELY_SCAM",
@@ -1614,9 +1894,9 @@
       "seed": 11,
       "variant_id": "mv-99a21fe98bfb",
       "parent_id": "sy-0012",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "You have received a cashback of Rs 2,000. Approve the request in your UPI app to receive the amount.",
       "variant_text": "You have received a ｃａｓｈｂａｃｋ of Rs 2,000. Approve the request in your ＵＰＩ app to receive the amount.",
       "parent_verdict": "LIKELY_SCAM",
@@ -1628,9 +1908,9 @@
       "seed": 11,
       "variant_id": "mv-2bb966fccbd0",
       "parent_id": "sy-0001",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "Dear customer, your HDFC netbanking will be suspended today. Update PAN at hxxps://hdfc-pan-update[.]xyz/login",
       "variant_text": "Dear customer, YOUR HDFC NETBANKING will be Suspended TODAY. uPDATE pan at hxxps://hdfc-pan-update[.]xyz/login",
       "parent_verdict": "LIKELY_SCAM",
@@ -1642,9 +1922,9 @@
       "seed": 11,
       "variant_id": "mv-06d5d3d0931d",
       "parent_id": "sy-0005",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "Income tax refund of Rs 15,490 approved. Submit your bank details at hxxps://incometax-refund[.]site/claim",
       "variant_text": "Income tax REFUND of Rs 15,490 Approved. Submit your BANK DETAILS at hxxps://incometax-refund[.]site/claim",
       "parent_verdict": "LIKELY_SCAM",
@@ -1656,9 +1936,9 @@
       "seed": 11,
       "variant_id": "mv-2ad533a1c306",
       "parent_id": "sy-0012",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "You have received a cashback of Rs 2,000. Approve the request in your UPI app to receive the amount.",
       "variant_text": "yOU have received a cashback of Rs 2,000. approve the request in your Upi APP to receive The amount.",
       "parent_verdict": "LIKELY_SCAM",
@@ -1670,9 +1950,9 @@
       "seed": 11,
       "variant_id": "mv-b1b206c622b7",
       "parent_id": "sy-0016",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "Join our VIP trading group on Telegram. Guaranteed 40% profit every week. hxxps://t[.]me/<HANDLE>",
       "variant_text": "Join our VIP trading group on Telegram. Guarnateed 40% profit every week. hxxps://t[.]me/<HANDLE>",
       "parent_verdict": "LIKELY_SCAM",
@@ -1684,9 +1964,9 @@
       "seed": 11,
       "variant_id": "mv-1bb362e47979",
       "parent_id": "sy-0051",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "hinglish",
-      "label": "scam",
+      "label": null,
       "parent_text": "Income tax vibhag: aapka refund Rs 12,800 approve hua hai. Bank details is link par bhariye hxxps://itr-refund-status[.]in",
       "variant_text": "Income tax vibhag: aapka refund Rs 12,800 approve hua hai. Bnak details is link par bhariye hxxps://itr-refund-status[.]in",
       "parent_verdict": "LIKELY_SCAM",
@@ -1698,9 +1978,9 @@
       "seed": 23,
       "variant_id": "mv-fae8d209ca42",
       "parent_id": "sy-0012",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "You have received a cashback of Rs 2,000. Approve the request in your UPI app to receive the amount.",
       "variant_text": "You have received a cashback of Rs 2,000. Apporve the request in your UPI app to receive the amount.",
       "parent_verdict": "LIKELY_SCAM",
@@ -1712,9 +1992,9 @@
       "seed": 11,
       "variant_id": "mv-8345bfb1732d",
       "parent_id": "sy-0035",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "hinglish",
-      "label": "scam",
+      "label": null,
       "parent_text": "Customer care se bol raha hoon, refund ke liye aapke phone par ek OTP aaya hoga, woh bata dijiye.",
       "variant_text": "Customer care se bol rha hoon, refund k liye aapke phone par ek OTP aaya hoga, woh bta do.",
       "parent_verdict": "LIKELY_SCAM",
@@ -1726,9 +2006,9 @@
       "seed": 11,
       "variant_id": "mv-a0ca30b2c4c6",
       "parent_id": "sy-0046",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "hinglish",
-      "label": "scam",
+      "label": null,
       "parent_text": "Aapka WhatsApp account hack hone wala hai. Usse bachane ke liye jo 6 digit code aaya hai woh bhejo.",
       "variant_text": "apka WhatsApp account hack hone wala hai. Usse bachane k liye jo 6 digit code aaya hai woh bhejdo.",
       "parent_verdict": "LIKELY_SCAM",
@@ -1740,9 +2020,9 @@
       "seed": 23,
       "variant_id": "mv-175ca309f6f7",
       "parent_id": "sy-0035",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "hinglish",
-      "label": "scam",
+      "label": null,
       "parent_text": "Customer care se bol raha hoon, refund ke liye aapke phone par ek OTP aaya hoga, woh bata dijiye.",
       "variant_text": "Customer care se bol rha hoon, refund ke liye apke phone par ek OTP aaya hoga, woh bta do.",
       "parent_verdict": "LIKELY_SCAM",
@@ -1754,9 +2034,9 @@
       "seed": 11,
       "variant_id": "mv-4f9965b0c20b",
       "parent_id": "sy-0046",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "hinglish",
-      "label": "scam",
+      "label": null,
       "parent_text": "Aapka WhatsApp account hack hone wala hai. Usse bachane ke liye jo 6 digit code aaya hai woh bhejo.",
       "variant_text": "आपका WhatsApp account hack hone wala hai. Usse bachane ke liye jo 6 digit code aaya hai woh भेजो.",
       "parent_verdict": "LIKELY_SCAM",
@@ -1768,9 +2048,9 @@
       "seed": 23,
       "variant_id": "mv-69a66e41d047",
       "parent_id": "sy-0028",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "hinglish",
-      "label": "scam",
+      "label": null,
       "parent_text": "Priya grahak, aapka PAN card link nahi hai, aapka account block ho jayega. Turant hxxp://pan-link-update[.]top par jaye.",
       "variant_text": "Priya grahak, aapka PAN card link nahi hai, aapka account block ho जाएगा. तुरंत hxxp://pan-link-update[.]top par jaye.",
       "parent_verdict": "LIKELY_SCAM",
@@ -1782,9 +2062,9 @@
       "seed": 23,
       "variant_id": "mv-01e11ad6559c",
       "parent_id": "sy-0046",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "hinglish",
-      "label": "scam",
+      "label": null,
       "parent_text": "Aapka WhatsApp account hack hone wala hai. Usse bachane ke liye jo 6 digit code aaya hai woh bhejo.",
       "variant_text": "आपका WhatsApp account hack hone wala hai. Usse bachane ke liye jo 6 digit code aaya hai woh भेजो.",
       "parent_verdict": "LIKELY_SCAM",
@@ -1796,9 +2076,9 @@
       "seed": 11,
       "variant_id": "mv-a1fd8eb276d0",
       "parent_id": "sy-0001",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "Dear customer, your HDFC netbanking will be suspended today. Update PAN at hxxps://hdfc-pan-update[.]xyz/login",
       "variant_text": "Dear customer, your HDFC netbanking will be suspended today. Update PAN at hxxps://hdfc-pan-update{.}xyz/login",
       "parent_verdict": "LIKELY_SCAM",
@@ -1810,9 +2090,9 @@
       "seed": 11,
       "variant_id": "mv-3d3e30c04663",
       "parent_id": "sy-0016",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "Join our VIP trading group on Telegram. Guaranteed 40% profit every week. hxxps://t[.]me/<HANDLE>",
       "variant_text": "Join our VIP trading group on Telegram. Guaranteed 40% profit every week. hxxps://t[dot]me/<HANDLE>",
       "parent_verdict": "LIKELY_SCAM",
@@ -1824,9 +2104,9 @@
       "seed": 11,
       "variant_id": "mv-4fb78606b141",
       "parent_id": "sy-0020",
-      "status": "label_inherited",
+      "status": "unvalidated_family",
       "language": "english",
-      "label": "scam",
+      "label": null,
       "parent_text": "You are the lucky winner of an iPhone 15 in our anniversary contest! Claim within 24 hours: hxxps://claim-gift-now[.]shop",
       "variant_text": "You are the lucky winner of an iPhone 15 in our anniversary contest! Claim within 24 hours: hxxps://claim-gift-now[dot]shop",
       "parent_verdict": "UNCLEAR",

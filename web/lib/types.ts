@@ -54,6 +54,7 @@ export interface Rate {
   rate: number | null;
   lo: number | null;
   hi: number | null;
+  interpretable?: boolean; // n >= 30 (docs/EVALUATION_PROTOCOL.md §5)
 }
 
 export interface CoreMetrics {
@@ -102,6 +103,10 @@ export interface BenchmarkReport {
 export interface RobustnessSystem {
   description: string;
   constant_verdict: boolean;
+  consistency_provisional: boolean;
+  consistency_validated_only: Rate;
+  parent_scam_moved_to_no_strong_signals: Rate;
+  parent_scam_detection_lost: Rate;
   consistency_preserving: Rate;
   consistency_by_transform: Record<string, Rate>;
   consistency_by_language: Record<string, Rate>;
@@ -136,6 +141,9 @@ export interface RobustnessReport {
     n_parents: number;
     transforms: { name: string; preserving: boolean; languages: string[] }[];
     counts: Record<string, number>;
+    review_guideline: string;
+    min_family_reviews: number;
+    families: Record<string, { preserving_by_design: boolean; status: string; reviewed: number; yes: number; no: number; unsure: number }>;
   };
   systems: Record<string, RobustnessSystem>;
   examples: RobustnessExample[];

@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import random
 from collections import Counter
+from datetime import date
 from itertools import combinations
 
 from .grouping import linking_domains
@@ -25,12 +26,66 @@ def allowed_in_test(item: Item, allow_synthetic_in_test: bool) -> bool:
     return allow_synthetic_in_test or not item.is_synthetic
 
 
+class TemporalSplitError(ValueError):
+    """The data cannot support a valid temporal hold-out; the message says why."""
+
+
+def _temporal_test(groups: dict[str, list[Item]], cutoff: date, allow_synthetic_in_test: bool):
+    """Campaign-level temporal hold-out.
+
+    A campaign with any item collected after `cutoff` is "future": it may only be tested, never trained on, so a
+    campaign that straddles the cutoff goes wholly to the test side. Future campaigns that are not test-eligible
+    (synthetic, unverified licence) are excluded rather than moved into training. Returns
+    (test assignment, excluded rows, temporal summary).
+    """
+    latest = {g: max(m.provenance.collected_at for m in ms) for g, ms in groups.items()}
+    earliest = {g: min(m.provenance.collected_at for m in ms) for g, ms in groups.items()}
+    future = sorted(g for g in groups if latest[g] > cutoff)
+    past = [g for g in groups if latest[g] <= cutoff]
+    dates = sorted({m.provenance.collected_at for ms in groups.values() for m in ms})
+    span = f"collected_at spans {dates[0]} to {dates[-1]} ({len(dates)} distinct date(s))" if dates else "no items"
+    if not future:
+        raise TemporalSplitError(f"no campaign has an item collected after the cutoff {cutoff}; {span}. A temporal "
+                                 "hold-out needs data collected after the training period.")
+    if not past:
+        raise TemporalSplitError(f"every campaign has an item collected after the cutoff {cutoff}; {span}. Nothing "
+                                 "is left to train on without using future data.")
+    assignment, excluded = {}, []
+    for g in future:
+        if all(allowed_in_test(m, allow_synthetic_in_test) for m in groups[g]):
+            assignment[g] = "test"
+        else:
+            excluded += [{"id": m.id, "reason": "after the temporal cutoff but not test-eligible (synthetic or "
+                                                "licence not verified); never moved into training"}
+                         for m in groups[g]]
+    if not assignment:
+        raise TemporalSplitError(f"{len(future)} campaign(s) fall after the cutoff {cutoff}, but none is "
+                                 "test-eligible (synthetic items or unverified licences), so the test split would "
+                                 "be empty.")
+    summary = {"cutoff": cutoff.isoformat(),
+               "train_dev_latest": max(latest[g] for g in past).isoformat(),
+               "test_earliest": min(earliest[g] for g in assignment).isoformat(),
+               "straddling_campaigns": sorted(g for g in assignment if earliest[g] <= cutoff)}
+    return assignment, excluded, summary
+
+
+def _require_labels(split_items_: list[Item], split: str, needed: set[str], why: str) -> None:
+    have = {it.gold.label for it in split_items_}
+    missing = sorted(needed - have)
+    if missing:
+        raise TemporalSplitError(f"temporal {split} split has labels {sorted(have) or 'none'} but no "
+                                 f"{', '.join(missing)}; {why}")
+
+
 def split_items(
     items: list[Item],
     ratios: dict[str, float] = DEFAULT_RATIOS,
     seed: int = 13,
     allow_synthetic_in_test: bool = False,
+    temporal_cutoff: date | None = None,
 ) -> dict:
+    """Group-aware stratified split. With `temporal_cutoff`, test = every eligible campaign with an item collected
+    after the cutoff, and the remaining (past) campaigns are split train/dev in the ratio train:dev."""
     if abs(sum(ratios.values()) - 1) > 1e-9 or set(ratios) != set(SPLITS):
         raise ValueError("ratios must cover train/dev/test and sum to 1")
     missing = [it.id for it in items if it.campaign_id is None]
@@ -46,14 +101,28 @@ def split_items(
     for it in labelled:
         groups.setdefault(it.campaign_id, []).append(it)
 
+    assignment: dict[str, str] = {}
+    temporal = None
+    splits = SPLITS
+    if temporal_cutoff is not None:
+        assignment, future_excluded, temporal = _temporal_test(groups, temporal_cutoff, allow_synthetic_in_test)
+        excluded += future_excluded
+        dropped = {r["id"] for r in future_excluded}
+        labelled = [it for it in labelled if it.id not in dropped]
+        groups = {g: ms for g, ms in groups.items() if not any(m.id in dropped for m in ms)}
+        splits = ("train", "dev")
+        ratios = {"train": ratios["train"] / (ratios["train"] + ratios["dev"]),
+                  "dev": ratios["dev"] / (ratios["train"] + ratios["dev"]), "test": 0.0}
+
     strata: dict[tuple, list[str]] = {}
     for gid, members in groups.items():
+        if gid in assignment:
+            continue
         key = Counter((m.gold.label, m.language) for m in members).most_common()
         key = sorted(key, key=lambda kv: (-kv[1], kv[0]))[0][0]
         strata.setdefault(key, []).append(gid)
 
     rng = random.Random(seed)
-    assignment: dict[str, str] = {}
     test_blocked: list[str] = []
     for key in sorted(strata):
         gids = sorted(strata[key])
@@ -63,14 +132,20 @@ def split_items(
         counts = dict.fromkeys(SPLITS, 0)
         for g in gids:
             eligible = [allowed_in_test(m, allow_synthetic_in_test) for m in groups[g]]
-            allowed = [s for s in SPLITS if s != "test" or all(eligible)]
-            if not all(eligible):
+            allowed = [s for s in splits if s != "test" or all(eligible)]
+            if not all(eligible) and "test" in splits:
                 test_blocked += [m.id for m, ok in zip(groups[g], eligible) if ok]
             best = max(allowed, key=lambda s: ratios[s] * total - counts[s])
             assignment[g] = best
             counts[best] += len(groups[g])
 
     split_of = {it.id: assignment[it.campaign_id] for it in labelled}
+    if temporal is not None:
+        by_split = {s: [it for it in labelled if split_of[it.id] == s] for s in SPLITS}
+        _require_labels(by_split["test"], "test", {"scam", "legitimate"},
+                        "recall and false alarms cannot both be measured on future data.")
+        _require_labels(by_split["train"], "train", {"scam", "legitimate"},
+                        "a baseline cannot be trained on the past data.")
     rows = sorted(
         ({"id": it.id, "split": split_of[it.id], "campaign_id": it.campaign_id, "sha256": item_sha256(it)}
          for it in labelled),
@@ -78,7 +153,9 @@ def split_items(
     )
     return {
         "manifest_version": 2,
-        "params": {"ratios": ratios, "seed": seed, "allow_synthetic_in_test": allow_synthetic_in_test},
+        "params": {"ratios": ratios, "seed": seed, "allow_synthetic_in_test": allow_synthetic_in_test,
+                   **({"temporal_cutoff": temporal_cutoff.isoformat()} if temporal_cutoff else {})},
+        **({"temporal": temporal} if temporal else {}),
         "counts": dict(Counter(r["split"] for r in rows)),
         "items": rows,
         "adversarial": sorted(
@@ -125,6 +202,17 @@ def check_leakage(
         if a["parent_split"] != actual:
             problems.append(f"lineage: adversarial {a['id']} recorded with parent split {a['parent_split']}, "
                             f"parent {a['parent_id']} is in {actual}")
+
+    cutoff = manifest["params"].get("temporal_cutoff")
+    if cutoff:
+        cut = date.fromisoformat(cutoff)
+        future_campaigns = {it.campaign_id for it in split_items_ if it.provenance.collected_at > cut}
+        for it in split_items_:
+            if split_of[it.id] != "test" and it.campaign_id in future_campaigns:
+                problems.append(f"temporal: {it.id} ({split_of[it.id]}) belongs to campaign {it.campaign_id}, "
+                                f"which has items collected after the cutoff {cutoff}")
+            if split_of[it.id] == "test" and it.campaign_id not in future_campaigns:
+                problems.append(f"temporal: {it.id} is in test but its campaign has nothing after the cutoff {cutoff}")
 
     def across(key_fn, what):
         seen: dict[str, tuple[str, str]] = {}

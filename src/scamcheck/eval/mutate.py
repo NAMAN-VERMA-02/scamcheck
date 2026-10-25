@@ -5,9 +5,9 @@ random.Random(f"{seed}:{parent_id}:{transform}") — string seeds are hashed det
 single variant can be rebuilt from its record and checked against its output hash.
 
 Two classes:
-  * meaning-preserving (preserving=True): a reader would understand the same message; the parent label is inherited
-    and verdict consistency is measured;
-  * meaning-changing or ambiguous (preserving=False): a human must confirm the label before it is used.
+  * meaning-preserving by design (preserving=True): intended to read as the same message. Verdict consistency is
+    measured, but the parent label is inherited only after human review validates the family (eval/review.py);
+  * meaning-changing or ambiguous (preserving=False): a human must label each variant before its label is used.
 """
 
 from __future__ import annotations
@@ -202,8 +202,8 @@ def variant_record(parent_id: str, parent_text: str, language: str, label: str, 
     if out == parent_text:
         rec["status"] = "excluded_no_change"
     elif t.preserving:
-        rec["status"] = "label_inherited"
-        rec["label"] = label
+        # Preserving by design is a hypothesis: no label until a human validates the family (eval/review.py).
+        rec["status"] = "unvalidated_family"
     else:
         rec["status"] = "needs_human_review"
     return rec

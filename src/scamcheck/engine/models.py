@@ -37,6 +37,7 @@ class ModelResult(BaseModel):
     dropped_evidence: int = 0            # quotes the model claimed that are not in the input
     model_id: Optional[str] = None
     prompt_id: Optional[str] = None
+    error_type: Optional[str] = None     # exception class name only, never its message
 
 
 class Decision(BaseModel):

@@ -16,7 +16,7 @@ from ..data.schema import Item
 from ..engine import VERSIONS
 from ..engine.llm import PROMPT_ID, ChatAdapter
 from .baselines import build_systems
-from .metrics import Row, auc, summarise
+from .metrics import MIN_INTERPRETABLE_N, Row, auc, paired_difference, summarise
 
 SYNTHETIC_WARNING = ("SYNTHETIC FIXTURE RESULTS. Every item was hand-written by the maintainer who also wrote the "
                      "rule pack. These numbers show the pipeline works; they are optimistic by construction and are "
@@ -39,16 +39,22 @@ def run_benchmark(items: list[Item], manifest: dict, *, split: str, seed: int, d
     systems = build_systems([it.text for it in train], [it.gold.label == "scam" for it in train], seed, model)
     synthetic_only = all(it.is_synthetic for it in items)
 
-    results = {}
+    results, rows_of = {}, {}
     for s in systems:
-        rows = [Row(it.id, it.gold.label, it.gold.category, it.language, it.campaign_id or it.id, s.predict(it.text))
-                for it in evaluated]
+        rows = rows_of[s.name] = [Row(it.id, it.gold.label, it.gold.category, it.language,
+                                      it.campaign_id or it.id, s.predict(it.text)) for it in evaluated]
         results[s.name] = {"description": s.description, "config": s.config, "metrics": summarise(rows, seed),
                            "predictions": {r.id: r.verdict for r in rows}}
         if s.score:
             ranked = [it for it in evaluated if it.gold.label != "ambiguous"]
             results[s.name]["ranking_auc"] = auc([s.score(it.text) for it in ranked],
                                                  [it.gold.label == "scam" for it in ranked])
+    # Protocol §6: B4 vs B3 is the pre-specified primary comparison (Bonferroni over its two metrics: 97.5%);
+    # every other comparison is exploratory at 95%.
+    comparisons = {f"B4-engine vs {name}": {"role": "primary" if name == "B3-llm" else "exploratory",
+                                            **paired_difference(rows_of["B4-engine"], rows_of[name], seed,
+                                                                level=0.975 if name == "B3-llm" else 0.95)}
+                   for name in ("B1-rules", "B2-tfidf-lr", "B3-llm") if name in rows_of}
     return {
         "meta": {
             "data_label": SYNTHETIC_WARNING if synthetic_only else "Contains non-synthetic items; see dataset report",
@@ -64,13 +70,15 @@ def run_benchmark(items: list[Item], manifest: dict, *, split: str, seed: int, d
         "items": [{"id": it.id, "label": it.gold.label, "category": it.gold.category, "language": it.language,
                    **({"text": it.text} if synthetic_only else {})} for it in evaluated],
         "systems": results,
+        "comparisons": comparisons,
     }
 
 
 def _pct(m: dict | None) -> str:
     if not m or m.get("rate") is None:
         return "n/a (n=0)"
-    return f"{m['rate'] * 100:.1f}% [{m['lo'] * 100:.1f}–{m['hi'] * 100:.1f}] ({m['k']}/{m['n']})"
+    small = "" if m["n"] >= MIN_INTERPRETABLE_N else " †"
+    return f"{m['rate'] * 100:.1f}% [{m['lo'] * 100:.1f}–{m['hi'] * 100:.1f}] ({m['k']}/{m['n']}){small}"
 
 
 def to_markdown(res: dict) -> str:
@@ -78,7 +86,8 @@ def to_markdown(res: dict) -> str:
     lines = [f"# Benchmark report — split `{meta['split']}`", ""]
     lines += [f"> **{meta['data_label']}**", ""]
     lines += ["Rates are point estimates with Wilson 95% intervals and counts. Lower is better for false alarms, "
-              "dangerous misses and unclear rate; higher is better for scam recall.", ""]
+              "dangerous misses and unclear rate; higher is better for scam recall. "
+              f"† marks n < {MIN_INTERPRETABLE_N}: counts only, not a finding (docs/EVALUATION_PROTOCOL.md §5).", ""]
     lines += ["| System | Scam recall | Dangerous misses | False alarms (legitimate) | Unclear (non-ambiguous) |",
               "|---|---|---|---|---|"]
     for name, s in res["systems"].items():
@@ -92,6 +101,18 @@ def to_markdown(res: dict) -> str:
                           f"non-scam). Its verdicts use thresholds fixed before evaluation "
                           f"({s['config']['t_low']}/{s['config']['t_high']}); an AUC well above 0.5 with an "
                           f"all-UNCLEAR verdict row means the scores are informative but compressed, not tuned."]
+    lines += ["", "## Paired comparisons on primary metrics (B4 − other; negative favours B4)", ""]
+    if not res.get("comparisons"):
+        lines.append("- none")
+    for label, c in res.get("comparisons", {}).items():
+        if "skipped" in c:
+            lines.append(f"- {label} ({c['role']}): skipped — {c['skipped']}")
+            continue
+        parts = [f"{k} {v['diff'] * 100:+.1f} pts [{v['lo'] * 100:+.1f}, {v['hi'] * 100:+.1f}] → {v['conclusion']}"
+                 for k, v in c.items() if isinstance(v, dict)]
+        lines.append(f"- {label} ({c['role']}, {c['level'] * 100:g}% paired campaign bootstrap): " + "; ".join(parts))
+    if "B4-engine vs B3-llm" not in res.get("comparisons", {}):
+        lines.append("- B4-engine vs B3-llm (primary): not run — no model configured.")
     lines += ["", "## Campaign-bootstrap intervals (headline metrics)", ""]
     for name, s in res["systems"].items():
         b = s["metrics"]["bootstrap"]

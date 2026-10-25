@@ -31,6 +31,7 @@ export function RateBar({ r, goodLow = false }: { r: Rate | undefined; goodLow?:
       </span>
       <span className="rate-meta">
         [{pct(r.lo, 0)}–{pct(r.hi, 0)}] · {r.k}/{r.n}
+        {r.interpretable === false && <span title="Fewer than 30 items: counts only, not a finding"> · n&lt;30</span>}
       </span>
     </span>
   );

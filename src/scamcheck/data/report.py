@@ -121,8 +121,15 @@ def build_report(items: list[Item], manifest: dict | None = None, review_pairs: 
         if manifest["params"]["allow_synthetic_in_test"]:
             out += ["> **WARNING:** this manifest allowed synthetic items in the test split. "
                     "Use it for pipeline testing only, never for reported results.", ""]
+        if "temporal" in manifest:
+            t = manifest["temporal"]
+            out += [f"- Temporal hold-out: cutoff {t['cutoff']}; train/dev collected up to {t['train_dev_latest']}; "
+                    f"test campaigns each have an item after the cutoff (earliest test item {t['test_earliest']}); "
+                    f"{len(t['straddling_campaigns'])} campaign(s) straddle the cutoff and are wholly in test.", ""]
         if manifest["excluded"]:
-            out += [f"- Excluded from splits: {len(manifest['excluded'])} (no gold label)", ""]
+            reasons = Counter(e["reason"] for e in manifest["excluded"])
+            out += [f"- Excluded from splits: {len(manifest['excluded'])} "
+                    f"({'; '.join(f'{r}: {n}' for r, n in sorted(reasons.items()))})", ""]
         adv = manifest.get("adversarial", [])
         if adv:
             orphans = sum(a["parent_split"] is None for a in adv)

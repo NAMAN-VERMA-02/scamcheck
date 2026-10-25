@@ -17,7 +17,7 @@ uv, GitHub Actions.
 - Mutation lab with 14 seeded transforms, meaning-preserving vs. needs-human-review separation, full lineage and exact
   hash-verified replay.
 - Privacy controls verified by tests: no message text in logs, responses or disk; validation errors don't echo input.
-- 398 automated tests (252 pre-existing pipeline tests plus 146 new), lint, schema check and frontend build in CI.
+- 423 automated tests (252 original pipeline tests, 146 from the workbench build, 25 from the evaluation-rigour work), lint, schema check and frontend build in CI.
 
 ## What the evidence does and does not show
 
@@ -29,5 +29,5 @@ collected; the consent form awaits legal review.
 
 > Built ScamCheck Research Workbench, an evidence-first English/Hinglish scam-analysis engine (FastAPI, Next.js) with
 > a reproducible benchmark lab (five baselines, Wilson and campaign-bootstrap intervals) and a seeded mutation lab
-> (14 transforms, hash-verified replay); 398 tests, including Hypothesis property tests that caught a verdict-logic
+> (14 transforms, hash-verified replay); 423 tests, including Hypothesis property tests that caught a verdict-logic
 > bug. Evaluated so far only on synthetic fixtures; real-data evaluation is pending consent review.
