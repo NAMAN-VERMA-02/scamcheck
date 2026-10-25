@@ -28,7 +28,7 @@ from .data.pilot import (
 )
 from .data.report import build_report
 from .data.schema import RECORDED_PERMISSIONS, Item, load_register
-from .data.split import check_leakage, split_items
+from .data.split import TemporalSplitError, check_leakage, split_items
 
 
 def _load_or_exit(path: str):
@@ -89,9 +89,23 @@ def cmd_split(a) -> int:
     res = _load_or_exit(a.file)
     if any(it.campaign_id is None for it in res.items):
         raise UsageError(f"{a.file} has items without campaign_id; run `scamcheck group` first and split its --out file")
-    manifest = split_items(res.items, seed=a.seed, allow_synthetic_in_test=a.allow_synthetic_in_test)
+    cutoff = None
+    if a.temporal_cutoff:
+        try:
+            cutoff = date.fromisoformat(a.temporal_cutoff)
+        except ValueError:
+            raise UsageError(f"--temporal-cutoff must be a date like 2026-12-31, got {a.temporal_cutoff!r}")
+    try:
+        manifest = split_items(res.items, seed=a.seed, allow_synthetic_in_test=a.allow_synthetic_in_test,
+                               temporal_cutoff=cutoff)
+    except TemporalSplitError as e:
+        raise UsageError(f"temporal split not possible: {e} No manifest was written.")
     _write_json(a.out, manifest)
     print(f"split counts {manifest['counts']}, excluded {len(manifest['excluded'])} → {a.out}")
+    if "temporal" in manifest:
+        t = manifest["temporal"]
+        print(f"temporal hold-out: train/dev up to {t['train_dev_latest']}, test campaigns reach past {t['cutoff']}; "
+              f"{len(t['straddling_campaigns'])} campaign(s) straddle the cutoff and were placed wholly in test")
     return 0
 
 
@@ -363,6 +377,9 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--seed", type=int, default=13)
     s.add_argument("--allow-synthetic-in-test", action="store_true",
                    help="pipeline testing only; the manifest and report are marked accordingly")
+    s.add_argument("--temporal-cutoff", metavar="YYYY-MM-DD",
+                   help="temporal hold-out: campaigns with any item collected after this date form the test split; "
+                        "earlier campaigns are split train/dev")
     s.set_defaults(fn=cmd_split)
 
     for name, fn in (("check-leakage", cmd_check_leakage), ("report", cmd_report)):
