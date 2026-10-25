@@ -98,18 +98,20 @@ def classify(adapter: ChatAdapter, redacted_text: str) -> ModelResult:
     safe = re.sub(r"</?\s*message\s*>", "", redacted_text, flags=re.I)
     try:
         raw = adapter.complete(SYSTEM_PROMPT, f"<message>\n{safe}\n</message>")
-    except (TimeoutError, socket.timeout):
-        return ModelResult(status="timeout", **ids)
+    # Only the exception class is kept: messages from providers can echo the prompt.
+    except (TimeoutError, socket.timeout) as e:
+        return ModelResult(status="timeout", error_type=type(e).__name__, **ids)
     except urllib.error.URLError as e:
         status = "timeout" if isinstance(e.reason, (TimeoutError, socket.timeout)) else "error"
-        return ModelResult(status=status, **ids)
-    except Exception:  # noqa: BLE001 - any provider failure fails closed; details may contain the prompt
-        return ModelResult(status="error", **ids)
+        cause = e.reason if isinstance(e.reason, BaseException) else e
+        return ModelResult(status=status, error_type=type(cause).__name__, **ids)
+    except Exception as e:  # noqa: BLE001 - any provider failure fails closed
+        return ModelResult(status="error", error_type=type(e).__name__, **ids)
     try:
         fenced = re.fullmatch(r"\s*```(?:json)?\s*(.*?)\s*```\s*", raw or "", re.S)
         out = _Out.model_validate(json.loads(fenced.group(1) if fenced else raw))
-    except (ValueError, ValidationError, TypeError):
-        return ModelResult(status="invalid_output", **ids)
+    except (ValueError, ValidationError, TypeError) as e:
+        return ModelResult(status="invalid_output", error_type=type(e).__name__, **ids)
     haystack = _squash(safe)
     grounded = [e for e in out.evidence if e.quote.strip() and _squash(e.quote) in haystack][:MAX_EVIDENCE]
     return ModelResult(status="ok", label=out.label, evidence=grounded,

@@ -350,6 +350,23 @@ def cmd_robustness(a) -> int:
     return 0
 
 
+def cmd_llm_smoke(a) -> int:
+    from .engine.llm import from_env
+    from .eval.llm_smoke import run_smoke
+
+    try:
+        adapter = from_env()
+    except ValueError as e:
+        raise UsageError(str(e))
+    result = run_smoke(adapter)
+    if a.out:
+        _write_json(a.out, result)
+    print(json.dumps({k: v for k, v in result.items() if k != "cases"}, indent=2))
+    if result["status"] == "skipped":
+        print("SKIPPED: " + result["reason"], file=sys.stderr)
+    return 1 if result["status"] == "completed_with_errors" else 0
+
+
 def main(argv: list[str] | None = None) -> int:
     for stream in (sys.stdout, sys.stderr):  # Windows consoles default to cp1252; output contains κ, ≥, →
         if hasattr(stream, "reconfigure"):
@@ -474,6 +491,11 @@ def main(argv: list[str] | None = None) -> int:
             s.add_argument("--reviews", help="JSONL of {variant_id, label} human decisions for needs-review variants")
             s.add_argument("--replay", help="variants.jsonl to regenerate and verify by hash")
         s.set_defaults(fn=fn)
+
+    s = sub.add_parser("llm-smoke", help="B3 smoke test on the built-in SYNTHETIC examples only (status, latency, "
+                                         "errors; no accuracy)")
+    s.add_argument("--out", help="write the full JSON record here")
+    s.set_defaults(fn=cmd_llm_smoke)
 
     a = p.parse_args(argv)
     try:
