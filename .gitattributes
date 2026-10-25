@@ -1,0 +1,4 @@
+# Data, manifests and generated reports are compared byte for byte in CI: keep them LF on every OS.
+*.json text eol=lf
+*.jsonl text eol=lf
+reports/**/*.md text eol=lf

@@ -1,4 +1,4 @@
-"""`scamcheck` command line: validate → group → split → check-leakage → report."""
+"""`scamcheck` command line: validate → group → split → check-leakage → report, plus analyse/benchmark/robustness."""
 
 from __future__ import annotations
 
@@ -13,8 +13,19 @@ from pathlib import Path
 from .data.grouping import DEFAULT_REVIEW_LOW, DEFAULT_THRESHOLD, group_items, load_decisions
 from .data.io import load_items, write_items
 from .data.pii import scan_item
-from .data.pilot import (ADJ_COLUMNS, SHEET_COLUMNS, CsvEncodingError, apply_adjudication, export_sheet,
-                         import_sheet, intake_from_rows, pseudo_id, read_csv, resolve, write_csv)
+from .data.pilot import (
+    ADJ_COLUMNS,
+    SHEET_COLUMNS,
+    CsvEncodingError,
+    apply_adjudication,
+    export_sheet,
+    import_sheet,
+    intake_from_rows,
+    pseudo_id,
+    read_csv,
+    resolve,
+    write_csv,
+)
 from .data.report import build_report
 from .data.schema import RECORDED_PERMISSIONS, Item, load_register
 from .data.split import check_leakage, split_items
@@ -46,7 +57,8 @@ def _load_manifest(path: str) -> dict:
 
 def _write_json(path: str, obj) -> None:
     Path(path).parent.mkdir(parents=True, exist_ok=True)
-    Path(path).write_text(json.dumps(obj, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    # LF on every OS, so manifests and reports are byte-identical wherever they are regenerated.
+    Path(path).write_text(json.dumps(obj, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
 
 
 def cmd_validate(a) -> int:
@@ -241,6 +253,89 @@ def cmd_schema(a) -> int:
     return 0
 
 
+def cmd_analyse(a) -> int:
+    from .engine import analyse
+    from .engine.llm import from_env
+
+    text = sys.stdin.read() if a.text == "-" else a.text
+    model = from_env() if a.llm_opt_in else None
+    if a.llm_opt_in and model is None:
+        raise UsageError("--llm-opt-in needs SCAMCHECK_LLM_BASE_URL and SCAMCHECK_LLM_MODEL to be set")
+    try:
+        res = analyse(text, url=a.url, language=a.language, model=model, llm_opt_in=a.llm_opt_in)
+    except ValueError as e:
+        raise UsageError(str(e))
+    print(res.model_dump_json(indent=2))
+    return 0
+
+
+def _eval_inputs(a):
+    res = _load_or_exit(a.file)
+    if any(it.campaign_id is None for it in res.items):
+        raise UsageError(f"{a.file} has items without campaign_id; run `scamcheck group` and `split` first")
+    manifest = _load_manifest(a.manifest)
+    problems = check_leakage(res.items, manifest, DEFAULT_THRESHOLD)
+    if problems:
+        raise UsageError(f"leakage check failed ({len(problems)} problem(s)); run `scamcheck check-leakage`")
+    model = None
+    if a.with_llm:
+        from .engine.llm import from_env
+        model = from_env()
+        if model is None:
+            raise UsageError("--with-llm needs SCAMCHECK_LLM_BASE_URL and SCAMCHECK_LLM_MODEL to be set")
+    return res.items, manifest, model
+
+
+def cmd_benchmark(a) -> int:
+    from .eval.benchmark import run_benchmark, to_markdown
+
+    items, manifest, model = _eval_inputs(a)
+    result = run_benchmark(items, manifest, split=a.split, seed=a.seed, dataset_path=Path(a.file),
+                           manifest_path=Path(a.manifest), model=model)
+    out = Path(a.out_dir)
+    _write_json(str(out / "benchmark.json"), result)
+    (out / "benchmark.md").write_text(to_markdown(result), encoding="utf-8", newline="\n")
+    for name, s in result["systems"].items():
+        o = s["metrics"]["overall"]
+        print(f"{name:12} recall {o['scam_recall']['rate']}  dangerous-miss {o['dangerous_miss_rate']['rate']}  "
+              f"false-alarm {o['false_alarm_rate_legitimate']['rate']}  unclear {o['unclear_rate_non_ambiguous']['rate']}")
+    print(f"{result['meta']['data_label']}\nreport → {out / 'benchmark.md'}")
+    return 0
+
+
+def cmd_robustness(a) -> int:
+    from .eval.mutate import replay
+    from .eval.robustness import run_robustness, to_markdown
+
+    items, manifest, model = _eval_inputs(a)
+    if a.replay:
+        records = [json.loads(line) for line in Path(a.replay).read_text(encoding="utf-8").splitlines() if line.strip()]
+        problems = replay(records, {it.id: it.text for it in items})
+        for p in problems:
+            print(f"REPLAY  {p}")
+        print(f"replayed {len(records)} variant(s): " + ("PASS" if not problems else f"FAIL ({len(problems)})"))
+        return 1 if problems else 0
+    reviews = {}
+    if a.reviews:
+        for line in Path(a.reviews).read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                r = json.loads(line)
+                reviews[r["variant_id"]] = r["label"]
+    result, records = run_robustness(items, manifest, seeds=tuple(a.seeds), model=model, reviews=reviews)
+    out = Path(a.out_dir)
+    _write_json(str(out / "robustness.json"), result)
+    (out / "robustness.md").write_text(to_markdown(result), encoding="utf-8", newline="\n")
+    with open(out / "variants.jsonl", "w", encoding="utf-8", newline="\n") as f:
+        for r in records:
+            f.write(json.dumps(r, ensure_ascii=False) + "\n")
+    print(json.dumps(result["meta"]["counts"]))
+    for name, s in result["systems"].items():
+        print(f"{name:12} consistency {s['consistency_preserving']['rate']}  "
+              f"scam→NO_STRONG_SIGNALS {s['scam_flip_to_no_strong_signals']['rate']}")
+    print(f"{result['meta']['data_label']}\nreport → {out / 'robustness.md'}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     for stream in (sys.stdout, sys.stderr):  # Windows consoles default to cp1252; output contains κ, ≥, →
         if hasattr(stream, "reconfigure"):
@@ -337,6 +432,31 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--out", default="schema/item.schema.json")
     s.add_argument("--check", action="store_true")
     s.set_defaults(fn=cmd_schema)
+
+    s = sub.add_parser("analyse", help="analyse one message with the evidence-first engine (prints JSON)")
+    s.add_argument("text", help="message text, or - to read stdin")
+    s.add_argument("--url", help="an extra URL to analyse statically (never fetched)")
+    s.add_argument("--language", choices=["english", "hinglish"], default="english")
+    s.add_argument("--llm-opt-in", action="store_true",
+                   help="send the REDACTED text to the configured LLM endpoint (SCAMCHECK_LLM_*)")
+    s.set_defaults(fn=cmd_analyse)
+
+    for name, fn in (("benchmark", cmd_benchmark), ("robustness", cmd_robustness)):
+        s = sub.add_parser(name, help="run baselines B0–B4 on a split" if name == "benchmark"
+                           else "seeded mutation lab on dev/test parents")
+        s.add_argument("file", help="grouped items JSONL")
+        s.add_argument("--manifest", required=True)
+        s.add_argument("--out-dir", required=True)
+        s.add_argument("--with-llm", action="store_true",
+                       help="include the configured LLM (B3, and B4 with model); sends redacted dataset text")
+        if name == "benchmark":
+            s.add_argument("--split", choices=["dev", "test"], default="test")
+            s.add_argument("--seed", type=int, default=13, help="bootstrap and B2 seed")
+        else:
+            s.add_argument("--seeds", type=int, nargs="+", default=[11, 23, 37])
+            s.add_argument("--reviews", help="JSONL of {variant_id, label} human decisions for needs-review variants")
+            s.add_argument("--replay", help="variants.jsonl to regenerate and verify by hash")
+        s.set_defaults(fn=fn)
 
     a = p.parse_args(argv)
     try:

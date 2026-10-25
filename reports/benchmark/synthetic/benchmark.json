@@ -1,0 +1,2910 @@
+{
+  "meta": {
+    "data_label": "SYNTHETIC FIXTURE RESULTS. Every item was hand-written by the maintainer who also wrote the rule pack. These numbers show the pipeline works; they are optimistic by construction and are NOT real-world detection performance.",
+    "synthetic_only": true,
+    "dataset": {
+      "path": "benchmarks/synthetic/items.grouped.jsonl",
+      "sha256": "dd33ee3a5d0045c17a5067ed4b61af0337d811b1747f4a5089ff7e3fb78c3b7f"
+    },
+    "manifest": {
+      "path": "benchmarks/synthetic/manifest.json",
+      "sha256": "d355732207d137e6182ca15e387c17efbc4dd77facbb563ac9d706a8c5485f1e",
+      "params": {
+        "ratios": {
+          "train": 0.6,
+          "dev": 0.15,
+          "test": 0.25
+        },
+        "seed": 13,
+        "allow_synthetic_in_test": true
+      },
+      "counts": {
+        "test": 28,
+        "train": 68,
+        "dev": 18
+      }
+    },
+    "split": "test",
+    "seed": 13,
+    "n_train": 64,
+    "n_evaluated": 28,
+    "versions": {
+      "engine": "engine-0.2.0",
+      "rules": "rules-2026.10.1",
+      "urls": "urls-2026.10.1",
+      "prompt": "zero-shot-v1:b413ed4f7af7",
+      "python": "3.12.10",
+      "scikit-learn": "1.9.1"
+    },
+    "model": {
+      "model_id": null,
+      "note": "no model configured; B3 not run, B4 in rule-only mode"
+    }
+  },
+  "items": [
+    {
+      "id": "sy-0001",
+      "label": "scam",
+      "category": "bank_kyc_impersonation",
+      "language": "english",
+      "text": "Dear customer, your HDFC netbanking will be suspended today. Update PAN at hxxps://hdfc-pan-update[.]xyz/login"
+    },
+    {
+      "id": "sy-0005",
+      "label": "scam",
+      "category": "phishing_credential",
+      "language": "english",
+      "text": "Income tax refund of Rs 15,490 approved. Submit your bank details at hxxps://incometax-refund[.]site/claim"
+    },
+    {
+      "id": "sy-0020",
+      "label": "scam",
+      "category": "lottery_prize",
+      "language": "english",
+      "text": "You are the lucky winner of an iPhone 15 in our anniversary contest! Claim within 24 hours: hxxps://claim-gift-now[.]shop"
+    },
+    {
+      "id": "sy-0021",
+      "label": "scam",
+      "category": "other_scam",
+      "language": "english",
+      "text": "Hi mom, I lost my phone and this is my new number. Please send Rs 8,000 to <UPI> urgently, will explain later."
+    },
+    {
+      "id": "sy-0022",
+      "label": "scam",
+      "category": "other_scam",
+      "language": "english",
+      "text": "This is Airtel customer care. To fix your SIM issue please install AnyDesk and share the 9-digit code."
+    },
+    {
+      "id": "sy-0026",
+      "label": "scam",
+      "category": "job_task_scam",
+      "language": "english",
+      "text": "Dear candidate, your profile is shortlisted for a data entry role. Salary Rs 45,000. Contact HR on WhatsApp <PHONE>."
+    },
+    {
+      "id": "sy-0027",
+      "label": "scam",
+      "category": "bank_kyc_impersonation",
+      "language": "hinglish",
+      "text": "Aapka SBI account aaj raat band ho jayega. KYC update karne ke liye hxxps://sbi-kyc-online[.]xyz par click karein."
+    },
+    {
+      "id": "sy-0028",
+      "label": "scam",
+      "category": "bank_kyc_impersonation",
+      "language": "hinglish",
+      "text": "Priya grahak, aapka PAN card link nahi hai, aapka account block ho jayega. Turant hxxp://pan-link-update[.]top par jaye."
+    },
+    {
+      "id": "sy-0030",
+      "label": "scam",
+      "category": "upi_collect_refund",
+      "language": "hinglish",
+      "text": "Aapke account mein Rs 10,000 cashback aaya hai. Paisa lene ke liye UPI PIN daaliye."
+    },
+    {
+      "id": "sy-0050",
+      "label": "scam",
+      "category": "bank_kyc_impersonation",
+      "language": "hinglish",
+      "text": "Aapka Paytm wallet aaj band ho jayega. KYC ke liye hxxps://paytm-kyc-verify[.]online par login karein."
+    },
+    {
+      "id": "sy-0051",
+      "label": "scam",
+      "category": "phishing_credential",
+      "language": "hinglish",
+      "text": "Income tax vibhag: aapka refund Rs 12,800 approve hua hai. Bank details is link par bhariye hxxps://itr-refund-status[.]in"
+    },
+    {
+      "id": "sy-0052",
+      "label": "scam",
+      "category": "job_task_scam",
+      "language": "hinglish",
+      "text": "Aapka resume select hua hai, ghar se kaam karke Rs 30,000 mahina. Interview ke liye HR ko WhatsApp karein <PHONE>."
+    },
+    {
+      "id": "sy-0053",
+      "label": "legitimate",
+      "category": "bank_txn_alert",
+      "language": "english",
+      "text": "Rs 1,250.00 debited from A/c XX4521 on 12-Oct-26 to VPA <UPI>. If not done by you, call 1800 123 4567. -XYZ Bank"
+    },
+    {
+      "id": "sy-0054",
+      "label": "legitimate",
+      "category": "bank_txn_alert",
+      "language": "english",
+      "text": "INR 35,000 credited to your A/c XX7781 on 15-10-26 by NEFT. Avl bal INR 52,340. -XYZ Bank"
+    },
+    {
+      "id": "sy-0065",
+      "label": "legitimate",
+      "category": "delivery_notification",
+      "language": "english",
+      "text": "Out for delivery: your package will arrive today between 2 pm and 6 pm. Our agent will call before arriving."
+    },
+    {
+      "id": "sy-0070",
+      "label": "legitimate",
+      "category": "service_account",
+      "language": "english",
+      "text": "Your plan of Rs 299 expires on 30-Oct-26. Recharge on the Example Telecom app to continue services."
+    },
+    {
+      "id": "sy-0072",
+      "label": "legitimate",
+      "category": "service_account",
+      "language": "english",
+      "text": "Your broadband service will be temporarily unavailable on 28 Oct from 2 am to 4 am for maintenance."
+    },
+    {
+      "id": "sy-0076",
+      "label": "legitimate",
+      "category": "personal",
+      "language": "english",
+      "text": "Rahul, please transfer my share of the trip, Rs 1,200, whenever you can."
+    },
+    {
+      "id": "sy-0080",
+      "label": "legitimate",
+      "category": "otp",
+      "language": "hinglish",
+      "text": "Aapka OTP <OTP> hai. Bank kabhi bhi call karke OTP nahi maangta. Kisi ko na batayein."
+    },
+    {
+      "id": "sy-0081",
+      "label": "legitimate",
+      "category": "otp",
+      "language": "hinglish",
+      "text": "Delivery ke waqt OTP <OTP> delivery agent ko bataiye, sirf package milne ke baad."
+    },
+    {
+      "id": "sy-0084",
+      "label": "legitimate",
+      "category": "payment_confirmation",
+      "language": "hinglish",
+      "text": "<NAME> ne aapko Rs 500 bheje hain UPI se. Ref <REF>."
+    },
+    {
+      "id": "sy-0086",
+      "label": "legitimate",
+      "category": "delivery_notification",
+      "language": "hinglish",
+      "text": "Aapka parcel aaj delivery ke liye nikal chuka hai. Delivery agent aane se pehle call karega."
+    },
+    {
+      "id": "sy-0093",
+      "label": "legitimate",
+      "category": "personal",
+      "language": "hinglish",
+      "text": "Mummy, main hostel pahunch gaya. Shaam ko call karta hoon."
+    },
+    {
+      "id": "sy-0096",
+      "label": "legitimate",
+      "category": "bank_txn_alert",
+      "language": "hinglish",
+      "text": "Aapke XYZ Bank credit card ka bill Rs 8,450 hai. Due date 10-11-26. Bhugtan official app se karein."
+    },
+    {
+      "id": "sy-0104",
+      "label": "promotional",
+      "category": "marketing",
+      "language": "english",
+      "text": "Example Mart sale: buy 2 get 1 free on all groceries till Sunday. Visit hxxps://www.example-mart[.]com/sale"
+    },
+    {
+      "id": "sy-0105",
+      "label": "promotional",
+      "category": "marketing",
+      "language": "hinglish",
+      "text": "Example Store par Diwali sale! Sabhi kapdon par 50% tak ki chhoot. Jaldi aaiye."
+    },
+    {
+      "id": "sy-0112",
+      "label": "ambiguous",
+      "category": null,
+      "language": "english",
+      "text": "Hello, I got your number from a group. Are you interested in a part-time opportunity?"
+    },
+    {
+      "id": "sy-0114",
+      "label": "ambiguous",
+      "category": null,
+      "language": "hinglish",
+      "text": "Sir, aapka number lucky customer list mein aaya hai. Details ke liye call karein."
+    }
+  ],
+  "systems": {
+    "B0-unclear": {
+      "description": "Control: always UNCLEAR",
+      "config": {},
+      "metrics": {
+        "n": 28,
+        "n_by_label": {
+          "scam": 12,
+          "legitimate": 12,
+          "promotional": 2,
+          "ambiguous": 2
+        },
+        "overall": {
+          "scam_recall": {
+            "k": 0,
+            "n": 12,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.2425
+          },
+          "dangerous_miss_rate": {
+            "k": 0,
+            "n": 12,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.2425
+          },
+          "false_alarm_rate_legitimate": {
+            "k": 0,
+            "n": 12,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.2425
+          },
+          "unclear_rate_non_ambiguous": {
+            "k": 26,
+            "n": 26,
+            "rate": 1.0,
+            "lo": 0.8713,
+            "hi": 1.0
+          },
+          "false_alarm_rate_promotional": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "unclear_rate_by_label": {
+            "ambiguous": {
+              "k": 2,
+              "n": 2,
+              "rate": 1.0,
+              "lo": 0.3424,
+              "hi": 1.0
+            },
+            "legitimate": {
+              "k": 12,
+              "n": 12,
+              "rate": 1.0,
+              "lo": 0.7575,
+              "hi": 1.0
+            },
+            "promotional": {
+              "k": 2,
+              "n": 2,
+              "rate": 1.0,
+              "lo": 0.3424,
+              "hi": 1.0
+            },
+            "scam": {
+              "k": 12,
+              "n": 12,
+              "rate": 1.0,
+              "lo": 0.7575,
+              "hi": 1.0
+            }
+          }
+        },
+        "by_language": {
+          "english": {
+            "scam_recall": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "dangerous_miss_rate": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "false_alarm_rate_legitimate": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "unclear_rate_non_ambiguous": {
+              "k": 13,
+              "n": 13,
+              "rate": 1.0,
+              "lo": 0.7719,
+              "hi": 1.0
+            },
+            "false_alarm_rate_promotional": {
+              "k": 0,
+              "n": 1,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.7935
+            },
+            "unclear_rate_by_label": {
+              "ambiguous": {
+                "k": 1,
+                "n": 1,
+                "rate": 1.0,
+                "lo": 0.2065,
+                "hi": 1.0
+              },
+              "legitimate": {
+                "k": 6,
+                "n": 6,
+                "rate": 1.0,
+                "lo": 0.6097,
+                "hi": 1.0
+              },
+              "promotional": {
+                "k": 1,
+                "n": 1,
+                "rate": 1.0,
+                "lo": 0.2065,
+                "hi": 1.0
+              },
+              "scam": {
+                "k": 6,
+                "n": 6,
+                "rate": 1.0,
+                "lo": 0.6097,
+                "hi": 1.0
+              }
+            }
+          },
+          "hinglish": {
+            "scam_recall": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "dangerous_miss_rate": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "false_alarm_rate_legitimate": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "unclear_rate_non_ambiguous": {
+              "k": 13,
+              "n": 13,
+              "rate": 1.0,
+              "lo": 0.7719,
+              "hi": 1.0
+            },
+            "false_alarm_rate_promotional": {
+              "k": 0,
+              "n": 1,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.7935
+            },
+            "unclear_rate_by_label": {
+              "ambiguous": {
+                "k": 1,
+                "n": 1,
+                "rate": 1.0,
+                "lo": 0.2065,
+                "hi": 1.0
+              },
+              "legitimate": {
+                "k": 6,
+                "n": 6,
+                "rate": 1.0,
+                "lo": 0.6097,
+                "hi": 1.0
+              },
+              "promotional": {
+                "k": 1,
+                "n": 1,
+                "rate": 1.0,
+                "lo": 0.2065,
+                "hi": 1.0
+              },
+              "scam": {
+                "k": 6,
+                "n": 6,
+                "rate": 1.0,
+                "lo": 0.6097,
+                "hi": 1.0
+              }
+            }
+          }
+        },
+        "language_gap_hinglish_minus_english": {
+          "scam_recall": 0.0,
+          "dangerous_miss_rate": 0.0,
+          "false_alarm_rate_legitimate": 0.0,
+          "unclear_rate_non_ambiguous": 0.0
+        },
+        "false_alarm_by_legit_category": {
+          "bank_txn_alert": {
+            "k": 0,
+            "n": 3,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.5615
+          },
+          "delivery_notification": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "otp": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "payment_confirmation": {
+            "k": 0,
+            "n": 1,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.7935
+          },
+          "personal": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "service_account": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "marketing": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          }
+        },
+        "scam_recall_by_category": {
+          "bank_kyc_impersonation": {
+            "k": 0,
+            "n": 4,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.4899
+          },
+          "job_task_scam": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "lottery_prize": {
+            "k": 0,
+            "n": 1,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.7935
+          },
+          "other_scam": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "phishing_credential": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "upi_collect_refund": {
+            "k": 0,
+            "n": 1,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.7935
+          }
+        },
+        "confusion": {
+          "overall": {
+            "ambiguous": {
+              "LIKELY_SCAM": 0,
+              "UNCLEAR": 2,
+              "NO_STRONG_SIGNALS": 0
+            },
+            "legitimate": {
+              "LIKELY_SCAM": 0,
+              "UNCLEAR": 12,
+              "NO_STRONG_SIGNALS": 0
+            },
+            "promotional": {
+              "LIKELY_SCAM": 0,
+              "UNCLEAR": 2,
+              "NO_STRONG_SIGNALS": 0
+            },
+            "scam": {
+              "LIKELY_SCAM": 0,
+              "UNCLEAR": 12,
+              "NO_STRONG_SIGNALS": 0
+            }
+          },
+          "by_language": {
+            "english": {
+              "ambiguous": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 6,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "promotional": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 6,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "hinglish": {
+              "ambiguous": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 6,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "promotional": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 6,
+                "NO_STRONG_SIGNALS": 0
+              }
+            }
+          },
+          "by_category": {
+            "bank_txn_alert": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 3,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "delivery_notification": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "otp": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "payment_confirmation": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "personal": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "service_account": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "marketing": {
+              "promotional": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "bank_kyc_impersonation": {
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 4,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "job_task_scam": {
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "lottery_prize": {
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "other_scam": {
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "phishing_credential": {
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "upi_collect_refund": {
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              }
+            }
+          }
+        },
+        "bootstrap": {
+          "seed": 13,
+          "resamples": 2000,
+          "campaigns": 28,
+          "scam_recall": {
+            "lo": 0.0,
+            "hi": 0.0
+          },
+          "dangerous_miss_rate": {
+            "lo": 0.0,
+            "hi": 0.0
+          },
+          "false_alarm_rate_legitimate": {
+            "lo": 0.0,
+            "hi": 0.0
+          },
+          "unclear_rate_non_ambiguous": {
+            "lo": 1.0,
+            "hi": 1.0
+          }
+        }
+      },
+      "predictions": {
+        "sy-0001": "UNCLEAR",
+        "sy-0005": "UNCLEAR",
+        "sy-0020": "UNCLEAR",
+        "sy-0021": "UNCLEAR",
+        "sy-0022": "UNCLEAR",
+        "sy-0026": "UNCLEAR",
+        "sy-0027": "UNCLEAR",
+        "sy-0028": "UNCLEAR",
+        "sy-0030": "UNCLEAR",
+        "sy-0050": "UNCLEAR",
+        "sy-0051": "UNCLEAR",
+        "sy-0052": "UNCLEAR",
+        "sy-0053": "UNCLEAR",
+        "sy-0054": "UNCLEAR",
+        "sy-0065": "UNCLEAR",
+        "sy-0070": "UNCLEAR",
+        "sy-0072": "UNCLEAR",
+        "sy-0076": "UNCLEAR",
+        "sy-0080": "UNCLEAR",
+        "sy-0081": "UNCLEAR",
+        "sy-0084": "UNCLEAR",
+        "sy-0086": "UNCLEAR",
+        "sy-0093": "UNCLEAR",
+        "sy-0096": "UNCLEAR",
+        "sy-0104": "UNCLEAR",
+        "sy-0105": "UNCLEAR",
+        "sy-0112": "UNCLEAR",
+        "sy-0114": "UNCLEAR"
+      }
+    },
+    "B0-scam": {
+      "description": "Control: always LIKELY_SCAM",
+      "config": {},
+      "metrics": {
+        "n": 28,
+        "n_by_label": {
+          "scam": 12,
+          "legitimate": 12,
+          "promotional": 2,
+          "ambiguous": 2
+        },
+        "overall": {
+          "scam_recall": {
+            "k": 12,
+            "n": 12,
+            "rate": 1.0,
+            "lo": 0.7575,
+            "hi": 1.0
+          },
+          "dangerous_miss_rate": {
+            "k": 0,
+            "n": 12,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.2425
+          },
+          "false_alarm_rate_legitimate": {
+            "k": 12,
+            "n": 12,
+            "rate": 1.0,
+            "lo": 0.7575,
+            "hi": 1.0
+          },
+          "unclear_rate_non_ambiguous": {
+            "k": 0,
+            "n": 26,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.1287
+          },
+          "false_alarm_rate_promotional": {
+            "k": 2,
+            "n": 2,
+            "rate": 1.0,
+            "lo": 0.3424,
+            "hi": 1.0
+          },
+          "unclear_rate_by_label": {
+            "ambiguous": {
+              "k": 0,
+              "n": 2,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.6576
+            },
+            "legitimate": {
+              "k": 0,
+              "n": 12,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.2425
+            },
+            "promotional": {
+              "k": 0,
+              "n": 2,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.6576
+            },
+            "scam": {
+              "k": 0,
+              "n": 12,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.2425
+            }
+          }
+        },
+        "by_language": {
+          "english": {
+            "scam_recall": {
+              "k": 6,
+              "n": 6,
+              "rate": 1.0,
+              "lo": 0.6097,
+              "hi": 1.0
+            },
+            "dangerous_miss_rate": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "false_alarm_rate_legitimate": {
+              "k": 6,
+              "n": 6,
+              "rate": 1.0,
+              "lo": 0.6097,
+              "hi": 1.0
+            },
+            "unclear_rate_non_ambiguous": {
+              "k": 0,
+              "n": 13,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.2281
+            },
+            "false_alarm_rate_promotional": {
+              "k": 1,
+              "n": 1,
+              "rate": 1.0,
+              "lo": 0.2065,
+              "hi": 1.0
+            },
+            "unclear_rate_by_label": {
+              "ambiguous": {
+                "k": 0,
+                "n": 1,
+                "rate": 0.0,
+                "lo": 0.0,
+                "hi": 0.7935
+              },
+              "legitimate": {
+                "k": 0,
+                "n": 6,
+                "rate": 0.0,
+                "lo": 0.0,
+                "hi": 0.3903
+              },
+              "promotional": {
+                "k": 0,
+                "n": 1,
+                "rate": 0.0,
+                "lo": 0.0,
+                "hi": 0.7935
+              },
+              "scam": {
+                "k": 0,
+                "n": 6,
+                "rate": 0.0,
+                "lo": 0.0,
+                "hi": 0.3903
+              }
+            }
+          },
+          "hinglish": {
+            "scam_recall": {
+              "k": 6,
+              "n": 6,
+              "rate": 1.0,
+              "lo": 0.6097,
+              "hi": 1.0
+            },
+            "dangerous_miss_rate": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "false_alarm_rate_legitimate": {
+              "k": 6,
+              "n": 6,
+              "rate": 1.0,
+              "lo": 0.6097,
+              "hi": 1.0
+            },
+            "unclear_rate_non_ambiguous": {
+              "k": 0,
+              "n": 13,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.2281
+            },
+            "false_alarm_rate_promotional": {
+              "k": 1,
+              "n": 1,
+              "rate": 1.0,
+              "lo": 0.2065,
+              "hi": 1.0
+            },
+            "unclear_rate_by_label": {
+              "ambiguous": {
+                "k": 0,
+                "n": 1,
+                "rate": 0.0,
+                "lo": 0.0,
+                "hi": 0.7935
+              },
+              "legitimate": {
+                "k": 0,
+                "n": 6,
+                "rate": 0.0,
+                "lo": 0.0,
+                "hi": 0.3903
+              },
+              "promotional": {
+                "k": 0,
+                "n": 1,
+                "rate": 0.0,
+                "lo": 0.0,
+                "hi": 0.7935
+              },
+              "scam": {
+                "k": 0,
+                "n": 6,
+                "rate": 0.0,
+                "lo": 0.0,
+                "hi": 0.3903
+              }
+            }
+          }
+        },
+        "language_gap_hinglish_minus_english": {
+          "scam_recall": 0.0,
+          "dangerous_miss_rate": 0.0,
+          "false_alarm_rate_legitimate": 0.0,
+          "unclear_rate_non_ambiguous": 0.0
+        },
+        "false_alarm_by_legit_category": {
+          "bank_txn_alert": {
+            "k": 3,
+            "n": 3,
+            "rate": 1.0,
+            "lo": 0.4385,
+            "hi": 1.0
+          },
+          "delivery_notification": {
+            "k": 2,
+            "n": 2,
+            "rate": 1.0,
+            "lo": 0.3424,
+            "hi": 1.0
+          },
+          "otp": {
+            "k": 2,
+            "n": 2,
+            "rate": 1.0,
+            "lo": 0.3424,
+            "hi": 1.0
+          },
+          "payment_confirmation": {
+            "k": 1,
+            "n": 1,
+            "rate": 1.0,
+            "lo": 0.2065,
+            "hi": 1.0
+          },
+          "personal": {
+            "k": 2,
+            "n": 2,
+            "rate": 1.0,
+            "lo": 0.3424,
+            "hi": 1.0
+          },
+          "service_account": {
+            "k": 2,
+            "n": 2,
+            "rate": 1.0,
+            "lo": 0.3424,
+            "hi": 1.0
+          },
+          "marketing": {
+            "k": 2,
+            "n": 2,
+            "rate": 1.0,
+            "lo": 0.3424,
+            "hi": 1.0
+          }
+        },
+        "scam_recall_by_category": {
+          "bank_kyc_impersonation": {
+            "k": 4,
+            "n": 4,
+            "rate": 1.0,
+            "lo": 0.5101,
+            "hi": 1.0
+          },
+          "job_task_scam": {
+            "k": 2,
+            "n": 2,
+            "rate": 1.0,
+            "lo": 0.3424,
+            "hi": 1.0
+          },
+          "lottery_prize": {
+            "k": 1,
+            "n": 1,
+            "rate": 1.0,
+            "lo": 0.2065,
+            "hi": 1.0
+          },
+          "other_scam": {
+            "k": 2,
+            "n": 2,
+            "rate": 1.0,
+            "lo": 0.3424,
+            "hi": 1.0
+          },
+          "phishing_credential": {
+            "k": 2,
+            "n": 2,
+            "rate": 1.0,
+            "lo": 0.3424,
+            "hi": 1.0
+          },
+          "upi_collect_refund": {
+            "k": 1,
+            "n": 1,
+            "rate": 1.0,
+            "lo": 0.2065,
+            "hi": 1.0
+          }
+        },
+        "confusion": {
+          "overall": {
+            "ambiguous": {
+              "LIKELY_SCAM": 2,
+              "UNCLEAR": 0,
+              "NO_STRONG_SIGNALS": 0
+            },
+            "legitimate": {
+              "LIKELY_SCAM": 12,
+              "UNCLEAR": 0,
+              "NO_STRONG_SIGNALS": 0
+            },
+            "promotional": {
+              "LIKELY_SCAM": 2,
+              "UNCLEAR": 0,
+              "NO_STRONG_SIGNALS": 0
+            },
+            "scam": {
+              "LIKELY_SCAM": 12,
+              "UNCLEAR": 0,
+              "NO_STRONG_SIGNALS": 0
+            }
+          },
+          "by_language": {
+            "english": {
+              "ambiguous": {
+                "LIKELY_SCAM": 1,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "legitimate": {
+                "LIKELY_SCAM": 6,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "promotional": {
+                "LIKELY_SCAM": 1,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "scam": {
+                "LIKELY_SCAM": 6,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "hinglish": {
+              "ambiguous": {
+                "LIKELY_SCAM": 1,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "legitimate": {
+                "LIKELY_SCAM": 6,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "promotional": {
+                "LIKELY_SCAM": 1,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "scam": {
+                "LIKELY_SCAM": 6,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            }
+          },
+          "by_category": {
+            "bank_txn_alert": {
+              "legitimate": {
+                "LIKELY_SCAM": 3,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "delivery_notification": {
+              "legitimate": {
+                "LIKELY_SCAM": 2,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "otp": {
+              "legitimate": {
+                "LIKELY_SCAM": 2,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "payment_confirmation": {
+              "legitimate": {
+                "LIKELY_SCAM": 1,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "personal": {
+              "legitimate": {
+                "LIKELY_SCAM": 2,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "service_account": {
+              "legitimate": {
+                "LIKELY_SCAM": 2,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "marketing": {
+              "promotional": {
+                "LIKELY_SCAM": 2,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "bank_kyc_impersonation": {
+              "scam": {
+                "LIKELY_SCAM": 4,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "job_task_scam": {
+              "scam": {
+                "LIKELY_SCAM": 2,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "lottery_prize": {
+              "scam": {
+                "LIKELY_SCAM": 1,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "other_scam": {
+              "scam": {
+                "LIKELY_SCAM": 2,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "phishing_credential": {
+              "scam": {
+                "LIKELY_SCAM": 2,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "upi_collect_refund": {
+              "scam": {
+                "LIKELY_SCAM": 1,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            }
+          }
+        },
+        "bootstrap": {
+          "seed": 13,
+          "resamples": 2000,
+          "campaigns": 28,
+          "scam_recall": {
+            "lo": 1.0,
+            "hi": 1.0
+          },
+          "dangerous_miss_rate": {
+            "lo": 0.0,
+            "hi": 0.0
+          },
+          "false_alarm_rate_legitimate": {
+            "lo": 1.0,
+            "hi": 1.0
+          },
+          "unclear_rate_non_ambiguous": {
+            "lo": 0.0,
+            "hi": 0.0
+          }
+        }
+      },
+      "predictions": {
+        "sy-0001": "LIKELY_SCAM",
+        "sy-0005": "LIKELY_SCAM",
+        "sy-0020": "LIKELY_SCAM",
+        "sy-0021": "LIKELY_SCAM",
+        "sy-0022": "LIKELY_SCAM",
+        "sy-0026": "LIKELY_SCAM",
+        "sy-0027": "LIKELY_SCAM",
+        "sy-0028": "LIKELY_SCAM",
+        "sy-0030": "LIKELY_SCAM",
+        "sy-0050": "LIKELY_SCAM",
+        "sy-0051": "LIKELY_SCAM",
+        "sy-0052": "LIKELY_SCAM",
+        "sy-0053": "LIKELY_SCAM",
+        "sy-0054": "LIKELY_SCAM",
+        "sy-0065": "LIKELY_SCAM",
+        "sy-0070": "LIKELY_SCAM",
+        "sy-0072": "LIKELY_SCAM",
+        "sy-0076": "LIKELY_SCAM",
+        "sy-0080": "LIKELY_SCAM",
+        "sy-0081": "LIKELY_SCAM",
+        "sy-0084": "LIKELY_SCAM",
+        "sy-0086": "LIKELY_SCAM",
+        "sy-0093": "LIKELY_SCAM",
+        "sy-0096": "LIKELY_SCAM",
+        "sy-0104": "LIKELY_SCAM",
+        "sy-0105": "LIKELY_SCAM",
+        "sy-0112": "LIKELY_SCAM",
+        "sy-0114": "LIKELY_SCAM"
+      }
+    },
+    "B1-rules": {
+      "description": "Rule pack only; rule silence → NO_STRONG_SIGNALS",
+      "config": {},
+      "metrics": {
+        "n": 28,
+        "n_by_label": {
+          "scam": 12,
+          "legitimate": 12,
+          "promotional": 2,
+          "ambiguous": 2
+        },
+        "overall": {
+          "scam_recall": {
+            "k": 5,
+            "n": 12,
+            "rate": 0.4167,
+            "lo": 0.1933,
+            "hi": 0.6805
+          },
+          "dangerous_miss_rate": {
+            "k": 3,
+            "n": 12,
+            "rate": 0.25,
+            "lo": 0.0889,
+            "hi": 0.5323
+          },
+          "false_alarm_rate_legitimate": {
+            "k": 0,
+            "n": 12,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.2425
+          },
+          "unclear_rate_non_ambiguous": {
+            "k": 4,
+            "n": 26,
+            "rate": 0.1538,
+            "lo": 0.0615,
+            "hi": 0.3353
+          },
+          "false_alarm_rate_promotional": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "unclear_rate_by_label": {
+            "ambiguous": {
+              "k": 0,
+              "n": 2,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.6576
+            },
+            "legitimate": {
+              "k": 0,
+              "n": 12,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.2425
+            },
+            "promotional": {
+              "k": 0,
+              "n": 2,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.6576
+            },
+            "scam": {
+              "k": 4,
+              "n": 12,
+              "rate": 0.3333,
+              "lo": 0.1381,
+              "hi": 0.6094
+            }
+          }
+        },
+        "by_language": {
+          "english": {
+            "scam_recall": {
+              "k": 2,
+              "n": 6,
+              "rate": 0.3333,
+              "lo": 0.0968,
+              "hi": 0.7
+            },
+            "dangerous_miss_rate": {
+              "k": 2,
+              "n": 6,
+              "rate": 0.3333,
+              "lo": 0.0968,
+              "hi": 0.7
+            },
+            "false_alarm_rate_legitimate": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "unclear_rate_non_ambiguous": {
+              "k": 2,
+              "n": 13,
+              "rate": 0.1538,
+              "lo": 0.0433,
+              "hi": 0.4223
+            },
+            "false_alarm_rate_promotional": {
+              "k": 0,
+              "n": 1,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.7935
+            },
+            "unclear_rate_by_label": {
+              "ambiguous": {
+                "k": 0,
+                "n": 1,
+                "rate": 0.0,
+                "lo": 0.0,
+                "hi": 0.7935
+              },
+              "legitimate": {
+                "k": 0,
+                "n": 6,
+                "rate": 0.0,
+                "lo": 0.0,
+                "hi": 0.3903
+              },
+              "promotional": {
+                "k": 0,
+                "n": 1,
+                "rate": 0.0,
+                "lo": 0.0,
+                "hi": 0.7935
+              },
+              "scam": {
+                "k": 2,
+                "n": 6,
+                "rate": 0.3333,
+                "lo": 0.0968,
+                "hi": 0.7
+              }
+            }
+          },
+          "hinglish": {
+            "scam_recall": {
+              "k": 3,
+              "n": 6,
+              "rate": 0.5,
+              "lo": 0.1876,
+              "hi": 0.8124
+            },
+            "dangerous_miss_rate": {
+              "k": 1,
+              "n": 6,
+              "rate": 0.1667,
+              "lo": 0.0301,
+              "hi": 0.5635
+            },
+            "false_alarm_rate_legitimate": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "unclear_rate_non_ambiguous": {
+              "k": 2,
+              "n": 13,
+              "rate": 0.1538,
+              "lo": 0.0433,
+              "hi": 0.4223
+            },
+            "false_alarm_rate_promotional": {
+              "k": 0,
+              "n": 1,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.7935
+            },
+            "unclear_rate_by_label": {
+              "ambiguous": {
+                "k": 0,
+                "n": 1,
+                "rate": 0.0,
+                "lo": 0.0,
+                "hi": 0.7935
+              },
+              "legitimate": {
+                "k": 0,
+                "n": 6,
+                "rate": 0.0,
+                "lo": 0.0,
+                "hi": 0.3903
+              },
+              "promotional": {
+                "k": 0,
+                "n": 1,
+                "rate": 0.0,
+                "lo": 0.0,
+                "hi": 0.7935
+              },
+              "scam": {
+                "k": 2,
+                "n": 6,
+                "rate": 0.3333,
+                "lo": 0.0968,
+                "hi": 0.7
+              }
+            }
+          }
+        },
+        "language_gap_hinglish_minus_english": {
+          "scam_recall": 0.1667,
+          "dangerous_miss_rate": -0.1666,
+          "false_alarm_rate_legitimate": 0.0,
+          "unclear_rate_non_ambiguous": 0.0
+        },
+        "false_alarm_by_legit_category": {
+          "bank_txn_alert": {
+            "k": 0,
+            "n": 3,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.5615
+          },
+          "delivery_notification": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "otp": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "payment_confirmation": {
+            "k": 0,
+            "n": 1,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.7935
+          },
+          "personal": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "service_account": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "marketing": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          }
+        },
+        "scam_recall_by_category": {
+          "bank_kyc_impersonation": {
+            "k": 1,
+            "n": 4,
+            "rate": 0.25,
+            "lo": 0.0456,
+            "hi": 0.6994
+          },
+          "job_task_scam": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "lottery_prize": {
+            "k": 0,
+            "n": 1,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.7935
+          },
+          "other_scam": {
+            "k": 2,
+            "n": 2,
+            "rate": 1.0,
+            "lo": 0.3424,
+            "hi": 1.0
+          },
+          "phishing_credential": {
+            "k": 1,
+            "n": 2,
+            "rate": 0.5,
+            "lo": 0.0945,
+            "hi": 0.9055
+          },
+          "upi_collect_refund": {
+            "k": 1,
+            "n": 1,
+            "rate": 1.0,
+            "lo": 0.2065,
+            "hi": 1.0
+          }
+        },
+        "confusion": {
+          "overall": {
+            "ambiguous": {
+              "LIKELY_SCAM": 0,
+              "UNCLEAR": 0,
+              "NO_STRONG_SIGNALS": 2
+            },
+            "legitimate": {
+              "LIKELY_SCAM": 0,
+              "UNCLEAR": 0,
+              "NO_STRONG_SIGNALS": 12
+            },
+            "promotional": {
+              "LIKELY_SCAM": 0,
+              "UNCLEAR": 0,
+              "NO_STRONG_SIGNALS": 2
+            },
+            "scam": {
+              "LIKELY_SCAM": 5,
+              "UNCLEAR": 4,
+              "NO_STRONG_SIGNALS": 3
+            }
+          },
+          "by_language": {
+            "english": {
+              "ambiguous": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 1
+              },
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 6
+              },
+              "promotional": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 1
+              },
+              "scam": {
+                "LIKELY_SCAM": 2,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 2
+              }
+            },
+            "hinglish": {
+              "ambiguous": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 1
+              },
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 6
+              },
+              "promotional": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 1
+              },
+              "scam": {
+                "LIKELY_SCAM": 3,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 1
+              }
+            }
+          },
+          "by_category": {
+            "bank_txn_alert": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 3
+              }
+            },
+            "delivery_notification": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 2
+              }
+            },
+            "otp": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 2
+              }
+            },
+            "payment_confirmation": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 1
+              }
+            },
+            "personal": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 2
+              }
+            },
+            "service_account": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 2
+              }
+            },
+            "marketing": {
+              "promotional": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 2
+              }
+            },
+            "bank_kyc_impersonation": {
+              "scam": {
+                "LIKELY_SCAM": 1,
+                "UNCLEAR": 3,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "job_task_scam": {
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 2
+              }
+            },
+            "lottery_prize": {
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "other_scam": {
+              "scam": {
+                "LIKELY_SCAM": 2,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "phishing_credential": {
+              "scam": {
+                "LIKELY_SCAM": 1,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 1
+              }
+            },
+            "upi_collect_refund": {
+              "scam": {
+                "LIKELY_SCAM": 1,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            }
+          }
+        },
+        "bootstrap": {
+          "seed": 13,
+          "resamples": 2000,
+          "campaigns": 28,
+          "scam_recall": {
+            "lo": 0.1333,
+            "hi": 0.7
+          },
+          "dangerous_miss_rate": {
+            "lo": 0.0,
+            "hi": 0.5
+          },
+          "false_alarm_rate_legitimate": {
+            "lo": 0.0,
+            "hi": 0.0
+          },
+          "unclear_rate_non_ambiguous": {
+            "lo": 0.037,
+            "hi": 0.2963
+          }
+        }
+      },
+      "predictions": {
+        "sy-0001": "UNCLEAR",
+        "sy-0005": "NO_STRONG_SIGNALS",
+        "sy-0020": "UNCLEAR",
+        "sy-0021": "LIKELY_SCAM",
+        "sy-0022": "LIKELY_SCAM",
+        "sy-0026": "NO_STRONG_SIGNALS",
+        "sy-0027": "LIKELY_SCAM",
+        "sy-0028": "UNCLEAR",
+        "sy-0030": "LIKELY_SCAM",
+        "sy-0050": "UNCLEAR",
+        "sy-0051": "LIKELY_SCAM",
+        "sy-0052": "NO_STRONG_SIGNALS",
+        "sy-0053": "NO_STRONG_SIGNALS",
+        "sy-0054": "NO_STRONG_SIGNALS",
+        "sy-0065": "NO_STRONG_SIGNALS",
+        "sy-0070": "NO_STRONG_SIGNALS",
+        "sy-0072": "NO_STRONG_SIGNALS",
+        "sy-0076": "NO_STRONG_SIGNALS",
+        "sy-0080": "NO_STRONG_SIGNALS",
+        "sy-0081": "NO_STRONG_SIGNALS",
+        "sy-0084": "NO_STRONG_SIGNALS",
+        "sy-0086": "NO_STRONG_SIGNALS",
+        "sy-0093": "NO_STRONG_SIGNALS",
+        "sy-0096": "NO_STRONG_SIGNALS",
+        "sy-0104": "NO_STRONG_SIGNALS",
+        "sy-0105": "NO_STRONG_SIGNALS",
+        "sy-0112": "NO_STRONG_SIGNALS",
+        "sy-0114": "NO_STRONG_SIGNALS"
+      }
+    },
+    "B2-tfidf-lr": {
+      "description": "Char n-gram TF-IDF + logistic regression, trained on train split only",
+      "config": {
+        "vectorizer": "TfidfVectorizer(analyzer='char_wb', ngram_range=(2, 5), sublinear_tf=True)",
+        "classifier": "LogisticRegression(C=1.0, class_weight='balanced', max_iter=2000)",
+        "t_high": 0.7,
+        "t_low": 0.3,
+        "train_labels": "scam vs. legitimate+promotional; ambiguous excluded"
+      },
+      "metrics": {
+        "n": 28,
+        "n_by_label": {
+          "scam": 12,
+          "legitimate": 12,
+          "promotional": 2,
+          "ambiguous": 2
+        },
+        "overall": {
+          "scam_recall": {
+            "k": 0,
+            "n": 12,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.2425
+          },
+          "dangerous_miss_rate": {
+            "k": 0,
+            "n": 12,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.2425
+          },
+          "false_alarm_rate_legitimate": {
+            "k": 0,
+            "n": 12,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.2425
+          },
+          "unclear_rate_non_ambiguous": {
+            "k": 26,
+            "n": 26,
+            "rate": 1.0,
+            "lo": 0.8713,
+            "hi": 1.0
+          },
+          "false_alarm_rate_promotional": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "unclear_rate_by_label": {
+            "ambiguous": {
+              "k": 2,
+              "n": 2,
+              "rate": 1.0,
+              "lo": 0.3424,
+              "hi": 1.0
+            },
+            "legitimate": {
+              "k": 12,
+              "n": 12,
+              "rate": 1.0,
+              "lo": 0.7575,
+              "hi": 1.0
+            },
+            "promotional": {
+              "k": 2,
+              "n": 2,
+              "rate": 1.0,
+              "lo": 0.3424,
+              "hi": 1.0
+            },
+            "scam": {
+              "k": 12,
+              "n": 12,
+              "rate": 1.0,
+              "lo": 0.7575,
+              "hi": 1.0
+            }
+          }
+        },
+        "by_language": {
+          "english": {
+            "scam_recall": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "dangerous_miss_rate": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "false_alarm_rate_legitimate": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "unclear_rate_non_ambiguous": {
+              "k": 13,
+              "n": 13,
+              "rate": 1.0,
+              "lo": 0.7719,
+              "hi": 1.0
+            },
+            "false_alarm_rate_promotional": {
+              "k": 0,
+              "n": 1,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.7935
+            },
+            "unclear_rate_by_label": {
+              "ambiguous": {
+                "k": 1,
+                "n": 1,
+                "rate": 1.0,
+                "lo": 0.2065,
+                "hi": 1.0
+              },
+              "legitimate": {
+                "k": 6,
+                "n": 6,
+                "rate": 1.0,
+                "lo": 0.6097,
+                "hi": 1.0
+              },
+              "promotional": {
+                "k": 1,
+                "n": 1,
+                "rate": 1.0,
+                "lo": 0.2065,
+                "hi": 1.0
+              },
+              "scam": {
+                "k": 6,
+                "n": 6,
+                "rate": 1.0,
+                "lo": 0.6097,
+                "hi": 1.0
+              }
+            }
+          },
+          "hinglish": {
+            "scam_recall": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "dangerous_miss_rate": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "false_alarm_rate_legitimate": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "unclear_rate_non_ambiguous": {
+              "k": 13,
+              "n": 13,
+              "rate": 1.0,
+              "lo": 0.7719,
+              "hi": 1.0
+            },
+            "false_alarm_rate_promotional": {
+              "k": 0,
+              "n": 1,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.7935
+            },
+            "unclear_rate_by_label": {
+              "ambiguous": {
+                "k": 1,
+                "n": 1,
+                "rate": 1.0,
+                "lo": 0.2065,
+                "hi": 1.0
+              },
+              "legitimate": {
+                "k": 6,
+                "n": 6,
+                "rate": 1.0,
+                "lo": 0.6097,
+                "hi": 1.0
+              },
+              "promotional": {
+                "k": 1,
+                "n": 1,
+                "rate": 1.0,
+                "lo": 0.2065,
+                "hi": 1.0
+              },
+              "scam": {
+                "k": 6,
+                "n": 6,
+                "rate": 1.0,
+                "lo": 0.6097,
+                "hi": 1.0
+              }
+            }
+          }
+        },
+        "language_gap_hinglish_minus_english": {
+          "scam_recall": 0.0,
+          "dangerous_miss_rate": 0.0,
+          "false_alarm_rate_legitimate": 0.0,
+          "unclear_rate_non_ambiguous": 0.0
+        },
+        "false_alarm_by_legit_category": {
+          "bank_txn_alert": {
+            "k": 0,
+            "n": 3,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.5615
+          },
+          "delivery_notification": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "otp": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "payment_confirmation": {
+            "k": 0,
+            "n": 1,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.7935
+          },
+          "personal": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "service_account": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "marketing": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          }
+        },
+        "scam_recall_by_category": {
+          "bank_kyc_impersonation": {
+            "k": 0,
+            "n": 4,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.4899
+          },
+          "job_task_scam": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "lottery_prize": {
+            "k": 0,
+            "n": 1,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.7935
+          },
+          "other_scam": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "phishing_credential": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "upi_collect_refund": {
+            "k": 0,
+            "n": 1,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.7935
+          }
+        },
+        "confusion": {
+          "overall": {
+            "ambiguous": {
+              "LIKELY_SCAM": 0,
+              "UNCLEAR": 2,
+              "NO_STRONG_SIGNALS": 0
+            },
+            "legitimate": {
+              "LIKELY_SCAM": 0,
+              "UNCLEAR": 12,
+              "NO_STRONG_SIGNALS": 0
+            },
+            "promotional": {
+              "LIKELY_SCAM": 0,
+              "UNCLEAR": 2,
+              "NO_STRONG_SIGNALS": 0
+            },
+            "scam": {
+              "LIKELY_SCAM": 0,
+              "UNCLEAR": 12,
+              "NO_STRONG_SIGNALS": 0
+            }
+          },
+          "by_language": {
+            "english": {
+              "ambiguous": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 6,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "promotional": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 6,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "hinglish": {
+              "ambiguous": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 6,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "promotional": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 6,
+                "NO_STRONG_SIGNALS": 0
+              }
+            }
+          },
+          "by_category": {
+            "bank_txn_alert": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 3,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "delivery_notification": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "otp": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "payment_confirmation": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "personal": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "service_account": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "marketing": {
+              "promotional": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "bank_kyc_impersonation": {
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 4,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "job_task_scam": {
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "lottery_prize": {
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "other_scam": {
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "phishing_credential": {
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "upi_collect_refund": {
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              }
+            }
+          }
+        },
+        "bootstrap": {
+          "seed": 13,
+          "resamples": 2000,
+          "campaigns": 28,
+          "scam_recall": {
+            "lo": 0.0,
+            "hi": 0.0
+          },
+          "dangerous_miss_rate": {
+            "lo": 0.0,
+            "hi": 0.0
+          },
+          "false_alarm_rate_legitimate": {
+            "lo": 0.0,
+            "hi": 0.0
+          },
+          "unclear_rate_non_ambiguous": {
+            "lo": 1.0,
+            "hi": 1.0
+          }
+        }
+      },
+      "predictions": {
+        "sy-0001": "UNCLEAR",
+        "sy-0005": "UNCLEAR",
+        "sy-0020": "UNCLEAR",
+        "sy-0021": "UNCLEAR",
+        "sy-0022": "UNCLEAR",
+        "sy-0026": "UNCLEAR",
+        "sy-0027": "UNCLEAR",
+        "sy-0028": "UNCLEAR",
+        "sy-0030": "UNCLEAR",
+        "sy-0050": "UNCLEAR",
+        "sy-0051": "UNCLEAR",
+        "sy-0052": "UNCLEAR",
+        "sy-0053": "UNCLEAR",
+        "sy-0054": "UNCLEAR",
+        "sy-0065": "UNCLEAR",
+        "sy-0070": "UNCLEAR",
+        "sy-0072": "UNCLEAR",
+        "sy-0076": "UNCLEAR",
+        "sy-0080": "UNCLEAR",
+        "sy-0081": "UNCLEAR",
+        "sy-0084": "UNCLEAR",
+        "sy-0086": "UNCLEAR",
+        "sy-0093": "UNCLEAR",
+        "sy-0096": "UNCLEAR",
+        "sy-0104": "UNCLEAR",
+        "sy-0105": "UNCLEAR",
+        "sy-0112": "UNCLEAR",
+        "sy-0114": "UNCLEAR"
+      },
+      "ranking_auc": {
+        "auc": 0.9702,
+        "n_pos": 12,
+        "n_neg": 14
+      }
+    },
+    "B4-engine": {
+      "description": "Evidence-first engine in rule-only mode (no model configured: abstains unless a HIGH signal)",
+      "config": {},
+      "metrics": {
+        "n": 28,
+        "n_by_label": {
+          "scam": 12,
+          "legitimate": 12,
+          "promotional": 2,
+          "ambiguous": 2
+        },
+        "overall": {
+          "scam_recall": {
+            "k": 9,
+            "n": 12,
+            "rate": 0.75,
+            "lo": 0.4677,
+            "hi": 0.9111
+          },
+          "dangerous_miss_rate": {
+            "k": 0,
+            "n": 12,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.2425
+          },
+          "false_alarm_rate_legitimate": {
+            "k": 0,
+            "n": 12,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.2425
+          },
+          "unclear_rate_non_ambiguous": {
+            "k": 17,
+            "n": 26,
+            "rate": 0.6538,
+            "lo": 0.4622,
+            "hi": 0.8059
+          },
+          "false_alarm_rate_promotional": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "unclear_rate_by_label": {
+            "ambiguous": {
+              "k": 2,
+              "n": 2,
+              "rate": 1.0,
+              "lo": 0.3424,
+              "hi": 1.0
+            },
+            "legitimate": {
+              "k": 12,
+              "n": 12,
+              "rate": 1.0,
+              "lo": 0.7575,
+              "hi": 1.0
+            },
+            "promotional": {
+              "k": 2,
+              "n": 2,
+              "rate": 1.0,
+              "lo": 0.3424,
+              "hi": 1.0
+            },
+            "scam": {
+              "k": 3,
+              "n": 12,
+              "rate": 0.25,
+              "lo": 0.0889,
+              "hi": 0.5323
+            }
+          }
+        },
+        "by_language": {
+          "english": {
+            "scam_recall": {
+              "k": 4,
+              "n": 6,
+              "rate": 0.6667,
+              "lo": 0.3,
+              "hi": 0.9032
+            },
+            "dangerous_miss_rate": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "false_alarm_rate_legitimate": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "unclear_rate_non_ambiguous": {
+              "k": 9,
+              "n": 13,
+              "rate": 0.6923,
+              "lo": 0.4237,
+              "hi": 0.8732
+            },
+            "false_alarm_rate_promotional": {
+              "k": 0,
+              "n": 1,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.7935
+            },
+            "unclear_rate_by_label": {
+              "ambiguous": {
+                "k": 1,
+                "n": 1,
+                "rate": 1.0,
+                "lo": 0.2065,
+                "hi": 1.0
+              },
+              "legitimate": {
+                "k": 6,
+                "n": 6,
+                "rate": 1.0,
+                "lo": 0.6097,
+                "hi": 1.0
+              },
+              "promotional": {
+                "k": 1,
+                "n": 1,
+                "rate": 1.0,
+                "lo": 0.2065,
+                "hi": 1.0
+              },
+              "scam": {
+                "k": 2,
+                "n": 6,
+                "rate": 0.3333,
+                "lo": 0.0968,
+                "hi": 0.7
+              }
+            }
+          },
+          "hinglish": {
+            "scam_recall": {
+              "k": 5,
+              "n": 6,
+              "rate": 0.8333,
+              "lo": 0.4365,
+              "hi": 0.9699
+            },
+            "dangerous_miss_rate": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "false_alarm_rate_legitimate": {
+              "k": 0,
+              "n": 6,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.3903
+            },
+            "unclear_rate_non_ambiguous": {
+              "k": 8,
+              "n": 13,
+              "rate": 0.6154,
+              "lo": 0.3552,
+              "hi": 0.8229
+            },
+            "false_alarm_rate_promotional": {
+              "k": 0,
+              "n": 1,
+              "rate": 0.0,
+              "lo": 0.0,
+              "hi": 0.7935
+            },
+            "unclear_rate_by_label": {
+              "ambiguous": {
+                "k": 1,
+                "n": 1,
+                "rate": 1.0,
+                "lo": 0.2065,
+                "hi": 1.0
+              },
+              "legitimate": {
+                "k": 6,
+                "n": 6,
+                "rate": 1.0,
+                "lo": 0.6097,
+                "hi": 1.0
+              },
+              "promotional": {
+                "k": 1,
+                "n": 1,
+                "rate": 1.0,
+                "lo": 0.2065,
+                "hi": 1.0
+              },
+              "scam": {
+                "k": 1,
+                "n": 6,
+                "rate": 0.1667,
+                "lo": 0.0301,
+                "hi": 0.5635
+              }
+            }
+          }
+        },
+        "language_gap_hinglish_minus_english": {
+          "scam_recall": 0.1666,
+          "dangerous_miss_rate": 0.0,
+          "false_alarm_rate_legitimate": 0.0,
+          "unclear_rate_non_ambiguous": -0.0769
+        },
+        "false_alarm_by_legit_category": {
+          "bank_txn_alert": {
+            "k": 0,
+            "n": 3,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.5615
+          },
+          "delivery_notification": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "otp": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "payment_confirmation": {
+            "k": 0,
+            "n": 1,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.7935
+          },
+          "personal": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "service_account": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "marketing": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          }
+        },
+        "scam_recall_by_category": {
+          "bank_kyc_impersonation": {
+            "k": 4,
+            "n": 4,
+            "rate": 1.0,
+            "lo": 0.5101,
+            "hi": 1.0
+          },
+          "job_task_scam": {
+            "k": 0,
+            "n": 2,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.6576
+          },
+          "lottery_prize": {
+            "k": 0,
+            "n": 1,
+            "rate": 0.0,
+            "lo": 0.0,
+            "hi": 0.7935
+          },
+          "other_scam": {
+            "k": 2,
+            "n": 2,
+            "rate": 1.0,
+            "lo": 0.3424,
+            "hi": 1.0
+          },
+          "phishing_credential": {
+            "k": 2,
+            "n": 2,
+            "rate": 1.0,
+            "lo": 0.3424,
+            "hi": 1.0
+          },
+          "upi_collect_refund": {
+            "k": 1,
+            "n": 1,
+            "rate": 1.0,
+            "lo": 0.2065,
+            "hi": 1.0
+          }
+        },
+        "confusion": {
+          "overall": {
+            "ambiguous": {
+              "LIKELY_SCAM": 0,
+              "UNCLEAR": 2,
+              "NO_STRONG_SIGNALS": 0
+            },
+            "legitimate": {
+              "LIKELY_SCAM": 0,
+              "UNCLEAR": 12,
+              "NO_STRONG_SIGNALS": 0
+            },
+            "promotional": {
+              "LIKELY_SCAM": 0,
+              "UNCLEAR": 2,
+              "NO_STRONG_SIGNALS": 0
+            },
+            "scam": {
+              "LIKELY_SCAM": 9,
+              "UNCLEAR": 3,
+              "NO_STRONG_SIGNALS": 0
+            }
+          },
+          "by_language": {
+            "english": {
+              "ambiguous": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 6,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "promotional": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "scam": {
+                "LIKELY_SCAM": 4,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "hinglish": {
+              "ambiguous": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 6,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "promotional": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              },
+              "scam": {
+                "LIKELY_SCAM": 5,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              }
+            }
+          },
+          "by_category": {
+            "bank_txn_alert": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 3,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "delivery_notification": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "otp": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "payment_confirmation": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "personal": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "service_account": {
+              "legitimate": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "marketing": {
+              "promotional": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "bank_kyc_impersonation": {
+              "scam": {
+                "LIKELY_SCAM": 4,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "job_task_scam": {
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 2,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "lottery_prize": {
+              "scam": {
+                "LIKELY_SCAM": 0,
+                "UNCLEAR": 1,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "other_scam": {
+              "scam": {
+                "LIKELY_SCAM": 2,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "phishing_credential": {
+              "scam": {
+                "LIKELY_SCAM": 2,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            },
+            "upi_collect_refund": {
+              "scam": {
+                "LIKELY_SCAM": 1,
+                "UNCLEAR": 0,
+                "NO_STRONG_SIGNALS": 0
+              }
+            }
+          }
+        },
+        "bootstrap": {
+          "seed": 13,
+          "resamples": 2000,
+          "campaigns": 28,
+          "scam_recall": {
+            "lo": 0.4545,
+            "hi": 1.0
+          },
+          "dangerous_miss_rate": {
+            "lo": 0.0,
+            "hi": 0.0
+          },
+          "false_alarm_rate_legitimate": {
+            "lo": 0.0,
+            "hi": 0.0
+          },
+          "unclear_rate_non_ambiguous": {
+            "lo": 0.4615,
+            "hi": 0.8333
+          }
+        }
+      },
+      "predictions": {
+        "sy-0001": "LIKELY_SCAM",
+        "sy-0005": "LIKELY_SCAM",
+        "sy-0020": "UNCLEAR",
+        "sy-0021": "LIKELY_SCAM",
+        "sy-0022": "LIKELY_SCAM",
+        "sy-0026": "UNCLEAR",
+        "sy-0027": "LIKELY_SCAM",
+        "sy-0028": "LIKELY_SCAM",
+        "sy-0030": "LIKELY_SCAM",
+        "sy-0050": "LIKELY_SCAM",
+        "sy-0051": "LIKELY_SCAM",
+        "sy-0052": "UNCLEAR",
+        "sy-0053": "UNCLEAR",
+        "sy-0054": "UNCLEAR",
+        "sy-0065": "UNCLEAR",
+        "sy-0070": "UNCLEAR",
+        "sy-0072": "UNCLEAR",
+        "sy-0076": "UNCLEAR",
+        "sy-0080": "UNCLEAR",
+        "sy-0081": "UNCLEAR",
+        "sy-0084": "UNCLEAR",
+        "sy-0086": "UNCLEAR",
+        "sy-0093": "UNCLEAR",
+        "sy-0096": "UNCLEAR",
+        "sy-0104": "UNCLEAR",
+        "sy-0105": "UNCLEAR",
+        "sy-0112": "UNCLEAR",
+        "sy-0114": "UNCLEAR"
+      }
+    }
+  }
+}
