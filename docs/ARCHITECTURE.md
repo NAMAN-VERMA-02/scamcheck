@@ -93,9 +93,18 @@ Consequences, each covered by a test:
 
 `eval/mutate.py` holds named, versioned transforms. Each variant is generated from
 `random.Random(f"{seed}:{parent_id}:{transform}")`, so any single variant can be rebuilt from its record.
-Meaning-preserving transforms inherit the parent label and measure verdict consistency; meaning-changing ones
-(prompt-injection suffix, link removal, code-switch rewrites) are marked `needs_human_review` and excluded from label-based
-metrics until a reviewer confirms them. Randomness exists only here, never in `analyse()`.
+Transforms that are meaning-preserving by design measure verdict consistency, but inherit the parent label only
+once human review validates their family (`eval/review.py`, [ROBUSTNESS_REVIEW.md](ROBUSTNESS_REVIEW.md)).
+Meaning-changing ones (prompt-injection suffix, link removal, code-switch rewrites) are marked `needs_human_review`
+and excluded from label-based metrics until a reviewer labels each variant. Randomness exists only here, never in
+`analyse()`.
+
+Later additions, all bounded by the evaluation protocol ([EVALUATION_PROTOCOL.md](EVALUATION_PROTOCOL.md)):
+
+- temporal hold-out in the existing group-aware splitter;
+- paired campaign-bootstrap comparisons;
+- small-subgroup flags;
+- a synthetic-only LLM smoke test (`eval/llm_smoke.py`).
 
 ## 6. Dependencies and why each exists
 
