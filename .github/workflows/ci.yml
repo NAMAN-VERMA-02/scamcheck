@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    env:
+      HYPOTHESIS_PROFILE: ci   # derandomized: a failing property reproduces on every run
+      PYTHONIOENCODING: utf-8
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          python-version: "3.12"
+      - name: Install (locked)
+        run: uv sync --locked --all-extras
+      - name: Lint
+        run: uv run ruff check .
+      - name: Schema is up to date
+        run: uv run scamcheck schema --check
+      - name: Tests
+        run: uv run pytest -q
+      - name: Smoke - dataset pipeline on the synthetic benchmark
+        run: |
+          D=benchmarks/synthetic
+          uv run scamcheck validate $D/items.jsonl --strict
+          uv run scamcheck check-leakage $D/items.grouped.jsonl --manifest $D/manifest.json
+      - name: Smoke - benchmark and robustness reproduce the committed reports
+        run: |
+          D=benchmarks/synthetic
+          uv run scamcheck benchmark $D/items.grouped.jsonl --manifest $D/manifest.json --out-dir /tmp/bench
+          uv run scamcheck robustness $D/items.grouped.jsonl --manifest $D/manifest.json --out-dir /tmp/rob
+          uv run scamcheck robustness $D/items.grouped.jsonl --manifest $D/manifest.json --out-dir /tmp/rob \
+            --replay reports/robustness/synthetic/variants.jsonl
+          cmp /tmp/rob/variants.jsonl reports/robustness/synthetic/variants.jsonl
+          cmp /tmp/rob/robustness.json reports/robustness/synthetic/robustness.json
+      - name: Smoke - CLI analyse
+        run: uv run scamcheck analyse "Please share the OTP you received" | grep -q LIKELY_SCAM
+
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm run build
