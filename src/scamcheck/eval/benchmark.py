@@ -16,6 +16,7 @@ from ..data.schema import Item
 from ..engine import VERSIONS
 from ..engine.llm import PROMPT_ID, ChatAdapter
 from .baselines import build_systems
+from .llm_smoke import _config as model_config
 from .metrics import MIN_INTERPRETABLE_N, Row, auc, paired_difference, summarise
 
 SYNTHETIC_WARNING = ("SYNTHETIC FIXTURE RESULTS. Every item was hand-written by the maintainer who also wrote the "
@@ -64,7 +65,8 @@ def run_benchmark(items: list[Item], manifest: dict, *, split: str, seed: int, d
                          "params": manifest["params"], "counts": manifest["counts"]},
             "split": split, "seed": seed, "n_train": len(train), "n_evaluated": len(evaluated),
             "versions": {**VERSIONS, "python": platform.python_version(), "scikit-learn": version("scikit-learn")},
-            "model": {"model_id": model.model_id, "prompt_id": PROMPT_ID} if model else
+            "model": {"model_id": model.model_id, "prompt_id": PROMPT_ID, "config": model_config(model),
+                      "calls": getattr(model, "calls", None)} if model else
                      {"model_id": None, "note": "no model configured; B3 not run, B4 in rule-only mode"},
         },
         "items": [{"id": it.id, "label": it.gold.label, "category": it.gold.category, "language": it.language,

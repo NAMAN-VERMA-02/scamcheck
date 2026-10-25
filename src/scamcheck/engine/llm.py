@@ -37,6 +37,7 @@ Rules: every quote must be copied character for character from the message. Use 
 quote. Use "unsure" when the text alone cannot decide. Placeholders like <PHONE> or <OTP> replace redacted values."""
 PROMPT_ID = f"{PROMPT_VERSION}:{hashlib.sha256(SYSTEM_PROMPT.encode()).hexdigest()[:12]}"
 MAX_EVIDENCE = 5
+MAX_OUTPUT_TOKENS = 400
 
 
 class ChatAdapter(Protocol):
@@ -68,7 +69,9 @@ class OpenAICompatibleAdapter:
         self._opener = urllib.request.build_opener(_NoRedirect)
 
     def complete(self, system: str, user: str) -> str:
-        body = json.dumps({"model": self.model, "temperature": 0,
+        # Fixed before any model output was seen: deterministic decoding, JSON mode, bounded output length.
+        body = json.dumps({"model": self.model, "temperature": 0, "seed": 0, "max_tokens": MAX_OUTPUT_TOKENS,
+                           "response_format": {"type": "json_object"},
                            "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]})
         headers = {"Content-Type": "application/json"}
         if self.api_key:
@@ -77,6 +80,31 @@ class OpenAICompatibleAdapter:
         with self._opener.open(req, timeout=self.timeout) as resp:
             payload = json.loads(resp.read().decode("utf-8"))
         return payload["choices"][0]["message"]["content"]
+
+
+class CachedAdapter:
+    """One model call per distinct prompt, so every system evaluated on the same text sees the same answer (or
+    the same failure). Used by offline evaluation only; the API never caches message content."""
+
+    def __init__(self, inner: ChatAdapter):
+        self.inner, self.model_id, self.calls = inner, inner.model_id, 0
+        self._cache: dict[tuple[str, str], tuple[bool, object]] = {}
+
+    def __getattr__(self, name):  # url, model, timeout, api_key for run records
+        return getattr(self.inner, name)
+
+    def complete(self, system: str, user: str) -> str:
+        key = (system, user)
+        if key not in self._cache:
+            self.calls += 1
+            try:
+                self._cache[key] = (True, self.inner.complete(system, user))
+            except Exception as e:  # noqa: BLE001 - replayed identically to every caller
+                self._cache[key] = (False, e)
+        ok, value = self._cache[key]
+        if not ok:
+            raise value
+        return value
 
 
 def from_env() -> Optional[OpenAICompatibleAdapter]:

@@ -10,3 +10,17 @@ Every evaluation on a `test` split is logged here (PLAN.md §5 step 9). No tunin
 | 2026-10-25 | same | test (28) | same | rules-2026.10.1 | Regenerated under evaluation protocol v1, with no change to any rule, threshold, prompt or prediction (verified field by field). Added paired campaign-bootstrap comparisons (B4 − B1 dangerous misses −25.0 pts, [−50.0, 0.0], inconclusive) and n < 30 markers. Robustness report: label inheritance removed until human review validates a family (0 reviews exist), so label-based rows are n/a and the earlier figures are shown as provisional parent-based rows. |
 
 No real-data test run has happened. The first one requires the pilot (docs/PILOT_READINESS.md).
+
+### Deviation 1 — external-author check selection (2026-10-25, before any verdict was computed)
+
+The pre-registered selection rule (Devanagari, or ≥ 2 distinct `HINGLISH_MARKERS`) found 14 scam / 18 legitimate
+rows; the dataset card states 35 / 28. Rows carry no language field and are shuffled through the file (checked by
+row index and label only), so position cannot be used. A deliberately broad candidate filter (Devanagari, or any
+marker including ka/ki/ke/ko/se/ho/ye/na/jo/bhi) finds only 54 rows, fewer than the card's 63.
+Revised procedure, decided now: each of the 54 candidates is judged Hinglish or not by reading its text **without
+its label**; the confirmed row list is committed before planning; labels come from the dataset unchanged. If the
+confirmed set does not match the card, the mismatch is reported and the check runs on the confirmed set only as a
+recorded deviation — no rule is tuned towards the card's numbers. No system verdict on these rows has been seen.
+| 2026-10-25 | `bolewara/hinglish-scam-text-dataset` @ 743799229923 (SYNTHETIC, external author; Hinglish part 16 scam / 22 legitimate) | all selected rows | B0-unclear, B0-scam, B1-rules, B2-tfidf-lr, B4-engine, B3-llm, B4-engine+llm | frozen 87b0e04c16c6 | **PLANNED** external-author check; model openai-compatible:qwen2.5:3b; label-blind row selection per Deviation 1, not the card counts; plan `reports/external/bolewara/plan.json`. Must be committed before `external-run`; runs once. |
+| 2026-10-25 | `bolewara/hinglish-scam-text-dataset` @ 743799229923 (SYNTHETIC, external author) | all selected rows (38) | B0-unclear, B0-scam, B1-rules, B2-tfidf-lr, B4-engine, B3-llm, B4-engine+llm | frozen 87b0e04c16c6 | **RUN** once as planned. B4-engine recall 4/16, false alarms 0/22; B3-llm recall 16/16, false alarms 0/22; B4-engine+llm recall 16/16, false alarms 0/22. Results `reports/external/bolewara/results.json`. |
+| 2026-10-25 | `benchmarks/synthetic` (SYNTHETIC, 114 items) | test (28) | B0, B1, B2, B3-llm, B4 with model | rules-2026.10.1; model `qwen2.5:3b` (digest 357c53fb), prompt zero-shot-v1:b413ed4f7af7 | First model-backed run (`reports/benchmark/synthetic-qwen2.5-3b/`). B3 and B4+model: recall 12/12, false alarms 4/12 legitimate (2 OTP, 1 payment confirmation, 1 bank alert) and 2/2 promotional; B4 with model inherits every model false alarm because a grounded "scam" answer escalates the verdict. Versus B1: false alarms +33.3 pts [+8.3, +62.5] (exploratory). Not acted on: changing the combiner after this result would be tuning on seen data; recorded as a hypothesis for engine v2, to be tested on a fresh set. |

@@ -293,10 +293,11 @@ def _eval_inputs(a):
         raise UsageError(f"leakage check failed ({len(problems)} problem(s)); run `scamcheck check-leakage`")
     model = None
     if a.with_llm:
-        from .engine.llm import from_env
+        from .engine.llm import CachedAdapter, from_env
         model = from_env()
         if model is None:
             raise UsageError("--with-llm needs SCAMCHECK_LLM_BASE_URL and SCAMCHECK_LLM_MODEL to be set")
+        model = CachedAdapter(model)  # B3 and B4 see the same answer per message
     return res.items, manifest, model
 
 
@@ -397,6 +398,31 @@ def cmd_review_import(a) -> int:
         for r in new:
             f.write(json.dumps(r, ensure_ascii=False) + "\n")
     print(f"appended {len(new)} review decision(s) by {a.reviewer} → {a.out}")
+    return 0
+
+
+def cmd_external(a) -> int:
+    from .engine.llm import from_env
+    from .eval.external import ExternalCheckError, run_check, write_plan
+
+    try:
+        if a.cmd == "external-plan":
+            model = from_env() if a.with_llm else None
+            if a.with_llm and model is None:
+                raise UsageError("--with-llm needs SCAMCHECK_LLM_BASE_URL and SCAMCHECK_LLM_MODEL to be set")
+            plan = write_plan(Path(a.raw), Path("."), Path(a.register), Path(a.plan), Path(a.log), date.today(),
+                              model, Path(a.selection) if a.selection else None)
+            print(f"plan → {a.plan}: {plan['selection']['counts']} in {plan['selection']['campaigns']} campaigns, "
+                  f"frozen {plan['frozen']['sha256'][:12]}"
+                  + (f", model {plan['model']['model_id']}" if plan["model"] else "")
+                  + ". Commit the plan, then run `scamcheck external-run` once.")
+        else:
+            planned = Path(a.plan).exists() and json.loads(Path(a.plan).read_text(encoding="utf-8")).get("model")
+            res = run_check(Path(a.raw), Path("."), Path(a.register), Path(a.plan), Path(a.out_dir), Path(a.log),
+                            date.today(), from_env() if planned else None)
+            print(f"{res['meta']['data_label']}\nresults → {Path(a.out_dir) / 'results.md'}")
+    except ExternalCheckError as e:
+        raise UsageError(str(e))
     return 0
 
 
@@ -557,6 +583,23 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--reviewer", required=True)
     s.add_argument("--out", required=True, help="review decisions JSONL (appended)")
     s.set_defaults(fn=cmd_review_import)
+
+    ext = "data/raw/external/bolewara-hinglish-scam-text-dataset.json"
+    for name, helptext in (("external-plan", "freeze and log the one-shot external-author check (docs/EXTERNAL_CHECK.md)"),
+                           ("external-run", "run the committed external-author check once")):
+        s = sub.add_parser(name, help=helptext)
+        s.add_argument("--raw", default=ext, help="downloaded data.json at the pinned revision (kept out of git)")
+        s.add_argument("--register", default="data/source_register.csv")
+        s.add_argument("--plan", default="reports/external/bolewara/plan.json")
+        s.add_argument("--log", default="reports/test_runs.md")
+        if name == "external-run":
+            s.add_argument("--out-dir", default="reports/external/bolewara")
+        else:
+            s.add_argument("--with-llm", action="store_true",
+                           help="pin the configured SCAMCHECK_LLM_* model in the plan (adds B3 and B4 with model)")
+            s.add_argument("--selection", help="committed, label-blind row selection used instead of the marker rule "
+                                               "(a recorded deviation; see docs/EXTERNAL_CHECK.md)")
+        s.set_defaults(fn=cmd_external)
 
     s = sub.add_parser("llm-smoke", help="B3 smoke test on the built-in SYNTHETIC examples only (status, latency, "
                                          "errors; no accuracy)")

@@ -1,0 +1,136 @@
+{
+  "check": "external-author synthetic check (not real-world evidence, not a protocol test run)",
+  "planned_on": "2026-10-25",
+  "dataset": {
+    "id": "bolewara/hinglish-scam-text-dataset",
+    "revision": "743799229923fc80fd7e9f2c764b5e9bd4ab3c9a",
+    "url": "https://huggingface.co/datasets/bolewara/hinglish-scam-text-dataset/resolve/743799229923fc80fd7e9f2c764b5e9bd4ab3c9a/data.json",
+    "file_sha256": "4c2ea6d6c9303f6b7e27740cb3bbebde57ec3cc10ec7b7f9e565e99b5d483f16",
+    "rows_in_file": 3787,
+    "licence": "CC-BY-4.0",
+    "attribution": "Anuj Bolewar (dataset card)"
+  },
+  "authorisation": {
+    "licence_verified_by": "Naman Verma",
+    "status": "PERMITTED-EXTERNAL-EVAL: hand-written Hinglish part only; evaluation only at revision 743799229923fc80fd7e9f2c764b5e9bd4ab3c9a; no text redistributed; not for test split or training. Still BLOCKED for real-data use (synthetic)",
+    "verified_on": "2026-10-25"
+  },
+  "selection": {
+    "rule": "Candidates = rows containing Devanagari or any HINGLISH_MARKERS word or one of ka/ki/ke/ko/se/ho/ye/na/jo/bhi (54 rows). Each candidate's language was judged by reading its text WITHOUT its label; Hinglish = romanised Hindi or Hindi-English code-mixing. Labels are taken unchanged from the dataset. No system verdict had been computed on any row.",
+    "deviation": {
+      "file": "reports/external/bolewara/selection.json",
+      "file_sha256": "7018e276a6e209782cbc72dfeb2ef3a92a65467bcf9b0cebbba1fcdd932756d6",
+      "reason": "reports/test_runs.md, Deviation 1: the pre-registered marker rule found 14 scam / 18 legitimate rows against the card's 35 / 28; rows are shuffled and carry no language field.",
+      "reviewed_by": "Claude (evaluation assistant), label-blind; the repository owner wrote the rule pack and did not select rows",
+      "card_counts": {
+        "scam": 35,
+        "legitimate": 28
+      }
+    },
+    "counts": {
+      "scam": 16,
+      "legitimate": 22
+    },
+    "rows": [
+      55,
+      116,
+      589,
+      612,
+      666,
+      683,
+      894,
+      943,
+      957,
+      1054,
+      1057,
+      1116,
+      1150,
+      1304,
+      1449,
+      1573,
+      1721,
+      1757,
+      1863,
+      1866,
+      1972,
+      2007,
+      2080,
+      2114,
+      2361,
+      2424,
+      2518,
+      2875,
+      2899,
+      2970,
+      2973,
+      3027,
+      3093,
+      3292,
+      3364,
+      3467,
+      3682,
+      3704
+    ],
+    "sha256": "ee928e773829de44215812bb845daedde5c8b1d0ff50b06f5782ebbae8b28eeb",
+    "campaigns": 38,
+    "label_mapping": {
+      "1": "scam",
+      "0": "legitimate"
+    },
+    "identifier_shapes_seen": {
+      "UPI id": 1
+    }
+  },
+  "frozen": {
+    "files": [
+      "src/scamcheck/engine",
+      "src/scamcheck/eval/baselines.py",
+      "src/scamcheck/eval/metrics.py",
+      "src/scamcheck/eval/external.py",
+      "src/scamcheck/eval/llm_smoke.py",
+      "src/scamcheck/data/normalise.py",
+      "benchmarks/synthetic/items.grouped.jsonl",
+      "benchmarks/synthetic/manifest.json"
+    ],
+    "sha256": "87b0e04c16c62609a7756aaeff0f102cb1ae7c0d4fcadabbfe49f1ed523f5a20",
+    "git_commit": "1f0e2993930a3afa8883805bb0db727f614b1b1d"
+  },
+  "model": {
+    "model_id": "openai-compatible:qwen2.5:3b",
+    "prompt_id": "zero-shot-v1:b413ed4f7af7",
+    "config": {
+      "endpoint": "http://127.0.0.1:11434/v1/chat/completions",
+      "endpoint_is_local": true,
+      "model": "qwen2.5:3b",
+      "timeout_s": 180.0,
+      "temperature": 0,
+      "api_key_set": false
+    },
+    "digest": "357c53fb659c5076de1d65ccb0b397446227b71a42be9d1603d46168015c9e4b"
+  },
+  "systems": [
+    "B0-unclear",
+    "B0-scam",
+    "B1-rules",
+    "B2-tfidf-lr",
+    "B4-engine",
+    "B3-llm",
+    "B4-engine+llm"
+  ],
+  "b2_training": "train split of benchmarks/synthetic (frozen above); never the external rows",
+  "seed": 13,
+  "primary": [
+    "scam_recall",
+    "dangerous_miss_rate",
+    "false_alarm_rate_legitimate"
+  ],
+  "pre_stated_reading": [
+    "Synthetic and small: report as an external-author check only, never as real-world accuracy.",
+    "Scam recall (n=16) is counts only (n < 30); legitimate rates (n=22) are counts only (n < 30).",
+    "B4-engine runs in rule-only mode, so it cannot return NO_STRONG_SIGNALS; its legitimate items can only be LIKELY_SCAM (false alarm) or UNCLEAR.",
+    "A B4-engine recall clearly below its own-author synthetic recall (9/12) would indicate the rules are fitted to their author's phrasing; 'clearly' means the two Wilson intervals do not overlap.",
+    "No rule, threshold, prompt or code is changed in response to the result; findings feed the next rule-pack version, which needs a different evaluation set.",
+    "Primary comparison (protocol §6): B4-engine+llm vs B3-llm on dangerous misses and false alarms, paired campaign bootstrap at 97.5%; a difference is claimed only if its interval excludes 0.",
+    "The model is a small local model chosen for privacy and hardware, not for accuracy; B3's result describes this model and prompt only, not LLMs in general."
+  ]
+}
