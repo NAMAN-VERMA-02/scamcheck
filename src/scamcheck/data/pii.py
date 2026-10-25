@@ -42,7 +42,8 @@ _TEXT_PATTERNS = {
     "email address": re.compile(r"(?i)\b[\w.+-]+@[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}\b"),
     "email address (obfuscated)": re.compile(
         r"(?i)\b[\w.+-]+\s*[\[({]\s*at\s*[\])}]\s*[\w-]+(?:\s*[\[({]\s*dot\s*[\])}]\s*[\w-]+)+"),
-    "UPI id": re.compile(r"(?i)(?<![\w.])[\w.-]{2,}@[a-z]{2,}(?![\w.@-])"),
+    # A sentence-ending period ("pay name@okaxis.") still ends the handle; "name@okaxis.com" is an email.
+    "UPI id": re.compile(r"(?i)(?<![\w.])[\w.-]{2,}@[a-z]{2,}(?![\w@-]|\.\w)"),
     "PAN": re.compile(r"(?i)\b[a-z]{5}\d{4}[a-z]\b"),  # any 4th letter: a safety net should over-flag
     "IFSC": re.compile(r"(?i)\b[a-z]{4}0[a-z0-9]{6}\b"),
     "passport number": re.compile(r"(?i)\b[a-pr-wy][1-9]\d\s?\d{4}[1-9]\b"),

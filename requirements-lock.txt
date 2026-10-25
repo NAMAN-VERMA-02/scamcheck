@@ -1,13 +1,39 @@
-# Exact versions the test suite passed with (Python 3.12.10, Windows 11), 2026-10-25.
-# Optional: pip install -c requirements-lock.txt -e ".[dev]" reproduces this environment.
+# Exact versions the test suite passed with (Python 3.12.10, Windows 11), 2026-10-25. Generated from uv.lock:
+#   uv export --all-extras --no-hashes --no-emit-project --no-header
+# Optional: pip install -c requirements-lock.txt -e ".[dev]" reproduces this environment without uv.
+annotated-doc==0.0.5
 annotated-types==0.8.0
-colorama==0.4.6
+anyio==4.15.1
+click==8.5.0
+cloudpickle==3.1.2
+colorama==0.4.6 ; sys_platform == 'win32'
+fastapi==0.162.0
+h11==0.16.0
+httpcore2==2.16.0 ; sys_platform != 'emscripten'
+httpx2==2.16.0
+httpx2-jsfetch==1.0 ; python_full_version >= '3.12' and sys_platform == 'emscripten'
+hypothesis==6.170.9
+idna==3.20
 iniconfig==2.3.1
+joblib==1.6.0
+narwhals==2.27.1
+numpy==2.4.6 ; python_full_version < '3.12'
+numpy==2.5.4 ; python_full_version >= '3.12'
+opentelemetry-api==1.45.1
 packaging==26.3
 pluggy==1.7.0
 pydantic==2.14.1
-pydantic_core==2.50.1
-Pygments==2.21.0
+pydantic-core==2.50.1
+pygments==2.21.0
 pytest==9.1.1
+ruff==0.17.2
+scikit-learn==1.9.1
+scipy==1.17.1 ; python_full_version < '3.12'
+scipy==1.18.1 ; python_full_version >= '3.12'
+sortedcontainers==2.4.0
+starlette==1.10.0
+threadpoolctl==3.7.0
+truststore==0.10.5 ; sys_platform != 'emscripten'
+typing-extensions==4.16.0
 typing-inspection==0.4.4
-typing_extensions==4.16.0
+uvicorn==0.54.0

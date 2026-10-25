@@ -9,7 +9,6 @@ from scamcheck.data.io import load_items, write_items
 from scamcheck.data.pilot import (SHEET_COLUMNS, CsvEncodingError, escape_cell, export_sheet, import_sheet,
                                   read_csv, unescape_cell, write_csv)
 
-from conftest import VALID
 
 TRICKY = ['=HYPERLINK("hxxp://evil[.]in","Click")', "+91 call now", "-50% off today", "@user hello",
           "\tindented", "\rcarriage", "'=already quoted", "'just a quote", "normal text", "", "a=b", None]

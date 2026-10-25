@@ -36,7 +36,7 @@ def intake_from_rows(rows: list[dict]) -> tuple[list[Item], dict[str, str], list
     """
     items, basis, errors, seen = [], {}, [], set()
     for n, row in enumerate(rows, start=2):
-        get = lambda k: (row.get(k) or "").strip()  # noqa: E731
+        get = lambda k: (row.get(k) or "").strip()  # noqa: E731, B023 - used within this iteration only
         urls, domains = get("urls").split(), get("registered_domains").split()
         if len(urls) != len(domains):
             errors.append(f"row {n}: {len(urls)} url(s) but {len(domains)} registered_domain(s); pair them by position")

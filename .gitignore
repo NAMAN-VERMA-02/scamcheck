@@ -28,3 +28,6 @@ dist/
 Thumbs.db
 .vscode/
 .idea/
+
+# Hypothesis example database (local replay of failing examples)
+.hypothesis/

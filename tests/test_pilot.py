@@ -6,7 +6,7 @@ import pytest
 from scamcheck.cli import main
 from scamcheck.data.io import load_items, write_items
 from scamcheck.data.pilot import (apply_adjudication, export_sheet, import_sheet, pseudo_id, read_csv, resolve,
-                                  write_csv, ADJ_COLUMNS, SHEET_COLUMNS)
+                                  write_csv, SHEET_COLUMNS)
 
 
 @pytest.fixture
