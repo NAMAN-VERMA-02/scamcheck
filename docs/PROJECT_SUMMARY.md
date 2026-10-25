@@ -21,13 +21,24 @@ uv, GitHub Actions.
 
 ## What the evidence does and does not show
 
-All results come from a 114-item synthetic set written by the same person who wrote the rules. They show that the
-measurement and robustness pipeline works. They do not show real-world accuracy. No real messages have been
-collected; the consent form awaits legal review.
+- **Data:** all evidence is synthetic.
+  - 114 messages were written by the rule author.
+  - One pre-registered, run-once check used 38 Hinglish messages written by another author
+    (`bolewara/hinglish-scam-text-dataset`). Its row selection deviated from the plan, and the deviation is
+    recorded.
+  - No real messages have been collected; the consent form awaits legal review.
+- **Findings, as counts at small n:**
+  - The rule engine's scam recall fell from 9/12 on its author's messages to 4/16 on the other author's. The drop is
+    large, but the intervals overlap slightly, so by the pre-registered criterion it is not yet conclusive.
+  - A small local LLM (qwen2.5:3b), run as B3 and inside the engine, caught 12/12 and 16/16 scams. It also flagged
+    4/12 legitimate OTP, payment and bank messages, and the engine inherited those false alarms.
+  - Reading rule silence as reassurance missed 10/16 external scams dangerously.
+  - None of this is real-world accuracy.
 
 ## Resume bullet (accurate to current evidence)
 
-> Built ScamCheck Research Workbench, an evidence-first English/Hinglish scam-analysis engine (FastAPI, Next.js) with
-> a reproducible benchmark lab (five baselines, Wilson and campaign-bootstrap intervals) and a seeded mutation lab
-> (14 transforms, hash-verified replay); 423 tests, including Hypothesis property tests that caught a verdict-logic
-> bug. Evaluated so far only on synthetic fixtures; real-data evaluation is pending consent review.
+> Built ScamCheck, an evidence-first English/Hinglish scam-analysis engine (FastAPI, Next.js) with a reproducible
+> benchmark lab (five baselines including a local LLM, paired campaign-bootstrap comparisons) and a seeded mutation
+> lab. In a pre-registered check on another author's Hinglish messages, rule-based recall fell from 9/12 to 4/16. A
+> 3B local LLM caught every scam in both synthetic sets but falsely flagged a third of legitimate OTP and bank
+> messages; that trade-off now drives the next design. 450+ tests; real-data evaluation is pending consent review.

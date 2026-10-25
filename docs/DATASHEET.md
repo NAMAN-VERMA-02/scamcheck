@@ -7,6 +7,7 @@ never be confused:
 |---|---|---|
 | **ScamCheck synthetic benchmark v1** | Exists. 114 hand-written synthetic messages | `benchmarks/synthetic/` |
 | **ScamCheck real dataset** (planned) | **Does not exist.** No message has been collected | would live in `data/annotated/` |
+| **External-author check set** (third-party, not ours) | 38 Hinglish rows (16 scam, 22 benign) selected from `bolewara/hinglish-scam-text-dataset` @ `7437992`, CC BY 4.0, by Anuj Bolewar. Used once for evaluation only; **no text is stored or redistributed** here, only row indices. The card's 35 + 28 rows are not all present in the file (Deviation 1) | `reports/external/bolewara/` (indices, plan, results); data in gitignored `data/raw/external/` |
 
 The unit-test fixtures (`tests/fixtures/`, 20 valid and 14 invalid synthetic lines) exist only to test the
 pipeline and are not a dataset.

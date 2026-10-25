@@ -8,9 +8,24 @@ false alarms per legitimate category, dangerous misses, abstention, the language
 compared against simple baselines.
 
 > **Status: no real-world results.** No real messages have been collected (the consent form still awaits legal
-> review). Every number in this repository comes from **synthetic** data written by the same maintainer who wrote the
-> rules. These numbers show the measurement pipeline works and expose concrete failure modes. They do not show
-> detection accuracy.
+> review). Every number in this repository comes from **synthetic** data: most of it written by the maintainer who
+> wrote the rules, plus one pre-registered check on 38 Hinglish messages written by another author. The numbers show
+> how the systems behave and where they fail. They do not show real-world detection accuracy.
+
+**Main findings so far (synthetic, small n — counts, not rates):**
+
+1. **The rule engine does not transfer well beyond its author.** B4 rule-only caught 9/12 scams on the rule author's
+   own messages, but 4/16 on another author's Hinglish messages. The drop is large, but the Wilson intervals overlap
+   slightly, so by the pre-registered criterion it is not yet conclusive.
+2. **A small local LLM (qwen2.5:3b) catches what the rules miss, but raises false alarms on exactly the messages this
+   project protects.** On the rule author's test split, B3 and B4-with-model caught 12/12 scams but flagged 4/12
+   legitimate messages (2 OTPs, a payment confirmation, a bank alert). On the external set it caught 16/16 with no
+   false alarms, but that set contains no OTP or bank-alert messages.
+3. **Treating rule silence as reassurance is dangerous.** B1 told users "no strong signals" on 10/16 external scams;
+   B4, which abstains instead, on 0/16.
+4. **The engine adds nothing to the model as currently combined.** B4-with-model equals B3 on both sets, because a
+   grounded "scam" answer from the model escalates the verdict. Whether requiring rule corroboration fixes the false
+   alarms is a hypothesis for engine v2, to be tested on a fresh set.
 
 | | |
 |---|---|
@@ -200,8 +215,22 @@ How to read this, honestly:
   abstains on everything. The thresholds were not retuned after seeing test results.
 
 - Paired campaign bootstrap, B4 − B1 on dangerous misses: −25.0 points, 95% interval [−50.0, 0.0], so
-  **inconclusive**, not "better". The primary comparison, B4 vs B3, has not been run because no model is
-  configured.
+  **inconclusive**, not "better".
+
+#### With a local model — SYNTHETIC test split, `qwen2.5:3b` (Q4_K_M, CPU), prompt `zero-shot-v1`
+
+| System | Scam recall | Dangerous misses | False alarms (legit) | Unclear (non-ambiguous) |
+|---|---|---|---|---|
+| B3-llm | 12/12 | 0/12 | **4/12** (2 OTP, payment confirmation, bank alert) | 0/26 |
+| B4 with model | 12/12 | 0/12 | **4/12** (same messages) | 0/26 |
+| B4 rule-only (above) | 9/12 | 0/12 | 0/12 | 17/26 |
+
+- The model also flagged both promotional messages.
+- The primary comparison, B4-with-model vs B3, is **inconclusive**: the two are identical.
+- Against B1, B4-with-model's false-alarm difference is +33.3 points [+8.3, +62.5], i.e. worse.
+- The model was configured (temperature 0, fixed seed, JSON mode) and the prompt fixed before any model output was
+  seen. Nothing was changed after the results.
+- Report: [reports/benchmark/synthetic-qwen2.5-3b/benchmark.md](reports/benchmark/synthetic-qwen2.5-3b/benchmark.md).
 
 Rules for interpreting real results are fixed in advance in
 [docs/EVALUATION_PROTOCOL.md](docs/EVALUATION_PROTOCOL.md). It covers the research questions, primary metrics,
@@ -226,17 +255,34 @@ scamcheck split items.grouped.jsonl --out manifest.json --temporal-cutoff 2027-0
   future campaign is test-eligible, or either side lacks scam or legitimate items.
 - The synthetic benchmark cannot be split this way: every item has one collection date, and the command says so.
 
-### External-author check (prepared, not run)
+### External-author check (run once, 2026-10-25)
 
-All the numbers above come from messages written by the rule author. `scamcheck external-plan` and
-`scamcheck external-run` evaluate the frozen systems **once** on the hand-written Hinglish part of
-`bolewara/hinglish-scam-text-dataset`, which someone else wrote.
+`scamcheck external-plan` and `scamcheck external-run` evaluated the frozen systems **once** on Hinglish messages
+written by someone other than the rule author: `bolewara/hinglish-scam-text-dataset` (CC BY 4.0, licence verified
+by the repository owner).
 
-- The procedure is pre-registered: a person verifies the licence in the source register, the plan freezes data,
-  code and selection by hash and is committed, and the run happens once.
-- No message text is ever written out.
-- It is still synthetic and small; see [docs/EXTERNAL_CHECK.md](docs/EXTERNAL_CHECK.md).
-- Status: **not run**. The licence has not been verified and nothing has been downloaded.
+- Pre-registered: the plan froze the data file, the row selection, the code at `1f0e299` and the model digest by
+  hash, and was committed before the run.
+- No message text is stored anywhere; rows are referenced by index.
+- **Deviation 1:** the card promises 35 + 28 Hinglish rows, but the shuffled file holds only 38. They were selected
+  by reading each candidate without its label, before any verdict was computed
+  ([selection](reports/external/bolewara/selection.json), [run log](reports/test_runs.md)).
+
+| System (38 rows: 16 scam, 22 benign) | Scam recall | Dangerous misses | False alarms | Unclear |
+|---|---|---|---|---|
+| B1 rules, silence = reassurance | 1/16 | **10/16** | 0/22 | 5/38 |
+| B4 rule-only | 4/16 | 0/16 | 0/22 | 34/38 |
+| B3 qwen2.5:3b | 16/16 | 0/16 | 0/22 | 2/38 |
+| B4 with model | 16/16 | 0/16 | 0/22 | 2/38 |
+
+- Both classes are under 30, so these are counts, not rates.
+- B4 rule-only recall falls from 9/12 on the author's own set to 4/16 here (intervals 46.8–91.1% and 10.2–49.5%).
+  They overlap slightly, so by the pre-stated criterion the drop is not yet conclusive.
+- B4 vs B1 on dangerous misses: −62.5 points [−86.7, −36.8] (exploratory).
+- B4-with-model vs B3 (primary): identical, so inconclusive.
+- qwen2.5 predates the dataset, so training-data contamination is unlikely.
+- Full results: [reports/external/bolewara/results.md](reports/external/bolewara/results.md). Procedure:
+  [docs/EXTERNAL_CHECK.md](docs/EXTERNAL_CHECK.md).
 
 ### LLM baseline smoke test
 
@@ -249,7 +295,9 @@ scamcheck llm-smoke --out reports/llm_smoke/latest.json
   exception class (never its message), grounded and dropped quotes, and latency.
 - No endpoint configured → `"status": "skipped"`, exit 0, nothing sent. Any failed call → `completed_with_errors`,
   exit 1.
-- It checks plumbing, not accuracy; no score is computed. It has not yet been run against a real model.
+- It checks plumbing, not accuracy; no score is computed.
+- Against local `qwen2.5:3b`: 9/9 valid JSON answers with grounded quotes, median 16 s on CPU
+  ([record](reports/llm_smoke/qwen2.5-3b.json)).
 
 ## Robustness Lab (seeded mutation testing)
 
@@ -341,8 +389,11 @@ per-category false-alarm rate). Every public number must trace to a committed re
 - Rules are sentence-scoped regexes. Punctuation noise, keyword typos, Hinglish spelling variety and Devanagari mixing
   still cause misses (see the Robustness report). The confusables table is a selected subset.
 - `registered_domain` uses a short list of multi-label suffixes, not the full Public Suffix List.
-- B2's fixed thresholds make it abstain at this data size. B3 has not been run; no model was configured.
-- No rate limiting, spend cap, TLS or privacy notice: the API is a local research tool, not a public service. See
+- B2's fixed thresholds make it abstain at this data size.
+- B3 has run only on synthetic data, with one small local model (qwen2.5:3b, CPU); results describe that model and
+  prompt, not LLMs in general. With the model, B4 inherits its false alarms on OTP and bank messages.
+- The API has per-client rate limiting and a daily LLM call cap, both in-process only. There is no TLS or privacy
+  notice: it is a local research tool, not a public service. See
   [docs/DEPLOYMENT_READINESS.md](docs/DEPLOYMENT_READINESS.md).
 - Robustness labels await human review (0 decisions so far); B2's dev-only threshold rule (protocol §3) applies once
   real dev data exists.
@@ -358,7 +409,9 @@ per-category false-alarm rate). Every public number must trace to a committed re
    then report label-based robustness, including prompt-injection flips.
 3. Address the measured gaps: punctuation-tolerant windows and Hinglish spelling normalisation, each re-measured in
    the Robustness Lab.
-4. Configure B3 and use the optional Promptfoo red-team config (`promptfoo/`) against it, with synthetic inputs only.
+4. Engine v2 hypothesis: the model may escalate to `LIKELY_SCAM` only with a corroborating MEDIUM+ rule signal.
+   This targets the measured OTP/bank false alarms. Evaluate it once on a set neither version has seen, and run the
+   optional Promptfoo probes (`promptfoo/`) against the model path.
 5. Fine-tune a multilingual encoder only if enough legally usable labelled data exists and B2/B3 show headroom.
 
 ## Dataset pipeline
