@@ -21,3 +21,4 @@ Revised procedure, decided now: each of the 54 candidates is judged Hinglish or 
 its label**; the confirmed row list is committed before planning; labels come from the dataset unchanged. If the
 confirmed set does not match the card, the mismatch is reported and the check runs on the confirmed set only as a
 recorded deviation — no rule is tuned towards the card's numbers. No system verdict on these rows has been seen.
+| 2026-10-25 | `bolewara/hinglish-scam-text-dataset` @ 743799229923 (SYNTHETIC, external author; Hinglish part 16 scam / 22 legitimate) | all selected rows | B0-unclear, B0-scam, B1-rules, B2-tfidf-lr, B4-engine, B3-llm, B4-engine+llm | frozen 87b0e04c16c6 | **PLANNED** external-author check; model openai-compatible:qwen2.5:3b; label-blind row selection per Deviation 1, not the card counts; plan `reports/external/bolewara/plan.json`. Must be committed before `external-run`; runs once. |
