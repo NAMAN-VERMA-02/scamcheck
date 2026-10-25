@@ -400,6 +400,23 @@ def cmd_review_import(a) -> int:
     return 0
 
 
+def cmd_external(a) -> int:
+    from .eval.external import ExternalCheckError, run_check, write_plan
+
+    try:
+        if a.cmd == "external-plan":
+            plan = write_plan(Path(a.raw), Path("."), Path(a.register), Path(a.plan), Path(a.log), date.today())
+            print(f"plan → {a.plan}: {plan['selection']['counts']} in {plan['selection']['campaigns']} campaigns, "
+                  f"frozen {plan['frozen']['sha256'][:12]}. Commit the plan, then run `scamcheck external-run` once.")
+        else:
+            res = run_check(Path(a.raw), Path("."), Path(a.register), Path(a.plan), Path(a.out_dir), Path(a.log),
+                            date.today())
+            print(f"{res['meta']['data_label']}\nresults → {Path(a.out_dir) / 'results.md'}")
+    except ExternalCheckError as e:
+        raise UsageError(str(e))
+    return 0
+
+
 def cmd_llm_smoke(a) -> int:
     from .engine.llm import from_env
     from .eval.llm_smoke import run_smoke
@@ -557,6 +574,18 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--reviewer", required=True)
     s.add_argument("--out", required=True, help="review decisions JSONL (appended)")
     s.set_defaults(fn=cmd_review_import)
+
+    ext = "data/raw/external/bolewara-hinglish-scam-text-dataset.json"
+    for name, helptext in (("external-plan", "freeze and log the one-shot external-author check (docs/EXTERNAL_CHECK.md)"),
+                           ("external-run", "run the committed external-author check once")):
+        s = sub.add_parser(name, help=helptext)
+        s.add_argument("--raw", default=ext, help="downloaded data.json at the pinned revision (kept out of git)")
+        s.add_argument("--register", default="data/source_register.csv")
+        s.add_argument("--plan", default="reports/external/bolewara/plan.json")
+        s.add_argument("--log", default="reports/test_runs.md")
+        if name == "external-run":
+            s.add_argument("--out-dir", default="reports/external/bolewara")
+        s.set_defaults(fn=cmd_external)
 
     s = sub.add_parser("llm-smoke", help="B3 smoke test on the built-in SYNTHETIC examples only (status, latency, "
                                          "errors; no accuracy)")

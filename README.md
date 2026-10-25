@@ -226,6 +226,18 @@ scamcheck split items.grouped.jsonl --out manifest.json --temporal-cutoff 2027-0
   future campaign is test-eligible, or either side lacks scam or legitimate items.
 - The synthetic benchmark cannot be split this way: every item has one collection date, and the command says so.
 
+### External-author check (prepared, not run)
+
+All the numbers above come from messages written by the rule author. `scamcheck external-plan` and
+`scamcheck external-run` evaluate the frozen systems **once** on the hand-written Hinglish part of
+`bolewara/hinglish-scam-text-dataset`, which someone else wrote.
+
+- The procedure is pre-registered: a person verifies the licence in the source register, the plan freezes data,
+  code and selection by hash and is committed, and the run happens once.
+- No message text is ever written out.
+- It is still synthetic and small; see [docs/EXTERNAL_CHECK.md](docs/EXTERNAL_CHECK.md).
+- Status: **not run**. The licence has not been verified and nothing has been downloaded.
+
 ### LLM baseline smoke test
 
 ```bash
