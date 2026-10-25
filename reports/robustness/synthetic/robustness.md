@@ -2,17 +2,40 @@
 
 > **SYNTHETIC ADVERSARIAL FIXTURES derived from the synthetic benchmark. They measure consistency of the systems under controlled perturbations, not real-world robustness.**
 
-Generator `mutate-2026.10.1`, seeds [11, 23, 37], 46 parents from dev/test.
+Generator `mutate-2026.10.1`, seeds [11, 23, 37], 46 parents from dev/test. Review guideline `mr1`; a family is validated after at least 30 reviewed variants, all judged meaning-preserving (docs/ROBUSTNESS_REVIEW.md).
 
-| Generated | Excluded (no change) | Label inherited | Needs human review | Human reviewed |
-|---|---|---|---|---|
-| 1725 | 307 | 1199 | 219 | 0 |
+| Generated | Excluded (no change) | Unvalidated family (no label) | Label inherited (validated family) | Needs human review | Human reviewed | Reviewed, no label | Review conflict | Review decisions |
+|---|---|---|---|---|---|---|---|---|
+| 1725 | 307 | 1199 | 0 | 219 | 0 | 0 | 0 | 0 |
 
-| System | Consistency (meaning-preserving) | Scam → NO_STRONG_SIGNALS flips | Scam detections lost | Seed spread (min–max) |
-|---|---|---|---|---|
-| B1-rules | 96.8% [95.6–97.6] (1160/1199) | 6.2% [4.5–8.6] (34/544) | 11.0% [8.0–14.9] (35/319) | 96.5–97.0% |
-| B2-tfidf-lr ⚠ constant verdict: trivially consistent | 100.0% [99.7–100.0] (1199/1199) | 0.0% [0.0–0.7] (0/544) | n/a | 100.0–100.0% |
-| B4-engine | 97.1% [96.0–97.9] (1164/1199) | 0.0% [0.0–0.7] (0/544) | 7.6% [5.5–10.3] (35/463) | 96.8–97.5% |
+## Mutation families
+
+| Family | Preserving by design | Status | Reviewed | yes | no | unsure | conflict | Meaning-change rate, 95% upper bound |
+|---|---|---|---|---|---|---|---|---|
+| whitespace | yes | pending | 0 | 0 | 0 | 0 | 0 | n/a |
+| punctuation | yes | pending | 0 | 0 | 0 | 0 | 0 | n/a |
+| char_spacing | yes | pending | 0 | 0 | 0 | 0 | 0 | n/a |
+| zero_width | yes | pending | 0 | 0 | 0 | 0 | 0 | n/a |
+| confusables | yes | pending | 0 | 0 | 0 | 0 | 0 | n/a |
+| fullwidth_nfkc | yes | pending | 0 | 0 | 0 | 0 | 0 | n/a |
+| casing | yes | pending | 0 | 0 | 0 | 0 | 0 | n/a |
+| typo | yes | pending | 0 | 0 | 0 | 0 | 0 | n/a |
+| hinglish_spelling | yes | pending | 0 | 0 | 0 | 0 | 0 | n/a |
+| script_mix_devanagari | yes | pending | 0 | 0 | 0 | 0 | 0 | n/a |
+| url_defang_style | yes | pending | 0 | 0 | 0 | 0 | 0 | n/a |
+| prompt_injection | no | meaning_changing | 0 | 0 | 0 | 0 | 0 | n/a |
+| drop_link | no | meaning_changing | 0 | 0 | 0 | 0 | 0 | n/a |
+| code_switch | no | meaning_changing | 0 | 0 | 0 | 0 | 0 | n/a |
+
+## Summary
+
+> **Provisional:** verdict consistency below includes variants from families no human has validated yet. Label-based rows (scam → NO_STRONG_SIGNALS, detections lost) use only human-confirmed labels and stay n/a until reviews exist. The parent-based rows describe verdict movement away from a scam parent; the variant's own label is unconfirmed.
+
+| System | Consistency (preserving by design) | Consistency (validated only) | Scam → NO_STRONG_SIGNALS (confirmed labels) | Scam detections lost (confirmed labels) | Parent-scam variants → NO_STRONG_SIGNALS (provisional) | Parent-scam detections lost (provisional) | Seed spread |
+|---|---|---|---|---|---|---|---|
+| B1-rules | 96.8% [95.6–97.6] (1160/1199) | n/a | n/a | n/a | 6.2% [4.5–8.6] (34/544) | 11.0% [8.0–14.9] (35/319) | 96.5–97.0% |
+| B2-tfidf-lr ⚠ constant verdict: trivially consistent | 100.0% [99.7–100.0] (1199/1199) | n/a | n/a | n/a | 0.0% [0.0–0.7] (0/544) | n/a | 100.0–100.0% |
+| B4-engine | 97.1% [96.0–97.9] (1164/1199) | n/a | n/a | n/a | 0.0% [0.0–0.7] (0/544) | 7.6% [5.5–10.3] (35/463) | 96.8–97.5% |
 
 ## Consistency by transform
 

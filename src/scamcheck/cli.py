@@ -329,12 +329,7 @@ def cmd_robustness(a) -> int:
             print(f"REPLAY  {p}")
         print(f"replayed {len(records)} variant(s): " + ("PASS" if not problems else f"FAIL ({len(problems)})"))
         return 1 if problems else 0
-    reviews = {}
-    if a.reviews:
-        for line in Path(a.reviews).read_text(encoding="utf-8").splitlines():
-            if line.strip():
-                r = json.loads(line)
-                reviews[r["variant_id"]] = r["label"]
+    reviews = _load_reviews(a.reviews) if a.reviews else []
     result, records = run_robustness(items, manifest, seeds=tuple(a.seeds), model=model, reviews=reviews)
     out = Path(a.out_dir)
     _write_json(str(out / "robustness.json"), result)
@@ -344,9 +339,64 @@ def cmd_robustness(a) -> int:
             f.write(json.dumps(r, ensure_ascii=False) + "\n")
     print(json.dumps(result["meta"]["counts"]))
     for name, s in result["systems"].items():
-        print(f"{name:12} consistency {s['consistency_preserving']['rate']}  "
-              f"scam→NO_STRONG_SIGNALS {s['scam_flip_to_no_strong_signals']['rate']}")
+        tag = " (provisional: unvalidated families)" if s["consistency_provisional"] else ""
+        print(f"{name:12} consistency {s['consistency_preserving']['rate']}{tag}  "
+              f"parent-scam→NO_STRONG_SIGNALS {s['parent_scam_moved_to_no_strong_signals']['rate']}  "
+              f"confirmed-label scam→NO_STRONG_SIGNALS {s['scam_flip_to_no_strong_signals']['rate']}")
     print(f"{result['meta']['data_label']}\nreport → {out / 'robustness.md'}")
+    return 0
+
+
+def _load_jsonl(path: str) -> list[dict]:
+    try:
+        return [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines() if line.strip()]
+    except json.JSONDecodeError as e:
+        raise UsageError(f"{path} is not valid JSONL ({e.msg} on line {e.lineno})")
+
+
+def _load_reviews(path: str) -> list[dict]:
+    from .eval.review import LABELS, MEANING
+
+    reviews = _load_jsonl(path)
+    for n, r in enumerate(reviews, start=1):
+        if not (r.get("variant_id") and r.get("reviewer") and r.get("meaning_preserved") in MEANING
+                and r.get("label", "scam") in LABELS):
+            raise UsageError(f"{path} line {n}: a review needs variant_id, reviewer, meaning_preserved "
+                             f"({'/'.join(MEANING)}) and an optional label ({'/'.join(LABELS)}); "
+                             "create it with `scamcheck review-import`")
+    return reviews
+
+
+def cmd_review_sheet(a) -> int:
+    from .data.pilot import write_csv
+    from .eval.review import SHEET_COLUMNS, export_sheet
+
+    res = _load_or_exit(a.file)
+    records = _load_jsonl(a.variants)
+    rows = export_sheet(records, {it.id: it.text for it in res.items}, _load_reviews(a.reviews) if a.reviews else [],
+                        a.per_family, a.seed)
+    write_csv(Path(a.out), rows, SHEET_COLUMNS)
+    print(f"{len(rows)} variant(s) across {len({r['transform'] for r in rows})} famil(ies) → {a.out}. Fill "
+          "meaning_preserved (yes/no/unsure) for every row, and label for meaning-changing families.")
+    return 0
+
+
+def cmd_review_import(a) -> int:
+    from .data.pilot import read_csv
+    from .eval.review import import_sheet
+
+    existing = _load_reviews(a.out) if Path(a.out).exists() else []
+    new, errors = import_sheet(read_csv(Path(a.sheet)), _load_jsonl(a.variants), a.reviewer, existing, date.today())
+    for e in errors:
+        print(f"ERROR {e}", file=sys.stderr)
+    if errors:
+        print(f"nothing imported ({len(errors)} error(s))", file=sys.stderr)
+        return 1
+    Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+    with open(a.out, "a", encoding="utf-8", newline="\n") as f:
+        for r in new:
+            f.write(json.dumps(r, ensure_ascii=False) + "\n")
+    print(f"appended {len(new)} review decision(s) by {a.reviewer} → {a.out}")
     return 0
 
 
@@ -488,9 +538,25 @@ def main(argv: list[str] | None = None) -> int:
             s.add_argument("--seed", type=int, default=13, help="bootstrap and B2 seed")
         else:
             s.add_argument("--seeds", type=int, nargs="+", default=[11, 23, 37])
-            s.add_argument("--reviews", help="JSONL of {variant_id, label} human decisions for needs-review variants")
+            s.add_argument("--reviews", help="review decisions JSONL written by `scamcheck review-import`")
             s.add_argument("--replay", help="variants.jsonl to regenerate and verify by hash")
         s.set_defaults(fn=fn)
+
+    s = sub.add_parser("review-sheet", help="CSV of sampled mutation variants for human meaning review (mr1)")
+    s.add_argument("file", help="grouped items JSONL (for parent texts)")
+    s.add_argument("--variants", required=True, help="variants.jsonl from `scamcheck robustness`")
+    s.add_argument("--out", required=True)
+    s.add_argument("--per-family", type=int, default=30, help="variants sampled per transform family")
+    s.add_argument("--seed", type=int, default=1)
+    s.add_argument("--reviews", help="existing decisions; already-reviewed variants are not sampled again")
+    s.set_defaults(fn=cmd_review_sheet)
+
+    s = sub.add_parser("review-import", help="validate a filled review sheet and append decisions (all-or-nothing)")
+    s.add_argument("--sheet", required=True)
+    s.add_argument("--variants", required=True)
+    s.add_argument("--reviewer", required=True)
+    s.add_argument("--out", required=True, help="review decisions JSONL (appended)")
+    s.set_defaults(fn=cmd_review_import)
 
     s = sub.add_parser("llm-smoke", help="B3 smoke test on the built-in SYNTHETIC examples only (status, latency, "
                                          "errors; no accuracy)")

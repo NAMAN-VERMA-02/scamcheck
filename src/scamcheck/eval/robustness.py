@@ -16,15 +16,19 @@ from ..engine.llm import ChatAdapter
 from .baselines import build_systems
 from .metrics import wilson
 from .mutate import GENERATOR_VERSION, TRANSFORMS, variant_record
+from .review import MIN_FAMILY_REVIEWS, REVIEW_GUIDELINE, apply_reviews
 
 DEFAULT_SEEDS = (11, 23, 37)
 SYSTEMS_EVALUATED = ("B4-engine", "B1-rules", "B2-tfidf-lr")
 
 
+STATUSES = ("excluded_no_change", "unvalidated_family", "label_inherited", "needs_human_review", "human_reviewed",
+            "reviewed_no_label", "review_conflict")
+
+
 def run_robustness(items: list[Item], manifest: dict, *, seeds: tuple[int, ...] = DEFAULT_SEEDS,
                    splits: tuple[str, ...] = ("dev", "test"), model: Optional[ChatAdapter] = None,
-                   reviews: Optional[dict[str, str]] = None, train_seed: int = 13) -> tuple[dict, list[dict]]:
-    reviews = reviews or {}
+                   reviews: Optional[list[dict]] = None, train_seed: int = 13) -> tuple[dict, list[dict]]:
     split_of = {r["id"]: r["split"] for r in manifest["items"]}
     train = [it for it in items if split_of.get(it.id) == "train" and it.gold.label != "ambiguous"]
     parents = [it for it in items if split_of.get(it.id) in splits]
@@ -33,19 +37,23 @@ def run_robustness(items: list[Item], manifest: dict, *, seeds: tuple[int, ...] 
 
     records = [variant_record(p.id, p.text, p.language, p.gold.label, t.name, seed)
                for seed in seeds for p in parents for t in TRANSFORMS if p.language in t.languages]
-    for r in records:
-        if r["variant_id"] in reviews and r["status"] == "needs_human_review":
-            r["status"], r["label"] = "human_reviewed", reviews[r["variant_id"]]
+    families = apply_reviews(records, reviews or [])
     live = [r for r in records if r["status"] != "excluded_no_change"]
     by_id = {p.id: p for p in parents}
     parent_v = {name: {p.id: s.predict(p.text) for p in parents} for name, s in systems.items()}
     variant_v = {name: {r["variant_id"]: s.predict(r["text"]) for r in live} for name, s in systems.items()}
 
+    # Verdict consistency needs no label, only "same meaning": preserving-by-design variants, minus any a reviewer
+    # said changed meaning. It stays PROVISIONAL while any of them comes from an unvalidated family.
+    pres = [r for r in live if r["preserving"] and r.get("review_meaning", "yes") == "yes"
+            and r["status"] != "review_conflict"]
+    validated = [r for r in pres if r["status"] in ("label_inherited", "human_reviewed")]
+    labelled = [r for r in live if r["status"] in ("label_inherited", "human_reviewed")]
+    provisional = any(r["status"] == "unvalidated_family" for r in pres)
+
     out_systems = {}
     for name in systems:
         pv, vv = parent_v[name], variant_v[name]
-        labelled = [r for r in live if r["status"] in ("label_inherited", "human_reviewed")]
-        pres = [r for r in labelled if r["preserving"]]
 
         def consistency(rs: list[dict], pv=pv, vv=vv) -> dict:
             return wilson(sum(vv[r["variant_id"]] == pv[r["parent_id"]] for r in rs), len(rs))
@@ -56,7 +64,16 @@ def run_robustness(items: list[Item], manifest: dict, *, seeds: tuple[int, ...] 
                 g[r[key]].append(r)
             return {str(k): consistency(v) for k, v in sorted(g.items())}
 
+        def to_nss(rs: list[dict], pv=pv, vv=vv) -> dict:
+            return wilson(sum(vv[r["variant_id"]] == "NO_STRONG_SIGNALS" and pv[r["parent_id"]] != "NO_STRONG_SIGNALS"
+                              for r in rs), len(rs))
+
+        def lost(rs: list[dict], pv=pv, vv=vv) -> dict:
+            return wilson(sum(pv[r["parent_id"]] == "LIKELY_SCAM" and vv[r["variant_id"]] != "LIKELY_SCAM" for r in rs),
+                          sum(pv[r["parent_id"]] == "LIKELY_SCAM" for r in rs))
+
         scam = [r for r in labelled if r["label"] == "scam"]
+        scam_parent = [r for r in pres if r["parent_label"] == "scam"]
         per_seed = group("seed", pres)
         seed_rates = [v["rate"] for v in per_seed.values() if v["rate"] is not None]
         failures = [r for r in pres if vv[r["variant_id"]] != pv[r["parent_id"]]]
@@ -64,22 +81,25 @@ def run_robustness(items: list[Item], manifest: dict, *, seeds: tuple[int, ...] 
             "description": systems[name].description,
             # A system that always gives the same verdict is trivially "consistent"; say so instead of implying it.
             "constant_verdict": len(set(pv.values()) | set(vv.values())) == 1,
+            "consistency_provisional": provisional,
             "consistency_preserving": consistency(pres),
+            "consistency_validated_only": consistency(validated),
             "consistency_by_transform": group("transform", pres),
             "consistency_by_language": group("language", pres),
             "consistency_by_seed": per_seed,
             "seed_variation": {"min": min(seed_rates), "max": max(seed_rates),
                                "stdev": round(statistics.pstdev(seed_rates), 4)} if seed_rates else None,
-            "scam_flip_to_no_strong_signals": wilson(
-                sum(vv[r["variant_id"]] == "NO_STRONG_SIGNALS" and pv[r["parent_id"]] != "NO_STRONG_SIGNALS"
-                    for r in scam), len(scam)),
-            "scam_lost_detection": wilson(
-                sum(pv[r["parent_id"]] == "LIKELY_SCAM" and vv[r["variant_id"]] != "LIKELY_SCAM" for r in scam),
-                sum(pv[r["parent_id"]] == "LIKELY_SCAM" for r in scam)),
+            # Label-based: only variants whose label a human confirmed (individually or by validated family).
+            "scam_flip_to_no_strong_signals": to_nss(scam),
+            "scam_lost_detection": lost(scam),
+            # Parent-based (provisional): the variant's own label is unconfirmed; this describes verdict movement
+            # away from a scam parent, not a measured miss.
+            "parent_scam_moved_to_no_strong_signals": to_nss(scam_parent),
+            "parent_scam_detection_lost": lost(scam_parent),
             "needs_review_verdicts": _verdict_counts([r for r in live if r["status"] == "needs_human_review"], vv),
             "failure_examples": [
                 {"variant_id": r["variant_id"], "parent_id": r["parent_id"], "transform": r["transform"],
-                 "seed": r["seed"], "language": r["language"], "label": r["label"],
+                 "seed": r["seed"], "language": r["language"], "status": r["status"],
                  "parent_verdict": pv[r["parent_id"]], "variant_verdict": vv[r["variant_id"]]}
                 for r in failures],
         }
@@ -102,14 +122,14 @@ def run_robustness(items: list[Item], manifest: dict, *, seeds: tuple[int, ...] 
             "data_label": ("SYNTHETIC ADVERSARIAL FIXTURES derived from the synthetic benchmark. They measure "
                            "consistency of the systems under controlled perturbations, not real-world robustness."),
             "generator_version": GENERATOR_VERSION, "seeds": list(seeds), "parent_splits": list(splits),
-            "n_parents": len(parents), "versions": VERSIONS,
+            "n_parents": len(parents), "versions": VERSIONS, "review_guideline": REVIEW_GUIDELINE,
+            "min_family_reviews": MIN_FAMILY_REVIEWS,
             "transforms": [{"name": t.name, "preserving": t.preserving, "languages": list(t.languages)}
                            for t in TRANSFORMS],
+            "families": families,
             "counts": {"generated": len(records),
-                       "excluded_no_change": sum(r["status"] == "excluded_no_change" for r in records),
-                       "label_inherited": sum(r["status"] == "label_inherited" for r in records),
-                       "needs_human_review": sum(r["status"] == "needs_human_review" for r in records),
-                       "human_reviewed": sum(r["status"] == "human_reviewed" for r in records)},
+                       **{st: sum(r["status"] == st for r in records) for st in STATUSES},
+                       "reviews": len(reviews or [])},
         },
         "systems": out_systems,
         "examples": examples,
@@ -126,26 +146,47 @@ def _verdict_counts(rs: list[dict], vv: dict[str, str]) -> dict:
 
 def to_markdown(res: dict) -> str:
     m = res["meta"]
+    c = m["counts"]
     lines = ["# Robustness report", "", f"> **{m['data_label']}**", "",
              f"Generator `{m['generator_version']}`, seeds {m['seeds']}, {m['n_parents']} parents from "
-             f"{'/'.join(m['parent_splits'])}.", "",
-             "| Generated | Excluded (no change) | Label inherited | Needs human review | Human reviewed |",
-             "|---|---|---|---|---|",
-             "| {generated} | {excluded_no_change} | {label_inherited} | {needs_human_review} | {human_reviewed} |"
-             .format(**m["counts"]), ""]
+             f"{'/'.join(m['parent_splits'])}. Review guideline `{m['review_guideline']}`; a family is validated "
+             f"after at least {m['min_family_reviews']} reviewed variants, all judged meaning-preserving "
+             "(docs/ROBUSTNESS_REVIEW.md).", "",
+             "| Generated | Excluded (no change) | Unvalidated family (no label) | Label inherited (validated family) "
+             "| Needs human review | Human reviewed | Reviewed, no label | Review conflict | Review decisions |",
+             "|---|---|---|---|---|---|---|---|---|",
+             f"| {c['generated']} | {c['excluded_no_change']} | {c['unvalidated_family']} | {c['label_inherited']} | "
+             f"{c['needs_human_review']} | {c['human_reviewed']} | {c['reviewed_no_label']} | {c['review_conflict']} | "
+             f"{c['reviews']} |", ""]
 
     def pct(w):
         return "n/a" if w is None or w["rate"] is None else \
             f"{w['rate'] * 100:.1f}% [{w['lo'] * 100:.1f}–{w['hi'] * 100:.1f}] ({w['k']}/{w['n']})"
 
-    lines += ["| System | Consistency (meaning-preserving) | Scam → NO_STRONG_SIGNALS flips | Scam detections lost "
-              "| Seed spread (min–max) |", "|---|---|---|---|---|"]
+    lines += ["## Mutation families", "", "| Family | Preserving by design | Status | Reviewed | yes | no | unsure "
+              "| conflict | Meaning-change rate, 95% upper bound |", "|---|---|---|---|---|---|---|---|---|"]
+    for name, f in m["families"].items():
+        ub = "n/a" if f["meaning_change_upper_95"] is None else f"{f['meaning_change_upper_95'] * 100:.1f}%"
+        lines.append(f"| {name} | {'yes' if f['preserving_by_design'] else 'no'} | {f['status']} | {f['reviewed']} | "
+                     f"{f['yes']} | {f['no']} | {f['unsure']} | {f['conflict']} | {ub} |")
+    lines += ["", "## Summary", ""]
+    if any(s["consistency_provisional"] for s in res["systems"].values()):
+        lines += ["> **Provisional:** verdict consistency below includes variants from families no human has "
+                  "validated yet. Label-based rows (scam → NO_STRONG_SIGNALS, detections lost) use only "
+                  "human-confirmed labels and stay n/a until reviews exist. The parent-based rows describe verdict "
+                  "movement away from a scam parent; the variant's own label is unconfirmed.", ""]
+    lines += ["| System | Consistency (preserving by design) | Consistency (validated only) | Scam → NO_STRONG_SIGNALS "
+              "(confirmed labels) | Scam detections lost (confirmed labels) | Parent-scam variants → NO_STRONG_SIGNALS "
+              "(provisional) | Parent-scam detections lost (provisional) | Seed spread |",
+              "|---|---|---|---|---|---|---|---|"]
     for name, s in res["systems"].items():
         sv = s["seed_variation"]
         spread = f"{sv['min'] * 100:.1f}–{sv['max'] * 100:.1f}%" if sv else "n/a"
         flag = " ⚠ constant verdict: trivially consistent" if s["constant_verdict"] else ""
-        lines.append(f"| {name}{flag} | {pct(s['consistency_preserving'])} | "
-                     f"{pct(s['scam_flip_to_no_strong_signals'])} | {pct(s['scam_lost_detection'])} | {spread} |")
+        lines.append(f"| {name}{flag} | {pct(s['consistency_preserving'])} | {pct(s['consistency_validated_only'])} | "
+                     f"{pct(s['scam_flip_to_no_strong_signals'])} | {pct(s['scam_lost_detection'])} | "
+                     f"{pct(s['parent_scam_moved_to_no_strong_signals'])} | {pct(s['parent_scam_detection_lost'])} | "
+                     f"{spread} |")
     names = list(res["systems"])
     lines += ["", "## Consistency by transform", "", "| Transform | " + " | ".join(names) + " |",
               "|---|" + "---|" * len(names)]
