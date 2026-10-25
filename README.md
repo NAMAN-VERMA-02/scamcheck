@@ -126,7 +126,7 @@ scamcheck analyse "Aapke account mein Rs 10,000 cashback aaya hai. Paisa lene ke
 pytest -q
 ruff check .
 scamcheck schema --check
-cd web && npm run lint && npx tsc --noEmit && npm run build
+cd web && npm run lint && npm run build   # build generates route types, then type-checks
 ```
 
 CI (`.github/workflows/ci.yml`) runs all of these and also checks that the committed benchmark and robustness
