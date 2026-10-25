@@ -1,19 +1,65 @@
-# scamcheck — dataset & benchmark infrastructure
+# ScamCheck Research Workbench
 
-Phase 1 of an English + Hinglish scam-checking engine. Thesis: **measured trust, not another chatbot**. This
-repository currently contains only the data pipeline: schema, validation, duplicate/campaign grouping, leakage-safe
-splits and a dataset quality report. There is no detector yet and **no performance results anywhere in this repo**.
+An evidence-first scam checker for English and Hinglish messages, with a reproducible benchmark lab and a seeded
+adversarial robustness lab. Thesis: **measured trust, not another chatbot**.
 
-Design rationale and milestones: [docs/PLAN.md](docs/PLAN.md). Engineering audit: [docs/AUDIT.md](docs/AUDIT.md).
-Annotation: [docs/ANNOTATION_GUIDELINES.md](docs/ANNOTATION_GUIDELINES.md) and the pilot procedure
-[docs/PILOT_WORKFLOW.md](docs/PILOT_WORKFLOW.md) (`scamcheck pilot-intake / pilot-sheet / pilot-import /
-pilot-resolve / pilot-adjudicate / pseudo-id`). Candidate data sources and their verified licences:
-[docs/DATA_SOURCES.md](docs/DATA_SOURCES.md); every source used is listed in `data/source_register.csv`.
-No real messages are in this repository yet.
+**Research question.** Can a transparent checker be measured honestly on English and Hinglish messages? That means
+false alarms per legitimate category, dangerous misses, abstention, the language gap and robustness to obfuscation,
+compared against simple baselines.
+
+> **Status: no real-world results.** No real messages have been collected (the consent form still awaits legal
+> review). Every number in this repository comes from **synthetic** data written by the same maintainer who wrote the
+> rules. These numbers show the measurement pipeline works and expose concrete failure modes. They do not show
+> detection accuracy.
+
+| | |
+|---|---|
+| Analyse | Paste a message (and optionally a link); get `LIKELY_SCAM`, `UNCLEAR` or `NO_STRONG_SIGNALS`, the evidence behind it, what to do, and what was *not* checked |
+| Benchmark Lab | Baselines B0–B4 on a frozen split, per category and language, Wilson and campaign-bootstrap intervals |
+| Robustness Lab | 14 seeded transforms (zero-width, confusables, Hinglish spelling, Devanagari mixing, defanging, prompt injection…) with full lineage and exact replay |
+
+Design and decisions: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) (design search, data flow, verdict policy).
+Original plan: [docs/PLAN.md](docs/PLAN.md). Audit: [docs/AUDIT.md](docs/AUDIT.md). Annotation:
+[docs/ANNOTATION_GUIDELINES.md](docs/ANNOTATION_GUIDELINES.md), pilot procedure
+[docs/PILOT_WORKFLOW.md](docs/PILOT_WORKFLOW.md), readiness [docs/PILOT_READINESS.md](docs/PILOT_READINESS.md).
+Sources and licences: [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md) and `data/source_register.csv`.
+Project summary: [docs/PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md).
+
+## Architecture in one picture
+
+```
+                ┌──────────────── one engine: src/scamcheck/engine ────────────────┐
+ text, url? ──▶ │ parse ─▶ rules ─▶ url_static ─▶ [redact ─▶ llm]? ─▶ combine ─▶ explain │ ──▶ Analysis
+                └───────────────────────────────────────────────────────────────────┘
+                     ▲                                           ▲
+       FastAPI /api/analyse ◀── Next.js web/        scamcheck benchmark / robustness (offline)
+```
+
+The API and the benchmark call the same `scamcheck.engine.analyse()`; there is no demo-only scoring path.
+
+Verdict rules (pure function, property-tested in `tests/test_engine_combiner.py`):
+
+- any HIGH rule or URL signal → `LIKELY_SCAM`, and no model can overrule it;
+- a model can raise a verdict to `LIKELY_SCAM` only by quoting text that is verbatim in the message;
+- `NO_STRONG_SIGNALS` needs a working model that said `not_scam` **and** no MEDIUM/HIGH signal, no obfuscation or
+  injection signal, and no link left unverified;
+- no model configured, model timeout, or invalid model output → `UNCLEAR` unless a HIGH signal fires.
+
+There is no `SAFE` verdict and no confidence percentage anywhere.
 
 ## Setup
 
-Requires Python 3.11+. Run every command from the repository root.
+Requires Python 3.11+ and, for the web app, Node.js 20+ (tested with 24). Run every command from the repository root.
+
+**With uv (recommended, uses `uv.lock`):**
+
+```bash
+uv sync --locked --all-extras
+```
+
+Then prefix commands with `uv run` (e.g. `uv run pytest -q`), or activate `.venv` as below.
+
+**With pip (still supported):**
 
 ```bash
 python -m venv .venv
@@ -29,33 +75,228 @@ Activate it:
 | macOS/Linux | `source .venv/bin/activate` |
 
 ```bash
-pip install -e ".[dev]"
+pip install -c requirements-lock.txt -e ".[dev]"
 ```
 
-Dependencies: `pydantic>=2.5,<3` (runtime), `pytest>=8` (dev). Nothing else, and nothing is downloaded at runtime.
-To reproduce the exact versions the test suite last passed with, use the lock file as a constraint:
-`pip install -c requirements-lock.txt -e ".[dev]"`. This matters because `scamcheck schema --check` compares against
-JSON Schema output from pydantic, which a new pydantic release could change.
+Extras: `api` (FastAPI, uvicorn), `eval` (scikit-learn for baseline B2), `dev` (both, plus pytest, Hypothesis,
+httpx2 for FastAPI's test client, ruff). The core package needs only pydantic. Nothing is downloaded at runtime.
+`requirements-lock.txt` is exported from `uv.lock`. Pinning matters because `scamcheck schema --check` compares
+against pydantic's JSON Schema output.
 
 **Windows: keep the checkout path short** (e.g. `C:\Projects\scamcheck`). With long-path support disabled (the
 Windows default), creating a venv inside a deeply nested folder fails while installing pip, because pip's files
 exceed the 260-character path limit.
 
-No install? Run from the checkout with `PYTHONPATH=src python -m scamcheck.cli ...` and `PYTHONPATH=src python -m pytest`.
+### Run the app locally
+
+```bash
+uvicorn scamcheck.api:app --port 8000
+```
+
+In a second terminal:
+
+```bash
+cd web && npm ci && npm run dev
+```
+
+Open http://localhost:3000. The Next.js server proxies `/api/*` to `SCAMCHECK_API_URL` (default
+`http://127.0.0.1:8000`), so the browser talks to one origin. The API docs are at http://localhost:8000/api/docs.
+The app runs fully in **rule-only mode** without any paid API.
+
+**Optional language model.** Any OpenAI-compatible chat endpoint works, including a local Ollama server. Set these
+before starting the API:
+
+```bash
+export SCAMCHECK_LLM_BASE_URL=http://127.0.0.1:11434/v1 SCAMCHECK_LLM_MODEL=<model name>
+```
+
+`SCAMCHECK_LLM_API_KEY` and `SCAMCHECK_LLM_TIMEOUT` are optional. The model is used only when the user ticks the
+opt-in for that request. Only redacted text is sent, and the call is skipped if the residual detector still sees an
+identifier. Check your provider's retention terms first (PLAN.md §7).
+
+### Command line
+
+```bash
+scamcheck analyse "Aapke account mein Rs 10,000 cashback aaya hai. Paisa lene ke liye UPI PIN daaliye." --language hinglish
+```
 
 ## Run the tests
 
 ```bash
 pytest -q
+ruff check .
+scamcheck schema --check
+cd web && npm run lint && npx tsc --noEmit && npm run build
 ```
 
-The tests use only `tests/fixtures/synthetic_items.jsonl` and `tests/fixtures/invalid_items.jsonl`. Every fixture
-message is **hand-written and synthetic** (`source_type: "synthetic"`, `source_name: "unit-test-fixture"`); brands
-like "XYZ Bank" and the domains are invented. They exist to exercise the pipeline and must never be cited as
+CI (`.github/workflows/ci.yml`) runs all of these and also checks that the committed benchmark and robustness
+reports reproduce byte for byte.
+
+The suite covers combiner invariants (Hypothesis), legitimate bank/OTP/delivery/payment messages that must not be
+flagged, English/Hinglish/mixed-script input, disguised requests (zero-width, Cyrillic lookalikes, full-width, spaced
+letters), prompt injection, URL parsing with a guard that fails on any network use, LLM timeouts and invalid output,
+API bounds and malformed bodies, a privacy test that no message text reaches logs or disk, metrics against
+hand-computed values, split leakage, and seeded mutation replay.
+
+Hypothesis prints a `@reproduce_failure` blob for every failure. CI sets `HYPOTHESIS_PROFILE=ci` (derandomized), so a
+failing example fails on every run. Locally, `.hypothesis/` replays the last failure first. Hypothesis has already
+found one real combiner bug: an `ok` model result with no label could reach `NO_STRONG_SIGNALS`. It is fixed and
+covered by the invariant test.
+
+The original pipeline tests use only `tests/fixtures/synthetic_items.jsonl` and `tests/fixtures/invalid_items.jsonl`.
+Every fixture message is **hand-written and synthetic** (`source_type: "synthetic"`, `source_name: "unit-test-fixture"`);
+brands like "XYZ Bank" and the domains are invented. They exist to exercise the pipeline and must never be cited as
 real-world evidence. Regenerate them with `python tests/fixtures/build_fixtures.py` (a test checks the committed files
 match the builder).
 
-## Pipeline
+## Benchmark Lab
+
+```bash
+D=benchmarks/synthetic
+python $D/build.py                                   # regenerate the synthetic set (a test checks it matches)
+scamcheck group $D/items.jsonl --out $D/items.grouped.jsonl --review $D/near_dup_pairs.jsonl
+scamcheck split $D/items.grouped.jsonl --out $D/manifest.json --allow-synthetic-in-test
+scamcheck benchmark $D/items.grouped.jsonl --manifest $D/manifest.json --out-dir reports/benchmark/synthetic
+```
+
+`benchmark` refuses to run if the leakage check fails or if asked to evaluate `train`. It writes `benchmark.json` and
+`benchmark.md` with dataset and manifest SHA-256, seed, split counts, rule-pack/engine/prompt versions and model id.
+The files contain no timestamps, so a re-run is byte-identical. `--with-llm` adds B3 and runs B4 with the model.
+
+| ID | System |
+|---|---|
+| B0 | always `UNCLEAR` / always `LIKELY_SCAM` (controls that expose metric gaming) |
+| B1 | rule pack only; rule silence → `NO_STRONG_SIGNALS` (what trusting a keyword list costs) |
+| B2 | char 2–5-gram TF-IDF + logistic regression, trained on `train` only, thresholds 0.3/0.7 fixed in advance |
+| B3 | zero-shot LLM with a fixed, hashed prompt (only when a model is configured) |
+| B4 | the full engine (rule-only mode when no model is configured) |
+
+Metrics: scam recall, dangerous-miss rate (scams → `NO_STRONG_SIGNALS`), false alarms per legitimate category and for
+promotional messages, `UNCLEAR` rate per class, confusion matrices per language and category, Hinglish − English gaps,
+Wilson 95% intervals with k/n for every rate, and a campaign-level bootstrap (2,000 resamples) when the split has at
+least 20 campaigns. B2 also reports a threshold-free ROC-AUC.
+
+### Example results — SYNTHETIC fixture, `test` split (28 items: 12 scam, 12 legitimate, 2 promotional, 2 ambiguous)
+
+| System | Scam recall | Dangerous misses | False alarms (legit) | Unclear (non-ambiguous) |
+|---|---|---|---|---|
+| B0-unclear | 0/12 | 0/12 | 0/12 | 26/26 |
+| B0-scam | 12/12 | 0/12 | 12/12 | 0/26 |
+| B1-rules | 5/12 (42%, CI 19–68%) | 3/12 (25%, CI 9–53%) | 0/12 | 4/26 |
+| B2-tfidf-lr | 0/12 | 0/12 | 0/12 | 26/26 (ROC-AUC 0.97) |
+| B4-engine (rule-only) | 9/12 (75%, CI 47–91%) | 0/12 | 0/12 | 17/26 (65%) |
+
+How to read this, honestly:
+
+- The intervals are wide (12 scams). The data was written by the same person who wrote the rules. None of this is
+  evidence of real-world performance.
+- B4 has no dangerous misses **by construction**: without a model it never reassures. The cost is visible: it answers
+  `UNCLEAR` for every legitimate message.
+- B1 shows the alternative. Treating rule silence as reassurance produced 3 dangerous misses out of 12.
+- B2 ranks well (AUC 0.97), but 64 training items never push its probabilities past the pre-set thresholds, so it
+  abstains on everything. The thresholds were not retuned after seeing test results.
+
+Full report: [reports/benchmark/synthetic/benchmark.md](reports/benchmark/synthetic/benchmark.md). Run log:
+[reports/test_runs.md](reports/test_runs.md).
+
+## Robustness Lab (seeded mutation testing)
+
+```bash
+scamcheck robustness $D/items.grouped.jsonl --manifest $D/manifest.json --out-dir reports/robustness/synthetic
+scamcheck robustness $D/items.grouped.jsonl --manifest $D/manifest.json --out-dir /tmp/x \
+    --replay reports/robustness/synthetic/variants.jsonl     # regenerate every variant and compare hashes
+```
+
+How it works (`src/scamcheck/eval/mutate.py`):
+
+- Each variant comes from `random.Random(f"{seed}:{parent_id}:{transform}")`. Python hashes string seeds
+  deterministically, so any single variant can be rebuilt from its record.
+- Every record stores `variant_id`, `parent_id`, `seed`, `transform`, `generator_version`, `output_sha256` and a
+  status. Default seeds are 11, 23 and 37 (`--seeds` to change).
+- **Meaning-preserving** transforms (whitespace, punctuation, character spacing, zero-width, confusables, full-width,
+  casing, typo, Hinglish spelling, Devanagari mixing, defang style) inherit the parent label, and verdict consistency
+  is measured.
+- **Meaning-changing or ambiguous** transforms (prompt-injection suffix, link removal, English→Hinglish code-switch)
+  are `needs_human_review`. They appear only as verdict counts until a reviewer supplies labels with
+  `--reviews decisions.jsonl` (`{"variant_id": "...", "label": "scam"}` per line).
+- Outputs identical to the parent are excluded and counted. Parents come only from `dev`/`test`, never `train`, so
+  B2 never sees a variant of its own training data. A test checks this lineage.
+- Randomness exists only here. `analyse()` is deterministic.
+
+### Example results — SYNTHETIC adversarial fixtures (46 parents × 3 seeds)
+
+1,725 generated · 307 excluded (no change) · 1,199 label-inherited · 219 awaiting human review · 0 reviewed.
+
+| System | Consistency (meaning-preserving) | Scam → `NO_STRONG_SIGNALS` | Scam detections lost | Seed spread |
+|---|---|---|---|---|
+| B1-rules | 96.8% (1160/1199) | 6.2% (34/544) | 11.0% (35/319) | 96.5–97.0% |
+| B2-tfidf-lr | 100% — constant verdict, trivially consistent | 0% | n/a | — |
+| B4-engine | 97.1% (1164/1199) | 0.0% (0/544) | 7.6% (35/463) | 96.8–97.5% |
+
+The lab found real weaknesses:
+
+- Newlines broke sentence-scoped rules: whitespace consistency was 87.7%. That is now fixed in `parse()` and is at
+  100%.
+- Still open: inserted punctuation (`...`, `!!`), adjacent-letter typos in keywords, Hinglish spelling variants
+  (`apka`, `kro`, `bta do`) and Devanagari words in romanised text each cost 7–9 points of consistency.
+
+Full report: [reports/robustness/synthetic/robustness.md](reports/robustness/synthetic/robustness.md).
+
+## Privacy and URL safety
+
+- No message is stored. The API logs only method, path, status and latency. Validation errors do not echo input.
+  Responses are `Cache-Control: no-store`. A test posts a marker string and asserts it reaches neither the logs nor
+  the disk.
+- URLs are parsed as text. Nothing is resolved, fetched, redirected or executed. Domain age, CT logs and reputation
+  are reported as **not checked**, never guessed. The brand-domain list is used only to avoid a lookalike flag on a
+  brand's own domain; it never vouches for a link.
+- There is no outbound lookup adapter, so there is no SSRF surface. The LLM endpoint comes from the operator's
+  environment, never from a request, must be http(s), and does not follow redirects. Any future lookup adapter must
+  resolve the host once, refuse private/loopback/link-local addresses, pin the resolved IP, and disable redirects.
+- Redaction (`engine/redact.py`) is assistance, not anonymisation. It cannot find names or addresses. The dataset
+  pipeline keeps its mandatory second-person redaction check.
+
+## Consent and licensing status
+
+- Code: Apache-2.0 ([LICENSE](LICENSE)).
+- No source is approved and no real message has been collected. `APPROVED_CONSENT_VERSIONS` is empty, so donated
+  items cannot reach a test split or a release until consent-v1's legal review is recorded
+  (`docs/PILOT_READINESS.md`).
+- The synthetic benchmark (`benchmarks/synthetic/`) and the unit-test fixtures were written for this repository and
+  are released as CC0-1.0. Brand names appear only as imitation targets; domains are invented.
+
+## How real-world claims will be evaluated
+
+Nothing here supports a claim yet. A claim will need: consented or licensed messages, redacted and checked by a
+second person; two independent annotators with κ ≥ 0.70 and adjudication; campaign-aware splits with a real-only
+frozen test set; thresholds frozen on `dev`; and one logged test run with campaign-bootstrap intervals, compared with
+B0–B3. PLAN.md §6 and §8 set the targets (e.g. at least ~75 test items per legitimate category before quoting a
+per-category false-alarm rate). Every public number must trace to a committed report.
+
+## Known limitations
+
+- Synthetic results only; same author for rules and data; 12 scams in the test split.
+- Rule-only mode can never say `NO_STRONG_SIGNALS`, and no message with a link can, until a lookup adapter exists.
+- Rules are sentence-scoped regexes. Punctuation noise, keyword typos, Hinglish spelling variety and Devanagari mixing
+  still cause misses (see the Robustness report). The confusables table is a selected subset.
+- `registered_domain` uses a short list of multi-label suffixes, not the full Public Suffix List.
+- B2's fixed thresholds make it abstain at this data size. B3 has not been run; no model was configured.
+- No rate limiting: the API is a local research tool, not a public service. Add rate limiting before exposing it.
+- Near-duplicate search is O(n²) pairwise Jaccard: fine for a few thousand items; switch to MinHash/LSH beyond that.
+- With very small strata the greedy group split cannot hit the 60/15/25 ratios (most singleton strata land in `train`).
+- κ is computed on the first two annotations of each item, assuming the same two people annotate throughout.
+- No temporal hold-out yet (PLAN.md §5 step 7); `collected_at` is stored so it can be added.
+
+## Future work (only where evidence justifies it)
+
+1. Run the pilot once consent-v1 is reviewed, then report B0–B4 on real `dev` data.
+2. Add human review for the 219 needs-review variants, and measure prompt-injection flips with confirmed labels.
+3. Address the measured gaps: punctuation-tolerant windows and Hinglish spelling normalisation, each re-measured in
+   the Robustness Lab.
+4. Configure B3 and use the optional Promptfoo red-team config (`promptfoo/`) against it, with synthetic inputs only.
+5. Fine-tune a multilingual encoder only if enough legally usable labelled data exists and B2/B3 show headroom.
+
+## Dataset pipeline
 
 ```bash
 scamcheck validate data/annotated/items.jsonl                 # schema + cross-field rules, line-numbered errors
@@ -143,19 +384,16 @@ Synthetic or augmented items are allowed for train/dev only and must use `source
 ## Layout
 
 ```
-src/scamcheck/data/   schema.py  io.py  normalise.py  grouping.py  split.py  report.py
-src/scamcheck/cli.py  command line entry point (`scamcheck`)
-schema/               item.schema.json generated from the pydantic models
-tests/                unit tests + synthetic fixtures (tests/fixtures/build_fixtures.py)
-data/                 annotated/ processed/ review/ splits/ (raw/ is gitignored)
-docs/PLAN.md          implementation plan
+src/scamcheck/engine/  parse · redact · rules · urls · llm · combiner · explain · models   (one analyse() path)
+src/scamcheck/eval/    baselines · metrics · benchmark · mutate · robustness
+src/scamcheck/api.py   FastAPI app            src/scamcheck/examples.py  synthetic demo examples
+src/scamcheck/data/    schema · io · normalise · grouping · split · report · pii · pilot
+src/scamcheck/cli.py   command line entry point (`scamcheck`)
+web/                   Next.js App Router frontend (Analyse, Benchmark Lab, Robustness Lab, Method)
+benchmarks/synthetic/  synthetic benchmark set, builder, grouped items, split manifest
+reports/               generated benchmark and robustness reports (synthetic), test-run log
+schema/                item.schema.json generated from the pydantic models
+tests/                 unit, property-based and API tests + synthetic fixtures
+data/                  annotated/ processed/ review/ splits/ (raw/ is gitignored)
+docs/                  ARCHITECTURE, PLAN, AUDIT, annotation and pilot procedures, PROJECT_SUMMARY
 ```
-
-## Known limitations
-
-- Near-duplicate search is O(n²) pairwise Jaccard: fine for a few thousand items; switch to MinHash/LSH beyond that.
-- With very small strata the greedy group split cannot hit the 60/15/25 ratios (most singleton strata land in `train`).
-  This resolves once each label × language stratum has dozens of groups.
-- κ is computed on the first two annotations of each item, assuming the same two people annotate throughout.
-- No temporal hold-out yet (PLAN.md §5 step 7); `collected_at` is stored so it can be added.
-- URL lookups (RDAP, CT, reputation) are schema fields only; no lookup code exists yet.

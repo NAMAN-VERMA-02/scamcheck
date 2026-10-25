@@ -1,5 +1,11 @@
 # ScamCheck v1 — Implementation Plan
 
+> **Status (2026-10-25):** the engine (§1.2–1.3), the evaluation harness (§6, B0–B4), the adversarial lab (M5, on
+> synthetic fixtures) and the web interface (M6) now exist; see [ARCHITECTURE.md](ARCHITECTURE.md). Two refinements
+> of the policy below: the model returns a categorical label with verbatim quotes instead of `p_scam`, so no
+> `T_HIGH`/`T_LOW` thresholds exist for it; and `NO_STRONG_SIGNALS` additionally requires that no link remains
+> unverified. Data milestones M1–M2 and every acceptance number in §8 are still open; there are no real-data results.
+
 Working name: `scamcheck` (placeholder). Scope: English + Hinglish text messages and the URLs inside them.
 Thesis: **measured trust**. The evaluation system is built first; the checker is a thin interface on top.
 
