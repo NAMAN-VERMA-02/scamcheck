@@ -10,8 +10,8 @@ Legend: ✅ done and tested · ⚠️ partial · ❌ not done.
 
 | Item | Status | Evidence / what is missing |
 |---|---|---|
-| Rate limiting per client | ❌ | No limiter exists. Required because a public checker is an **oracle** for scammers testing evasions (PLAN §7) and because LLM calls cost money. Needed: a per-IP and per-session token bucket at the reverse proxy or in-app (e.g. 10 requests/min, 200/day), returning 429 with no detail |
-| LLM spend cap | ❌ | No budget guard in code. Needed: a hard monthly cap at the provider **and** an in-app daily call counter that turns model calls off (fail to rule-only, never to reassurance) |
+| Rate limiting per client | ⚠️ | In-app sliding window, `SCAMCHECK_RATE_PER_MINUTE` (default 20) analyses per client address per minute → 429 with `Retry-After` and no detail (`RateLimiter` in `api.py`; `test_rate_limit_returns_429_with_retry_after`). Addresses are held in memory only. Still missing: it is per process (several workers each get their own window), behind a proxy every client shares the proxy's address unless the proxy limits instead, and there is no daily per-client cap. Put the limit at the reverse proxy for a real deployment |
+| LLM spend cap | ⚠️ | In-app daily call cap across all clients, `SCAMCHECK_LLM_DAILY_CALLS` (default 200, resets at UTC midnight). Past it, model calls fail closed to the rule-only verdict, never to reassurance (`BudgetedAdapter`; `test_llm_budget_fails_closed_and_resets_daily`). Still missing: a hard monthly cap at the provider (not applicable to a local model) |
 | Request body bound | ✅ | `MAX_BODY_BYTES = 32,000` → 413 (`api.py`; `test_api.py`). A chunked request without `Content-Length` is bounded only by pydantic after parsing. Add a proxy body limit too |
 | Text and URL bounds | ✅ | `text` 1–4,000 chars, not blank; `url` ≤ 2,000; unknown fields rejected (`test_invalid_requests_are_rejected`) |
 | Model timeout | ✅ | `SCAMCHECK_LLM_TIMEOUT`, default 10 s. A timeout falls back to rule-only (`test_failures_fail_conservatively`) |
@@ -61,7 +61,7 @@ Legend: ✅ done and tested · ⚠️ partial · ❌ not done.
 
 ## Minimum before any public deployment
 
-1. Rate limiting and an LLM spend cap.
+1. Move rate limiting to the reverse proxy (the in-app limiter is per process) and set a provider-side spend cap when a hosted model is used.
 2. TLS proxy; no client IPs in logs.
 3. A privacy notice.
 4. Provider terms recorded, if a model is enabled.

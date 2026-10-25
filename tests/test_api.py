@@ -68,3 +68,46 @@ def test_reports_are_served_or_404(monkeypatch, tmp_path):
     monkeypatch.setattr(api, "REPORTS_DIR", tmp_path)
     assert client.get("/api/reports/robustness").status_code == 404
     assert client.get("/api/reports/../../etc").status_code in (404, 422)
+
+
+@pytest.fixture(autouse=True)
+def fresh_limiter(monkeypatch):
+    monkeypatch.setattr(api, "_LIMITER", api.RateLimiter(10_000))
+
+
+def test_rate_limit_returns_429_with_retry_after(monkeypatch):
+    monkeypatch.setattr(api, "_LIMITER", api.RateLimiter(3))
+    codes = [client.post("/api/analyse", json={"text": "hello"}).status_code for _ in range(4)]
+    assert codes == [200, 200, 200, 429]
+    r = client.post("/api/analyse", json={"text": "hello"})
+    assert r.status_code == 429 and int(r.headers["retry-after"]) >= 1 and "hello" not in r.text
+    assert client.get("/api/health").status_code == 200          # only analysis is limited
+
+
+def test_limiter_window_slides_and_clients_are_separate():
+    lim = api.RateLimiter(2)
+    assert lim.allow("a", 0)[0] and lim.allow("a", 1)[0] and not lim.allow("a", 2)[0]
+    assert lim.allow("b", 2)[0]
+    assert lim.allow("a", 61)[0]                                    # the first hit has left the window
+
+
+class _Model:
+    model_id = "fake:budget"
+
+    def complete(self, system, user):
+        return '{"label": "not_scam", "evidence": []}'
+
+
+def test_llm_budget_fails_closed_and_resets_daily(monkeypatch):
+    from datetime import date
+
+    from scamcheck.engine import analyse
+    day = {"d": date(2026, 10, 25)}
+    budget = api.BudgetedAdapter(_Model(), daily_calls=1, today=lambda: day["d"])
+    first = analyse("Mom, reached the hostel.", model=budget, llm_opt_in=True)
+    assert first.model.status == "ok" and first.verdict == "NO_STRONG_SIGNALS"
+    second = analyse("Mom, reached the hostel.", model=budget, llm_opt_in=True)
+    assert second.model.status == "error" and second.model.error_type == "LLMBudgetExhausted"
+    assert second.verdict == "UNCLEAR"                              # never reassurance without the model
+    day["d"] = date(2026, 10, 26)
+    assert analyse("Mom, reached the hostel.", model=budget, llm_opt_in=True).model.status == "ok"
