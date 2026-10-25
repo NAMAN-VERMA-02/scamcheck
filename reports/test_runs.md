@@ -10,3 +10,14 @@ Every evaluation on a `test` split is logged here (PLAN.md §5 step 9). No tunin
 | 2026-10-25 | same | test (28) | same | rules-2026.10.1 | Regenerated under evaluation protocol v1, with no change to any rule, threshold, prompt or prediction (verified field by field). Added paired campaign-bootstrap comparisons (B4 − B1 dangerous misses −25.0 pts, [−50.0, 0.0], inconclusive) and n < 30 markers. Robustness report: label inheritance removed until human review validates a family (0 reviews exist), so label-based rows are n/a and the earlier figures are shown as provisional parent-based rows. |
 
 No real-data test run has happened. The first one requires the pilot (docs/PILOT_READINESS.md).
+
+### Deviation 1 — external-author check selection (2026-10-25, before any verdict was computed)
+
+The pre-registered selection rule (Devanagari, or ≥ 2 distinct `HINGLISH_MARKERS`) found 14 scam / 18 legitimate
+rows; the dataset card states 35 / 28. Rows carry no language field and are shuffled through the file (checked by
+row index and label only), so position cannot be used. A deliberately broad candidate filter (Devanagari, or any
+marker including ka/ki/ke/ko/se/ho/ye/na/jo/bhi) finds only 54 rows, fewer than the card's 63.
+Revised procedure, decided now: each of the 54 candidates is judged Hinglish or not by reading its text **without
+its label**; the confirmed row list is committed before planning; labels come from the dataset unchanged. If the
+confirmed set does not match the card, the mismatch is reported and the check runs on the confirmed set only as a
+recorded deviation — no rule is tuned towards the card's numbers. No system verdict on these rows has been seen.

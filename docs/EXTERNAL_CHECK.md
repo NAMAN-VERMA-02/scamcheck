@@ -73,6 +73,18 @@ stops the plan.
 - Then either stop, or decide in writing how the rule will change *before* looking at any verdicts.
 - Then plan again.
 
+**What actually happened (Deviation 1, `reports/test_runs.md`).** At the pinned revision the marker rule found
+14 scam / 18 benign rows. The rows are shuffled, and even a broad filter finds only 54 candidates, so the file does
+not hold the 63 rows the card describes. Every candidate's language was then judged by reading it without its label:
+38 are Hinglish. The confirmed list, with the not-Hinglish reasons and two judgement calls, is
+`reports/external/bolewara/selection.json`. It was committed before planning and is passed with:
+
+```bash
+scamcheck external-plan --with-llm --selection reports/external/bolewara/selection.json
+```
+
+The plan records the file's hash, the card's counts and the deviation. Labels come from the dataset unchanged.
+
 ## Step 4 — commit the plan (the pre-registration record)
 
 ```bash

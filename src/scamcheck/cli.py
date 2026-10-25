@@ -411,7 +411,7 @@ def cmd_external(a) -> int:
             if a.with_llm and model is None:
                 raise UsageError("--with-llm needs SCAMCHECK_LLM_BASE_URL and SCAMCHECK_LLM_MODEL to be set")
             plan = write_plan(Path(a.raw), Path("."), Path(a.register), Path(a.plan), Path(a.log), date.today(),
-                              model)
+                              model, Path(a.selection) if a.selection else None)
             print(f"plan → {a.plan}: {plan['selection']['counts']} in {plan['selection']['campaigns']} campaigns, "
                   f"frozen {plan['frozen']['sha256'][:12]}"
                   + (f", model {plan['model']['model_id']}" if plan["model"] else "")
@@ -597,6 +597,8 @@ def main(argv: list[str] | None = None) -> int:
         else:
             s.add_argument("--with-llm", action="store_true",
                            help="pin the configured SCAMCHECK_LLM_* model in the plan (adds B3 and B4 with model)")
+            s.add_argument("--selection", help="committed, label-blind row selection used instead of the marker rule "
+                                               "(a recorded deviation; see docs/EXTERNAL_CHECK.md)")
         s.set_defaults(fn=cmd_external)
 
     s = sub.add_parser("llm-smoke", help="B3 smoke test on the built-in SYNTHETIC examples only (status, latency, "

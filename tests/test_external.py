@@ -229,3 +229,32 @@ def test_run_refuses_a_model_the_plan_did_not_name(setup, monkeypatch):
     with pytest.raises(ext.ExternalCheckError, match="has no model"):
         ext.run_check(setup["raw"], ROOT, setup["register"], setup["plan"], setup["out"], setup["log"], TODAY,
                       FakeModel())
+
+
+def selection_file(tmp_path, rows, revision=ext.REVISION):
+    p = tmp_path / "selection.json"
+    p.write_text(json.dumps({"revision": revision, "hinglish": rows, "procedure": "label-blind reading (test)",
+                             "deviation": "test deviation", "reviewed_by": "tester"}), encoding="utf-8")
+    return p
+
+
+def test_committed_selection_replaces_the_rule_and_records_the_deviation(setup, monkeypatch, tmp_path):
+    monkeypatch.setattr(ext, "EXPECTED", {"scam": 35, "legitimate": 28})    # the card disagrees, as in reality
+    sel = selection_file(tmp_path, [3, 4, 11, 14])
+    p = ext.write_plan(setup["raw"], ROOT, setup["register"], setup["plan"], setup["log"], TODAY, None, sel)
+    assert p["selection"]["rows"] == [3, 4, 11, 14] and p["selection"]["counts"] == {"scam": 2, "legitimate": 2}
+    d = p["selection"]["deviation"]
+    assert d["card_counts"] == {"scam": 35, "legitimate": 28} and len(d["file_sha256"]) == 64
+    assert "Deviation 1" in setup["log"].read_text(encoding="utf-8")
+    assert any("n=2" in r and "counts only" in r for r in p["pre_stated_reading"])
+    monkeypatch.setattr(ext, "plan_committed", lambda root, path: True)
+    res = run(setup)                                                          # run uses the plan's rows
+    assert res["meta"]["n"] == 4 and not any(t in written(setup) for t in ALL_TEXTS)
+
+
+@pytest.mark.parametrize("rows,revision,match", [([999], ext.REVISION, "not in the data file"),
+                                                 ([3], "0" * 40, "different dataset revision")])
+def test_bad_selection_files_are_refused(setup, tmp_path, rows, revision, match):
+    with pytest.raises(ext.ExternalCheckError, match=match):
+        ext.write_plan(setup["raw"], ROOT, setup["register"], setup["plan"], setup["log"], TODAY, None,
+                       selection_file(tmp_path, rows, revision))

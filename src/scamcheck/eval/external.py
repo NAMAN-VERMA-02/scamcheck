@@ -93,10 +93,14 @@ def load_rows(raw: Path) -> list[dict]:
     return rows
 
 
-def select(rows: list[dict]) -> list[dict]:
-    """Hinglish rows as {row, label, text}; 1 → scam, 0 → legitimate (the card's only two classes)."""
+def select(rows: list[dict], row_ids: list[int] | None = None) -> list[dict]:
+    """Hinglish rows as {row, label, text}; 1 → scam, 0 → legitimate (the card's only two classes).
+    `row_ids` replaces the marker rule with an explicit, committed, label-blind selection (a recorded deviation)."""
+    keep = set(row_ids) if row_ids is not None else None
+    if keep is not None and not keep <= set(range(len(rows))):
+        raise ExternalCheckError("the selection names rows that are not in the data file")
     return [{"row": i, "label": "scam" if r["label"] == 1 else "legitimate", "text": r["text"]}
-            for i, r in enumerate(rows) if is_hinglish(r["text"])]
+            for i, r in enumerate(rows) if (i in keep if keep is not None else is_hinglish(r["text"]))]
 
 
 def selection_hash(selected: list[dict]) -> str:
@@ -182,12 +186,16 @@ def _model_record(model) -> dict:
             "digest": model_digest(model)}
 
 
-def make_plan(raw: Path, root: Path, register: Path, today: date, model=None) -> dict:
+def make_plan(raw: Path, root: Path, register: Path, today: date, model=None,
+              selection_file: Path | None = None) -> dict:
     authorisation = check_register(register)
     rows = load_rows(raw)
-    selected = select(rows)
+    chosen = json.loads(Path(selection_file).read_text(encoding="utf-8")) if selection_file else None
+    if chosen and chosen.get("revision") != REVISION:
+        raise ExternalCheckError("the selection file was made for a different dataset revision")
+    selected = select(rows, chosen["hinglish"] if chosen else None)
     counts = dict(Counter(s["label"] for s in selected))
-    if counts != EXPECTED:
+    if counts != EXPECTED and not chosen:
         raise ExternalCheckError(
             f"the pre-registered selection rule found {counts or 'no rows'}, but the dataset card states {EXPECTED}. "
             "The rule must not be adjusted after seeing the data without recording a deviation; stop and review "
@@ -195,9 +203,14 @@ def make_plan(raw: Path, root: Path, register: Path, today: date, model=None) ->
     pii = Counter(k for s in selected for k in pii_kinds(s["text"]))
     commit = _git(root, "rev-parse", "HEAD")
     groups = campaigns([s["text"] for s in selected])
+    n_scam, n_legit = counts.get("scam", 0), counts.get("legitimate", 0)
+
+    def readable(n: int) -> str:
+        return "interpretable under protocol §5 (n >= 30)" if n >= 30 else "counts only (n < 30)"
+
     reading = [
         "Synthetic and small: report as an external-author check only, never as real-world accuracy.",
-        "Scam recall (n=35) is interpretable under protocol §5 (n >= 30); legitimate rates (n=28) are counts only.",
+        f"Scam recall (n={n_scam}) is {readable(n_scam)}; legitimate rates (n={n_legit}) are {readable(n_legit)}.",
         "B4-engine runs in rule-only mode, so it cannot return NO_STRONG_SIGNALS; its legitimate items can only be "
         "LIKELY_SCAM (false alarm) or UNCLEAR.",
         "A B4-engine recall clearly below its own-author synthetic recall (9/12) would indicate the rules are fitted "
@@ -219,8 +232,14 @@ def make_plan(raw: Path, root: Path, register: Path, today: date, model=None) ->
                     "file_sha256": _sha(Path(raw).read_bytes()), "rows_in_file": len(rows), "licence": "CC-BY-4.0",
                     "attribution": "Anuj Bolewar (dataset card)"},
         "authorisation": authorisation,
-        "selection": {"rule": f"Devanagari present, or >= {MIN_MARKERS} distinct HINGLISH_MARKERS (fixed before "
-                              "the data was seen)", "counts": counts, "rows": [s["row"] for s in selected],
+        "selection": {"rule": (chosen["procedure"] if chosen else
+                               f"Devanagari present, or >= {MIN_MARKERS} distinct HINGLISH_MARKERS (fixed before "
+                               "the data was seen)"),
+                      "deviation": ({"file": Path(selection_file).as_posix(),
+                                     "file_sha256": _sha(Path(selection_file).read_bytes()),
+                                     "reason": chosen["deviation"], "reviewed_by": chosen["reviewed_by"],
+                                     "card_counts": EXPECTED} if chosen else None),
+                      "counts": counts, "rows": [s["row"] for s in selected],
                       "sha256": selection_hash(selected), "campaigns": len(set(groups)),
                       "label_mapping": {"1": "scam", "0": "legitimate"},
                       "identifier_shapes_seen": dict(sorted(pii.items()))},
@@ -235,18 +254,20 @@ def make_plan(raw: Path, root: Path, register: Path, today: date, model=None) ->
     }
 
 
-def write_plan(raw: Path, root: Path, register: Path, plan_path: Path, log: Path, today: date, model=None) -> dict:
+def write_plan(raw: Path, root: Path, register: Path, plan_path: Path, log: Path, today: date, model=None,
+               selection_file: Path | None = None) -> dict:
     if plan_path.exists():
         raise ExternalCheckError(f"{plan_path} already exists; a plan is written once")
-    plan = make_plan(raw, root, register, today, model)
+    plan = make_plan(raw, root, register, today, model, selection_file)
     plan_path.parent.mkdir(parents=True, exist_ok=True)
     plan_path.write_text(json.dumps(plan, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     s = plan["selection"]
     _log(log, f"| {today.isoformat()} | `{DATASET}` @ {REVISION[:12]} (SYNTHETIC, external author; Hinglish part "
-              f"{s['counts']['scam']} scam / {s['counts']['legitimate']} legitimate) | all selected rows | "
+              f"{s['counts'].get('scam', 0)} scam / {s['counts'].get('legitimate', 0)} legitimate) | all selected rows | "
               f"{', '.join(plan['systems'])} | frozen {plan['frozen']['sha256'][:12]} | **PLANNED** external-author "
-              f"check{'; model ' + plan['model']['model_id'] if plan['model'] else ''}; plan `{plan_path.as_posix()}`. "
-              "Must be committed before `external-run`; runs once. |")
+              f"check{'; model ' + plan['model']['model_id'] if plan['model'] else ''}"
+              f"{'; label-blind row selection per Deviation 1, not the card counts' if s['deviation'] else ''}; "
+              f"plan `{plan_path.as_posix()}`. Must be committed before `external-run`; runs once. |")
     return plan
 
 
@@ -264,7 +285,7 @@ def run_check(raw: Path, root: Path, register: Path, plan_path: Path, out_dir: P
     check_register(register)
     if _sha(Path(raw).read_bytes()) != plan["dataset"]["file_sha256"]:
         raise ExternalCheckError("the data file differs from the one in the plan")
-    selected = select(load_rows(raw))
+    selected = select(load_rows(raw), plan["selection"]["rows"])
     if selection_hash(selected) != plan["selection"]["sha256"]:
         raise ExternalCheckError("the selected rows differ from the plan")
     if freeze_hash(root) != plan["frozen"]["sha256"]:

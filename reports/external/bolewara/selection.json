@@ -1,0 +1,21 @@
+{
+  "dataset": "bolewara/hinglish-scam-text-dataset",
+  "revision": "743799229923fc80fd7e9f2c764b5e9bd4ab3c9a",
+  "decided_on": "2026-10-25",
+  "deviation": "reports/test_runs.md, Deviation 1: the pre-registered marker rule found 14 scam / 18 legitimate rows against the card's 35 / 28; rows are shuffled and carry no language field.",
+  "procedure": "Candidates = rows containing Devanagari or any HINGLISH_MARKERS word or one of ka/ki/ke/ko/se/ho/ye/na/jo/bhi (54 rows). Each candidate's language was judged by reading its text WITHOUT its label; Hinglish = romanised Hindi or Hindi-English code-mixing. Labels are taken unchanged from the dataset. No system verdict had been computed on any row.",
+  "reviewed_by": "Claude (evaluation assistant), label-blind; the repository owner wrote the rule pack and did not select rows",
+  "candidates": [55, 107, 116, 250, 589, 612, 636, 658, 666, 683, 711, 894, 943, 957, 1054, 1057, 1099, 1116, 1150, 1178, 1242, 1304, 1449, 1564, 1573, 1721, 1757, 1830, 1863, 1866, 1972, 2007, 2080, 2114, 2361, 2424, 2489, 2518, 2797, 2875, 2899, 2970, 2973, 3027, 3093, 3143, 3222, 3292, 3364, 3467, 3502, 3682, 3691, 3704],
+  "hinglish": [55, 116, 589, 612, 666, 683, 894, 943, 957, 1054, 1057, 1116, 1150, 1304, 1449, 1573, 1721, 1757, 1863, 1866, 1972, 2007, 2080, 2114, 2361, 2424, 2518, 2875, 2899, 2970, 2973, 3027, 3093, 3292, 3364, 3467, 3682, 3704],
+  "not_hinglish": {
+    "107": "Indian English", "250": "Singapore English", "636": "UK English", "658": "English", "711": "English",
+    "1099": "Indian English (tag 'na')", "1178": "Indian English (tag 'na')", "1242": "English ('mummy')",
+    "1564": "Indian English (tag 'pa')", "1830": "Singapore English", "2489": "Indian English", "2797": "Singapore English",
+    "3143": "Indian English (tag 'na')", "3222": "English", "3502": "romanised Bengali, not Hindi", "3691": "Indian English (tag 'na')"
+  },
+  "judgement_calls": {
+    "1057": "mostly English with a Hindi postposition ('department se link'); included as code-mixed",
+    "1304": "romanised Hindi quotation; style suggests a forwarded SMS, possibly UCI-derived rather than written by the dataset author; included under the language criterion"
+  },
+  "note": "The card states 35 Hinglish scam and 28 Hinglish benign rows (63). Even a deliberately broad filter yields only 54 candidates, of which 38 are Hinglish, so the file at this revision does not contain the 63 rows the card describes."
+}
