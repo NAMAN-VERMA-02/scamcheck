@@ -54,6 +54,7 @@ export interface Rate {
   rate: number | null;
   lo: number | null;
   hi: number | null;
+  interpretable?: boolean; // n >= 30 (docs/EVALUATION_PROTOCOL.md §5)
 }
 
 export interface CoreMetrics {

@@ -18,6 +18,8 @@ from ..engine.models import VERDICTS
 Z95 = 1.959963984540054
 MIN_BOOTSTRAP_CAMPAIGNS = 20
 BOOTSTRAP_RESAMPLES = 2000
+MIN_INTERPRETABLE_N = 30   # docs/EVALUATION_PROTOCOL.md §5
+PRIMARY = ("dangerous_miss_rate", "false_alarm_rate_legitimate")  # protocol §2; lower is better for both
 
 
 @dataclass(frozen=True)
@@ -31,14 +33,16 @@ class Row:
 
 
 def wilson(k: int, n: int) -> dict:
+    """Rate with Wilson 95% interval. `interpretable` follows docs/EVALUATION_PROTOCOL.md §5: below
+    MIN_INTERPRETABLE_N the counts are reported but the rate is not to be read as a finding."""
     if n == 0:
-        return {"k": 0, "n": 0, "rate": None, "lo": None, "hi": None}
+        return {"k": 0, "n": 0, "rate": None, "lo": None, "hi": None, "interpretable": False}
     p = k / n
     denom = 1 + Z95 ** 2 / n
     centre = (p + Z95 ** 2 / (2 * n)) / denom
     half = Z95 * math.sqrt(p * (1 - p) / n + Z95 ** 2 / (4 * n * n)) / denom
     return {"k": k, "n": n, "rate": round(p, 4), "lo": round(max(0.0, centre - half), 4),
-            "hi": round(min(1.0, centre + half), 4)}
+            "hi": round(min(1.0, centre + half), 4), "interpretable": n >= MIN_INTERPRETABLE_N}
 
 
 def auc(scores: list[float], positive: list[bool]) -> dict:
@@ -111,6 +115,44 @@ def bootstrap(rows: list[Row], seed: int, resamples: int = BOOTSTRAP_RESAMPLES) 
         vals.sort()
         out[name] = ({"lo": round(vals[int(0.025 * (len(vals) - 1))], 4),
                       "hi": round(vals[int(0.975 * (len(vals) - 1))], 4)} if vals else None)
+    return out
+
+
+def paired_difference(a: list[Row], b: list[Row], seed: int, resamples: int = BOOTSTRAP_RESAMPLES,
+                      level: float = 0.95) -> dict:
+    """Paired campaign bootstrap of rate(a) − rate(b) for each primary metric (same items, two systems).
+
+    Conclusion per protocol §6: "a_lower" / "b_lower" only when the interval excludes 0, otherwise
+    "inconclusive" — never "equivalent".
+    """
+    b_by_id = {r.id: r for r in b}
+    if {r.id for r in a} != set(b_by_id):
+        raise ValueError("paired comparison needs predictions for the same items")
+    by_campaign: dict[str, list[tuple[Row, Row]]] = defaultdict(list)
+    for r in a:
+        by_campaign[r.campaign].append((r, b_by_id[r.id]))
+    campaigns = sorted(by_campaign)
+    if len(campaigns) < MIN_BOOTSTRAP_CAMPAIGNS:
+        return {"skipped": f"only {len(campaigns)} campaigns (< {MIN_BOOTSTRAP_CAMPAIGNS})"}
+    rng = random.Random(seed)
+    diffs: dict[str, list[float]] = {name: [] for name in PRIMARY}
+    for _ in range(resamples):
+        draw = [p for c in rng.choices(campaigns, k=len(campaigns)) for p in by_campaign[c]]
+        for name in PRIMARY:
+            (ka, n), (kb, _) = HEADLINE[name]([x for x, _ in draw]), HEADLINE[name]([y for _, y in draw])
+            if n:
+                diffs[name].append(ka / n - kb / n)
+    tail = (1 - level) / 2
+    out: dict = {"seed": seed, "resamples": resamples, "campaigns": len(campaigns), "level": level}
+    for name, vals in diffs.items():
+        if not vals:
+            out[name] = None
+            continue
+        vals.sort()
+        lo, hi = vals[int(tail * (len(vals) - 1))], vals[int((1 - tail) * (len(vals) - 1))]
+        (ka, n), (kb, _) = HEADLINE[name](a), HEADLINE[name](b)
+        out[name] = {"diff": round((ka - kb) / n, 4) if n else None, "lo": round(lo, 4), "hi": round(hi, 4),
+                     "conclusion": "a_lower" if hi < 0 else "b_lower" if lo > 0 else "inconclusive"}
     return out
 
 

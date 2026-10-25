@@ -295,14 +295,16 @@
         "n": 1199,
         "rate": 0.9675,
         "lo": 0.9558,
-        "hi": 0.9761
+        "hi": 0.9761,
+        "interpretable": true
       },
       "consistency_validated_only": {
         "k": 0,
         "n": 0,
         "rate": null,
         "lo": null,
-        "hi": null
+        "hi": null,
+        "interpretable": false
       },
       "consistency_by_transform": {
         "casing": {
@@ -310,77 +312,88 @@
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "char_spacing": {
           "k": 126,
           "n": 138,
           "rate": 0.913,
           "lo": 0.8542,
-          "hi": 0.9496
+          "hi": 0.9496,
+          "interpretable": true
         },
         "confusables": {
           "k": 137,
           "n": 137,
           "rate": 1.0,
           "lo": 0.9727,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "fullwidth_nfkc": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "hinglish_spelling": {
           "k": 52,
           "n": 57,
           "rate": 0.9123,
           "lo": 0.8106,
-          "hi": 0.9619
+          "hi": 0.9619,
+          "interpretable": true
         },
         "punctuation": {
           "k": 128,
           "n": 138,
           "rate": 0.9275,
           "lo": 0.8717,
-          "hi": 0.9602
+          "hi": 0.9602,
+          "interpretable": true
         },
         "script_mix_devanagari": {
           "k": 50,
           "n": 54,
           "rate": 0.9259,
           "lo": 0.8245,
-          "hi": 0.9708
+          "hi": 0.9708,
+          "interpretable": true
         },
         "typo": {
           "k": 92,
           "n": 100,
           "rate": 0.92,
           "lo": 0.85,
-          "hi": 0.9589
+          "hi": 0.9589,
+          "interpretable": true
         },
         "url_defang_style": {
           "k": 23,
           "n": 23,
           "rate": 1.0,
           "lo": 0.8569,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": false
         },
         "whitespace": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "zero_width": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         }
       },
       "consistency_by_language": {
@@ -389,14 +402,16 @@
           "n": 541,
           "rate": 0.976,
           "lo": 0.9593,
-          "hi": 0.9859
+          "hi": 0.9859,
+          "interpretable": true
         },
         "hinglish": {
           "k": 632,
           "n": 658,
           "rate": 0.9605,
           "lo": 0.9427,
-          "hi": 0.9729
+          "hi": 0.9729,
+          "interpretable": true
         }
       },
       "consistency_by_seed": {
@@ -405,21 +420,24 @@
           "n": 399,
           "rate": 0.9674,
           "lo": 0.9451,
-          "hi": 0.9809
+          "hi": 0.9809,
+          "interpretable": true
         },
         "23": {
           "k": 387,
           "n": 401,
           "rate": 0.9651,
           "lo": 0.9423,
-          "hi": 0.9791
+          "hi": 0.9791,
+          "interpretable": true
         },
         "37": {
           "k": 387,
           "n": 399,
           "rate": 0.9699,
           "lo": 0.9482,
-          "hi": 0.9827
+          "hi": 0.9827,
+          "interpretable": true
         }
       },
       "seed_variation": {
@@ -432,28 +450,32 @@
         "n": 0,
         "rate": null,
         "lo": null,
-        "hi": null
+        "hi": null,
+        "interpretable": false
       },
       "scam_lost_detection": {
         "k": 0,
         "n": 0,
         "rate": null,
         "lo": null,
-        "hi": null
+        "hi": null,
+        "interpretable": false
       },
       "parent_scam_moved_to_no_strong_signals": {
         "k": 34,
         "n": 544,
         "rate": 0.0625,
         "lo": 0.0451,
-        "hi": 0.0861
+        "hi": 0.0861,
+        "interpretable": true
       },
       "parent_scam_detection_lost": {
         "k": 35,
         "n": 319,
         "rate": 0.1097,
         "lo": 0.08,
-        "hi": 0.1488
+        "hi": 0.1488,
+        "interpretable": true
       },
       "needs_review_verdicts": {
         "code_switch": {
@@ -873,14 +895,16 @@
         "n": 1199,
         "rate": 1.0,
         "lo": 0.9968,
-        "hi": 1.0
+        "hi": 1.0,
+        "interpretable": true
       },
       "consistency_validated_only": {
         "k": 0,
         "n": 0,
         "rate": null,
         "lo": null,
-        "hi": null
+        "hi": null,
+        "interpretable": false
       },
       "consistency_by_transform": {
         "casing": {
@@ -888,77 +912,88 @@
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "char_spacing": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "confusables": {
           "k": 137,
           "n": 137,
           "rate": 1.0,
           "lo": 0.9727,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "fullwidth_nfkc": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "hinglish_spelling": {
           "k": 57,
           "n": 57,
           "rate": 1.0,
           "lo": 0.9369,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "punctuation": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "script_mix_devanagari": {
           "k": 54,
           "n": 54,
           "rate": 1.0,
           "lo": 0.9336,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "typo": {
           "k": 100,
           "n": 100,
           "rate": 1.0,
           "lo": 0.963,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "url_defang_style": {
           "k": 23,
           "n": 23,
           "rate": 1.0,
           "lo": 0.8569,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": false
         },
         "whitespace": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "zero_width": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         }
       },
       "consistency_by_language": {
@@ -967,14 +1002,16 @@
           "n": 541,
           "rate": 1.0,
           "lo": 0.9929,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "hinglish": {
           "k": 658,
           "n": 658,
           "rate": 1.0,
           "lo": 0.9942,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         }
       },
       "consistency_by_seed": {
@@ -983,21 +1020,24 @@
           "n": 399,
           "rate": 1.0,
           "lo": 0.9905,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "23": {
           "k": 401,
           "n": 401,
           "rate": 1.0,
           "lo": 0.9905,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "37": {
           "k": 399,
           "n": 399,
           "rate": 1.0,
           "lo": 0.9905,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         }
       },
       "seed_variation": {
@@ -1010,28 +1050,32 @@
         "n": 0,
         "rate": null,
         "lo": null,
-        "hi": null
+        "hi": null,
+        "interpretable": false
       },
       "scam_lost_detection": {
         "k": 0,
         "n": 0,
         "rate": null,
         "lo": null,
-        "hi": null
+        "hi": null,
+        "interpretable": false
       },
       "parent_scam_moved_to_no_strong_signals": {
         "k": 0,
         "n": 544,
         "rate": 0.0,
         "lo": 0.0,
-        "hi": 0.007
+        "hi": 0.007,
+        "interpretable": true
       },
       "parent_scam_detection_lost": {
         "k": 0,
         "n": 0,
         "rate": null,
         "lo": null,
-        "hi": null
+        "hi": null,
+        "interpretable": false
       },
       "needs_review_verdicts": {
         "code_switch": {
@@ -1055,14 +1099,16 @@
         "n": 1199,
         "rate": 0.9708,
         "lo": 0.9597,
-        "hi": 0.9789
+        "hi": 0.9789,
+        "interpretable": true
       },
       "consistency_validated_only": {
         "k": 0,
         "n": 0,
         "rate": null,
         "lo": null,
-        "hi": null
+        "hi": null,
+        "interpretable": false
       },
       "consistency_by_transform": {
         "casing": {
@@ -1070,77 +1116,88 @@
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "char_spacing": {
           "k": 129,
           "n": 138,
           "rate": 0.9348,
           "lo": 0.8807,
-          "hi": 0.9653
+          "hi": 0.9653,
+          "interpretable": true
         },
         "confusables": {
           "k": 137,
           "n": 137,
           "rate": 1.0,
           "lo": 0.9727,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "fullwidth_nfkc": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "hinglish_spelling": {
           "k": 52,
           "n": 57,
           "rate": 0.9123,
           "lo": 0.8106,
-          "hi": 0.9619
+          "hi": 0.9619,
+          "interpretable": true
         },
         "punctuation": {
           "k": 128,
           "n": 138,
           "rate": 0.9275,
           "lo": 0.8717,
-          "hi": 0.9602
+          "hi": 0.9602,
+          "interpretable": true
         },
         "script_mix_devanagari": {
           "k": 50,
           "n": 54,
           "rate": 0.9259,
           "lo": 0.8245,
-          "hi": 0.9708
+          "hi": 0.9708,
+          "interpretable": true
         },
         "typo": {
           "k": 93,
           "n": 100,
           "rate": 0.93,
           "lo": 0.8625,
-          "hi": 0.9657
+          "hi": 0.9657,
+          "interpretable": true
         },
         "url_defang_style": {
           "k": 23,
           "n": 23,
           "rate": 1.0,
           "lo": 0.8569,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": false
         },
         "whitespace": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         },
         "zero_width": {
           "k": 138,
           "n": 138,
           "rate": 1.0,
           "lo": 0.9729,
-          "hi": 1.0
+          "hi": 1.0,
+          "interpretable": true
         }
       },
       "consistency_by_language": {
@@ -1149,14 +1206,16 @@
           "n": 541,
           "rate": 0.9778,
           "lo": 0.9616,
-          "hi": 0.9873
+          "hi": 0.9873,
+          "interpretable": true
         },
         "hinglish": {
           "k": 635,
           "n": 658,
           "rate": 0.965,
           "lo": 0.9481,
-          "hi": 0.9766
+          "hi": 0.9766,
+          "interpretable": true
         }
       },
       "consistency_by_seed": {
@@ -1165,21 +1224,24 @@
           "n": 399,
           "rate": 0.9699,
           "lo": 0.9482,
-          "hi": 0.9827
+          "hi": 0.9827,
+          "interpretable": true
         },
         "23": {
           "k": 388,
           "n": 401,
           "rate": 0.9676,
           "lo": 0.9453,
-          "hi": 0.981
+          "hi": 0.981,
+          "interpretable": true
         },
         "37": {
           "k": 389,
           "n": 399,
           "rate": 0.9749,
           "lo": 0.9545,
-          "hi": 0.9863
+          "hi": 0.9863,
+          "interpretable": true
         }
       },
       "seed_variation": {
@@ -1192,28 +1254,32 @@
         "n": 0,
         "rate": null,
         "lo": null,
-        "hi": null
+        "hi": null,
+        "interpretable": false
       },
       "scam_lost_detection": {
         "k": 0,
         "n": 0,
         "rate": null,
         "lo": null,
-        "hi": null
+        "hi": null,
+        "interpretable": false
       },
       "parent_scam_moved_to_no_strong_signals": {
         "k": 0,
         "n": 544,
         "rate": 0.0,
         "lo": 0.0,
-        "hi": 0.007
+        "hi": 0.007,
+        "interpretable": true
       },
       "parent_scam_detection_lost": {
         "k": 35,
         "n": 463,
         "rate": 0.0756,
         "lo": 0.0549,
-        "hi": 0.1033
+        "hi": 0.1033,
+        "interpretable": true
       },
       "needs_review_verdicts": {
         "code_switch": {

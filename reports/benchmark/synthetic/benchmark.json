@@ -257,35 +257,40 @@
             "n": 12,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.2425
+            "hi": 0.2425,
+            "interpretable": false
           },
           "dangerous_miss_rate": {
             "k": 0,
             "n": 12,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.2425
+            "hi": 0.2425,
+            "interpretable": false
           },
           "false_alarm_rate_legitimate": {
             "k": 0,
             "n": 12,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.2425
+            "hi": 0.2425,
+            "interpretable": false
           },
           "unclear_rate_non_ambiguous": {
             "k": 26,
             "n": 26,
             "rate": 1.0,
             "lo": 0.8713,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "false_alarm_rate_promotional": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "unclear_rate_by_label": {
             "ambiguous": {
@@ -293,28 +298,32 @@
               "n": 2,
               "rate": 1.0,
               "lo": 0.3424,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "legitimate": {
               "k": 12,
               "n": 12,
               "rate": 1.0,
               "lo": 0.7575,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "promotional": {
               "k": 2,
               "n": 2,
               "rate": 1.0,
               "lo": 0.3424,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "scam": {
               "k": 12,
               "n": 12,
               "rate": 1.0,
               "lo": 0.7575,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             }
           }
         },
@@ -325,35 +334,40 @@
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "dangerous_miss_rate": {
               "k": 0,
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "false_alarm_rate_legitimate": {
               "k": 0,
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "unclear_rate_non_ambiguous": {
               "k": 13,
               "n": 13,
               "rate": 1.0,
               "lo": 0.7719,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "false_alarm_rate_promotional": {
               "k": 0,
               "n": 1,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.7935
+              "hi": 0.7935,
+              "interpretable": false
             },
             "unclear_rate_by_label": {
               "ambiguous": {
@@ -361,28 +375,32 @@
                 "n": 1,
                 "rate": 1.0,
                 "lo": 0.2065,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               },
               "legitimate": {
                 "k": 6,
                 "n": 6,
                 "rate": 1.0,
                 "lo": 0.6097,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               },
               "promotional": {
                 "k": 1,
                 "n": 1,
                 "rate": 1.0,
                 "lo": 0.2065,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               },
               "scam": {
                 "k": 6,
                 "n": 6,
                 "rate": 1.0,
                 "lo": 0.6097,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               }
             }
           },
@@ -392,35 +410,40 @@
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "dangerous_miss_rate": {
               "k": 0,
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "false_alarm_rate_legitimate": {
               "k": 0,
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "unclear_rate_non_ambiguous": {
               "k": 13,
               "n": 13,
               "rate": 1.0,
               "lo": 0.7719,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "false_alarm_rate_promotional": {
               "k": 0,
               "n": 1,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.7935
+              "hi": 0.7935,
+              "interpretable": false
             },
             "unclear_rate_by_label": {
               "ambiguous": {
@@ -428,28 +451,32 @@
                 "n": 1,
                 "rate": 1.0,
                 "lo": 0.2065,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               },
               "legitimate": {
                 "k": 6,
                 "n": 6,
                 "rate": 1.0,
                 "lo": 0.6097,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               },
               "promotional": {
                 "k": 1,
                 "n": 1,
                 "rate": 1.0,
                 "lo": 0.2065,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               },
               "scam": {
                 "k": 6,
                 "n": 6,
                 "rate": 1.0,
                 "lo": 0.6097,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               }
             }
           }
@@ -466,49 +493,56 @@
             "n": 3,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.5615
+            "hi": 0.5615,
+            "interpretable": false
           },
           "delivery_notification": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "otp": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "payment_confirmation": {
             "k": 0,
             "n": 1,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.7935
+            "hi": 0.7935,
+            "interpretable": false
           },
           "personal": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "service_account": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "marketing": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           }
         },
         "scam_recall_by_category": {
@@ -517,42 +551,48 @@
             "n": 4,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.4899
+            "hi": 0.4899,
+            "interpretable": false
           },
           "job_task_scam": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "lottery_prize": {
             "k": 0,
             "n": 1,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.7935
+            "hi": 0.7935,
+            "interpretable": false
           },
           "other_scam": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "phishing_credential": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "upi_collect_refund": {
             "k": 0,
             "n": 1,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.7935
+            "hi": 0.7935,
+            "interpretable": false
           }
         },
         "confusion": {
@@ -788,35 +828,40 @@
             "n": 12,
             "rate": 1.0,
             "lo": 0.7575,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "dangerous_miss_rate": {
             "k": 0,
             "n": 12,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.2425
+            "hi": 0.2425,
+            "interpretable": false
           },
           "false_alarm_rate_legitimate": {
             "k": 12,
             "n": 12,
             "rate": 1.0,
             "lo": 0.7575,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "unclear_rate_non_ambiguous": {
             "k": 0,
             "n": 26,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.1287
+            "hi": 0.1287,
+            "interpretable": false
           },
           "false_alarm_rate_promotional": {
             "k": 2,
             "n": 2,
             "rate": 1.0,
             "lo": 0.3424,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "unclear_rate_by_label": {
             "ambiguous": {
@@ -824,28 +869,32 @@
               "n": 2,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.6576
+              "hi": 0.6576,
+              "interpretable": false
             },
             "legitimate": {
               "k": 0,
               "n": 12,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.2425
+              "hi": 0.2425,
+              "interpretable": false
             },
             "promotional": {
               "k": 0,
               "n": 2,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.6576
+              "hi": 0.6576,
+              "interpretable": false
             },
             "scam": {
               "k": 0,
               "n": 12,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.2425
+              "hi": 0.2425,
+              "interpretable": false
             }
           }
         },
@@ -856,35 +905,40 @@
               "n": 6,
               "rate": 1.0,
               "lo": 0.6097,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "dangerous_miss_rate": {
               "k": 0,
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "false_alarm_rate_legitimate": {
               "k": 6,
               "n": 6,
               "rate": 1.0,
               "lo": 0.6097,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "unclear_rate_non_ambiguous": {
               "k": 0,
               "n": 13,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.2281
+              "hi": 0.2281,
+              "interpretable": false
             },
             "false_alarm_rate_promotional": {
               "k": 1,
               "n": 1,
               "rate": 1.0,
               "lo": 0.2065,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "unclear_rate_by_label": {
               "ambiguous": {
@@ -892,28 +946,32 @@
                 "n": 1,
                 "rate": 0.0,
                 "lo": 0.0,
-                "hi": 0.7935
+                "hi": 0.7935,
+                "interpretable": false
               },
               "legitimate": {
                 "k": 0,
                 "n": 6,
                 "rate": 0.0,
                 "lo": 0.0,
-                "hi": 0.3903
+                "hi": 0.3903,
+                "interpretable": false
               },
               "promotional": {
                 "k": 0,
                 "n": 1,
                 "rate": 0.0,
                 "lo": 0.0,
-                "hi": 0.7935
+                "hi": 0.7935,
+                "interpretable": false
               },
               "scam": {
                 "k": 0,
                 "n": 6,
                 "rate": 0.0,
                 "lo": 0.0,
-                "hi": 0.3903
+                "hi": 0.3903,
+                "interpretable": false
               }
             }
           },
@@ -923,35 +981,40 @@
               "n": 6,
               "rate": 1.0,
               "lo": 0.6097,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "dangerous_miss_rate": {
               "k": 0,
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "false_alarm_rate_legitimate": {
               "k": 6,
               "n": 6,
               "rate": 1.0,
               "lo": 0.6097,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "unclear_rate_non_ambiguous": {
               "k": 0,
               "n": 13,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.2281
+              "hi": 0.2281,
+              "interpretable": false
             },
             "false_alarm_rate_promotional": {
               "k": 1,
               "n": 1,
               "rate": 1.0,
               "lo": 0.2065,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "unclear_rate_by_label": {
               "ambiguous": {
@@ -959,28 +1022,32 @@
                 "n": 1,
                 "rate": 0.0,
                 "lo": 0.0,
-                "hi": 0.7935
+                "hi": 0.7935,
+                "interpretable": false
               },
               "legitimate": {
                 "k": 0,
                 "n": 6,
                 "rate": 0.0,
                 "lo": 0.0,
-                "hi": 0.3903
+                "hi": 0.3903,
+                "interpretable": false
               },
               "promotional": {
                 "k": 0,
                 "n": 1,
                 "rate": 0.0,
                 "lo": 0.0,
-                "hi": 0.7935
+                "hi": 0.7935,
+                "interpretable": false
               },
               "scam": {
                 "k": 0,
                 "n": 6,
                 "rate": 0.0,
                 "lo": 0.0,
-                "hi": 0.3903
+                "hi": 0.3903,
+                "interpretable": false
               }
             }
           }
@@ -997,49 +1064,56 @@
             "n": 3,
             "rate": 1.0,
             "lo": 0.4385,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "delivery_notification": {
             "k": 2,
             "n": 2,
             "rate": 1.0,
             "lo": 0.3424,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "otp": {
             "k": 2,
             "n": 2,
             "rate": 1.0,
             "lo": 0.3424,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "payment_confirmation": {
             "k": 1,
             "n": 1,
             "rate": 1.0,
             "lo": 0.2065,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "personal": {
             "k": 2,
             "n": 2,
             "rate": 1.0,
             "lo": 0.3424,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "service_account": {
             "k": 2,
             "n": 2,
             "rate": 1.0,
             "lo": 0.3424,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "marketing": {
             "k": 2,
             "n": 2,
             "rate": 1.0,
             "lo": 0.3424,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           }
         },
         "scam_recall_by_category": {
@@ -1048,42 +1122,48 @@
             "n": 4,
             "rate": 1.0,
             "lo": 0.5101,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "job_task_scam": {
             "k": 2,
             "n": 2,
             "rate": 1.0,
             "lo": 0.3424,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "lottery_prize": {
             "k": 1,
             "n": 1,
             "rate": 1.0,
             "lo": 0.2065,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "other_scam": {
             "k": 2,
             "n": 2,
             "rate": 1.0,
             "lo": 0.3424,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "phishing_credential": {
             "k": 2,
             "n": 2,
             "rate": 1.0,
             "lo": 0.3424,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "upi_collect_refund": {
             "k": 1,
             "n": 1,
             "rate": 1.0,
             "lo": 0.2065,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           }
         },
         "confusion": {
@@ -1319,35 +1399,40 @@
             "n": 12,
             "rate": 0.4167,
             "lo": 0.1933,
-            "hi": 0.6805
+            "hi": 0.6805,
+            "interpretable": false
           },
           "dangerous_miss_rate": {
             "k": 3,
             "n": 12,
             "rate": 0.25,
             "lo": 0.0889,
-            "hi": 0.5323
+            "hi": 0.5323,
+            "interpretable": false
           },
           "false_alarm_rate_legitimate": {
             "k": 0,
             "n": 12,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.2425
+            "hi": 0.2425,
+            "interpretable": false
           },
           "unclear_rate_non_ambiguous": {
             "k": 4,
             "n": 26,
             "rate": 0.1538,
             "lo": 0.0615,
-            "hi": 0.3353
+            "hi": 0.3353,
+            "interpretable": false
           },
           "false_alarm_rate_promotional": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "unclear_rate_by_label": {
             "ambiguous": {
@@ -1355,28 +1440,32 @@
               "n": 2,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.6576
+              "hi": 0.6576,
+              "interpretable": false
             },
             "legitimate": {
               "k": 0,
               "n": 12,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.2425
+              "hi": 0.2425,
+              "interpretable": false
             },
             "promotional": {
               "k": 0,
               "n": 2,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.6576
+              "hi": 0.6576,
+              "interpretable": false
             },
             "scam": {
               "k": 4,
               "n": 12,
               "rate": 0.3333,
               "lo": 0.1381,
-              "hi": 0.6094
+              "hi": 0.6094,
+              "interpretable": false
             }
           }
         },
@@ -1387,35 +1476,40 @@
               "n": 6,
               "rate": 0.3333,
               "lo": 0.0968,
-              "hi": 0.7
+              "hi": 0.7,
+              "interpretable": false
             },
             "dangerous_miss_rate": {
               "k": 2,
               "n": 6,
               "rate": 0.3333,
               "lo": 0.0968,
-              "hi": 0.7
+              "hi": 0.7,
+              "interpretable": false
             },
             "false_alarm_rate_legitimate": {
               "k": 0,
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "unclear_rate_non_ambiguous": {
               "k": 2,
               "n": 13,
               "rate": 0.1538,
               "lo": 0.0433,
-              "hi": 0.4223
+              "hi": 0.4223,
+              "interpretable": false
             },
             "false_alarm_rate_promotional": {
               "k": 0,
               "n": 1,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.7935
+              "hi": 0.7935,
+              "interpretable": false
             },
             "unclear_rate_by_label": {
               "ambiguous": {
@@ -1423,28 +1517,32 @@
                 "n": 1,
                 "rate": 0.0,
                 "lo": 0.0,
-                "hi": 0.7935
+                "hi": 0.7935,
+                "interpretable": false
               },
               "legitimate": {
                 "k": 0,
                 "n": 6,
                 "rate": 0.0,
                 "lo": 0.0,
-                "hi": 0.3903
+                "hi": 0.3903,
+                "interpretable": false
               },
               "promotional": {
                 "k": 0,
                 "n": 1,
                 "rate": 0.0,
                 "lo": 0.0,
-                "hi": 0.7935
+                "hi": 0.7935,
+                "interpretable": false
               },
               "scam": {
                 "k": 2,
                 "n": 6,
                 "rate": 0.3333,
                 "lo": 0.0968,
-                "hi": 0.7
+                "hi": 0.7,
+                "interpretable": false
               }
             }
           },
@@ -1454,35 +1552,40 @@
               "n": 6,
               "rate": 0.5,
               "lo": 0.1876,
-              "hi": 0.8124
+              "hi": 0.8124,
+              "interpretable": false
             },
             "dangerous_miss_rate": {
               "k": 1,
               "n": 6,
               "rate": 0.1667,
               "lo": 0.0301,
-              "hi": 0.5635
+              "hi": 0.5635,
+              "interpretable": false
             },
             "false_alarm_rate_legitimate": {
               "k": 0,
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "unclear_rate_non_ambiguous": {
               "k": 2,
               "n": 13,
               "rate": 0.1538,
               "lo": 0.0433,
-              "hi": 0.4223
+              "hi": 0.4223,
+              "interpretable": false
             },
             "false_alarm_rate_promotional": {
               "k": 0,
               "n": 1,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.7935
+              "hi": 0.7935,
+              "interpretable": false
             },
             "unclear_rate_by_label": {
               "ambiguous": {
@@ -1490,28 +1593,32 @@
                 "n": 1,
                 "rate": 0.0,
                 "lo": 0.0,
-                "hi": 0.7935
+                "hi": 0.7935,
+                "interpretable": false
               },
               "legitimate": {
                 "k": 0,
                 "n": 6,
                 "rate": 0.0,
                 "lo": 0.0,
-                "hi": 0.3903
+                "hi": 0.3903,
+                "interpretable": false
               },
               "promotional": {
                 "k": 0,
                 "n": 1,
                 "rate": 0.0,
                 "lo": 0.0,
-                "hi": 0.7935
+                "hi": 0.7935,
+                "interpretable": false
               },
               "scam": {
                 "k": 2,
                 "n": 6,
                 "rate": 0.3333,
                 "lo": 0.0968,
-                "hi": 0.7
+                "hi": 0.7,
+                "interpretable": false
               }
             }
           }
@@ -1528,49 +1635,56 @@
             "n": 3,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.5615
+            "hi": 0.5615,
+            "interpretable": false
           },
           "delivery_notification": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "otp": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "payment_confirmation": {
             "k": 0,
             "n": 1,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.7935
+            "hi": 0.7935,
+            "interpretable": false
           },
           "personal": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "service_account": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "marketing": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           }
         },
         "scam_recall_by_category": {
@@ -1579,42 +1693,48 @@
             "n": 4,
             "rate": 0.25,
             "lo": 0.0456,
-            "hi": 0.6994
+            "hi": 0.6994,
+            "interpretable": false
           },
           "job_task_scam": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "lottery_prize": {
             "k": 0,
             "n": 1,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.7935
+            "hi": 0.7935,
+            "interpretable": false
           },
           "other_scam": {
             "k": 2,
             "n": 2,
             "rate": 1.0,
             "lo": 0.3424,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "phishing_credential": {
             "k": 1,
             "n": 2,
             "rate": 0.5,
             "lo": 0.0945,
-            "hi": 0.9055
+            "hi": 0.9055,
+            "interpretable": false
           },
           "upi_collect_refund": {
             "k": 1,
             "n": 1,
             "rate": 1.0,
             "lo": 0.2065,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           }
         },
         "confusion": {
@@ -1856,35 +1976,40 @@
             "n": 12,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.2425
+            "hi": 0.2425,
+            "interpretable": false
           },
           "dangerous_miss_rate": {
             "k": 0,
             "n": 12,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.2425
+            "hi": 0.2425,
+            "interpretable": false
           },
           "false_alarm_rate_legitimate": {
             "k": 0,
             "n": 12,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.2425
+            "hi": 0.2425,
+            "interpretable": false
           },
           "unclear_rate_non_ambiguous": {
             "k": 26,
             "n": 26,
             "rate": 1.0,
             "lo": 0.8713,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "false_alarm_rate_promotional": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "unclear_rate_by_label": {
             "ambiguous": {
@@ -1892,28 +2017,32 @@
               "n": 2,
               "rate": 1.0,
               "lo": 0.3424,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "legitimate": {
               "k": 12,
               "n": 12,
               "rate": 1.0,
               "lo": 0.7575,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "promotional": {
               "k": 2,
               "n": 2,
               "rate": 1.0,
               "lo": 0.3424,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "scam": {
               "k": 12,
               "n": 12,
               "rate": 1.0,
               "lo": 0.7575,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             }
           }
         },
@@ -1924,35 +2053,40 @@
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "dangerous_miss_rate": {
               "k": 0,
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "false_alarm_rate_legitimate": {
               "k": 0,
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "unclear_rate_non_ambiguous": {
               "k": 13,
               "n": 13,
               "rate": 1.0,
               "lo": 0.7719,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "false_alarm_rate_promotional": {
               "k": 0,
               "n": 1,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.7935
+              "hi": 0.7935,
+              "interpretable": false
             },
             "unclear_rate_by_label": {
               "ambiguous": {
@@ -1960,28 +2094,32 @@
                 "n": 1,
                 "rate": 1.0,
                 "lo": 0.2065,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               },
               "legitimate": {
                 "k": 6,
                 "n": 6,
                 "rate": 1.0,
                 "lo": 0.6097,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               },
               "promotional": {
                 "k": 1,
                 "n": 1,
                 "rate": 1.0,
                 "lo": 0.2065,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               },
               "scam": {
                 "k": 6,
                 "n": 6,
                 "rate": 1.0,
                 "lo": 0.6097,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               }
             }
           },
@@ -1991,35 +2129,40 @@
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "dangerous_miss_rate": {
               "k": 0,
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "false_alarm_rate_legitimate": {
               "k": 0,
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "unclear_rate_non_ambiguous": {
               "k": 13,
               "n": 13,
               "rate": 1.0,
               "lo": 0.7719,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "false_alarm_rate_promotional": {
               "k": 0,
               "n": 1,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.7935
+              "hi": 0.7935,
+              "interpretable": false
             },
             "unclear_rate_by_label": {
               "ambiguous": {
@@ -2027,28 +2170,32 @@
                 "n": 1,
                 "rate": 1.0,
                 "lo": 0.2065,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               },
               "legitimate": {
                 "k": 6,
                 "n": 6,
                 "rate": 1.0,
                 "lo": 0.6097,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               },
               "promotional": {
                 "k": 1,
                 "n": 1,
                 "rate": 1.0,
                 "lo": 0.2065,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               },
               "scam": {
                 "k": 6,
                 "n": 6,
                 "rate": 1.0,
                 "lo": 0.6097,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               }
             }
           }
@@ -2065,49 +2212,56 @@
             "n": 3,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.5615
+            "hi": 0.5615,
+            "interpretable": false
           },
           "delivery_notification": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "otp": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "payment_confirmation": {
             "k": 0,
             "n": 1,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.7935
+            "hi": 0.7935,
+            "interpretable": false
           },
           "personal": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "service_account": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "marketing": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           }
         },
         "scam_recall_by_category": {
@@ -2116,42 +2270,48 @@
             "n": 4,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.4899
+            "hi": 0.4899,
+            "interpretable": false
           },
           "job_task_scam": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "lottery_prize": {
             "k": 0,
             "n": 1,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.7935
+            "hi": 0.7935,
+            "interpretable": false
           },
           "other_scam": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "phishing_credential": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "upi_collect_refund": {
             "k": 0,
             "n": 1,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.7935
+            "hi": 0.7935,
+            "interpretable": false
           }
         },
         "confusion": {
@@ -2392,35 +2552,40 @@
             "n": 12,
             "rate": 0.75,
             "lo": 0.4677,
-            "hi": 0.9111
+            "hi": 0.9111,
+            "interpretable": false
           },
           "dangerous_miss_rate": {
             "k": 0,
             "n": 12,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.2425
+            "hi": 0.2425,
+            "interpretable": false
           },
           "false_alarm_rate_legitimate": {
             "k": 0,
             "n": 12,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.2425
+            "hi": 0.2425,
+            "interpretable": false
           },
           "unclear_rate_non_ambiguous": {
             "k": 17,
             "n": 26,
             "rate": 0.6538,
             "lo": 0.4622,
-            "hi": 0.8059
+            "hi": 0.8059,
+            "interpretable": false
           },
           "false_alarm_rate_promotional": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "unclear_rate_by_label": {
             "ambiguous": {
@@ -2428,28 +2593,32 @@
               "n": 2,
               "rate": 1.0,
               "lo": 0.3424,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "legitimate": {
               "k": 12,
               "n": 12,
               "rate": 1.0,
               "lo": 0.7575,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "promotional": {
               "k": 2,
               "n": 2,
               "rate": 1.0,
               "lo": 0.3424,
-              "hi": 1.0
+              "hi": 1.0,
+              "interpretable": false
             },
             "scam": {
               "k": 3,
               "n": 12,
               "rate": 0.25,
               "lo": 0.0889,
-              "hi": 0.5323
+              "hi": 0.5323,
+              "interpretable": false
             }
           }
         },
@@ -2460,35 +2629,40 @@
               "n": 6,
               "rate": 0.6667,
               "lo": 0.3,
-              "hi": 0.9032
+              "hi": 0.9032,
+              "interpretable": false
             },
             "dangerous_miss_rate": {
               "k": 0,
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "false_alarm_rate_legitimate": {
               "k": 0,
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "unclear_rate_non_ambiguous": {
               "k": 9,
               "n": 13,
               "rate": 0.6923,
               "lo": 0.4237,
-              "hi": 0.8732
+              "hi": 0.8732,
+              "interpretable": false
             },
             "false_alarm_rate_promotional": {
               "k": 0,
               "n": 1,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.7935
+              "hi": 0.7935,
+              "interpretable": false
             },
             "unclear_rate_by_label": {
               "ambiguous": {
@@ -2496,28 +2670,32 @@
                 "n": 1,
                 "rate": 1.0,
                 "lo": 0.2065,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               },
               "legitimate": {
                 "k": 6,
                 "n": 6,
                 "rate": 1.0,
                 "lo": 0.6097,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               },
               "promotional": {
                 "k": 1,
                 "n": 1,
                 "rate": 1.0,
                 "lo": 0.2065,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               },
               "scam": {
                 "k": 2,
                 "n": 6,
                 "rate": 0.3333,
                 "lo": 0.0968,
-                "hi": 0.7
+                "hi": 0.7,
+                "interpretable": false
               }
             }
           },
@@ -2527,35 +2705,40 @@
               "n": 6,
               "rate": 0.8333,
               "lo": 0.4365,
-              "hi": 0.9699
+              "hi": 0.9699,
+              "interpretable": false
             },
             "dangerous_miss_rate": {
               "k": 0,
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "false_alarm_rate_legitimate": {
               "k": 0,
               "n": 6,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.3903
+              "hi": 0.3903,
+              "interpretable": false
             },
             "unclear_rate_non_ambiguous": {
               "k": 8,
               "n": 13,
               "rate": 0.6154,
               "lo": 0.3552,
-              "hi": 0.8229
+              "hi": 0.8229,
+              "interpretable": false
             },
             "false_alarm_rate_promotional": {
               "k": 0,
               "n": 1,
               "rate": 0.0,
               "lo": 0.0,
-              "hi": 0.7935
+              "hi": 0.7935,
+              "interpretable": false
             },
             "unclear_rate_by_label": {
               "ambiguous": {
@@ -2563,28 +2746,32 @@
                 "n": 1,
                 "rate": 1.0,
                 "lo": 0.2065,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               },
               "legitimate": {
                 "k": 6,
                 "n": 6,
                 "rate": 1.0,
                 "lo": 0.6097,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               },
               "promotional": {
                 "k": 1,
                 "n": 1,
                 "rate": 1.0,
                 "lo": 0.2065,
-                "hi": 1.0
+                "hi": 1.0,
+                "interpretable": false
               },
               "scam": {
                 "k": 1,
                 "n": 6,
                 "rate": 0.1667,
                 "lo": 0.0301,
-                "hi": 0.5635
+                "hi": 0.5635,
+                "interpretable": false
               }
             }
           }
@@ -2601,49 +2788,56 @@
             "n": 3,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.5615
+            "hi": 0.5615,
+            "interpretable": false
           },
           "delivery_notification": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "otp": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "payment_confirmation": {
             "k": 0,
             "n": 1,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.7935
+            "hi": 0.7935,
+            "interpretable": false
           },
           "personal": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "service_account": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "marketing": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           }
         },
         "scam_recall_by_category": {
@@ -2652,42 +2846,48 @@
             "n": 4,
             "rate": 1.0,
             "lo": 0.5101,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "job_task_scam": {
             "k": 0,
             "n": 2,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.6576
+            "hi": 0.6576,
+            "interpretable": false
           },
           "lottery_prize": {
             "k": 0,
             "n": 1,
             "rate": 0.0,
             "lo": 0.0,
-            "hi": 0.7935
+            "hi": 0.7935,
+            "interpretable": false
           },
           "other_scam": {
             "k": 2,
             "n": 2,
             "rate": 1.0,
             "lo": 0.3424,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "phishing_credential": {
             "k": 2,
             "n": 2,
             "rate": 1.0,
             "lo": 0.3424,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           },
           "upi_collect_refund": {
             "k": 1,
             "n": 1,
             "rate": 1.0,
             "lo": 0.2065,
-            "hi": 1.0
+            "hi": 1.0,
+            "interpretable": false
           }
         },
         "confusion": {
@@ -2904,6 +3104,46 @@
         "sy-0105": "UNCLEAR",
         "sy-0112": "UNCLEAR",
         "sy-0114": "UNCLEAR"
+      }
+    }
+  },
+  "comparisons": {
+    "B4-engine vs B1-rules": {
+      "role": "exploratory",
+      "seed": 13,
+      "resamples": 2000,
+      "campaigns": 28,
+      "level": 0.95,
+      "dangerous_miss_rate": {
+        "diff": -0.25,
+        "lo": -0.5,
+        "hi": 0.0,
+        "conclusion": "inconclusive"
+      },
+      "false_alarm_rate_legitimate": {
+        "diff": 0.0,
+        "lo": 0.0,
+        "hi": 0.0,
+        "conclusion": "inconclusive"
+      }
+    },
+    "B4-engine vs B2-tfidf-lr": {
+      "role": "exploratory",
+      "seed": 13,
+      "resamples": 2000,
+      "campaigns": 28,
+      "level": 0.95,
+      "dangerous_miss_rate": {
+        "diff": 0.0,
+        "lo": 0.0,
+        "hi": 0.0,
+        "conclusion": "inconclusive"
+      },
+      "false_alarm_rate_legitimate": {
+        "diff": 0.0,
+        "lo": 0.0,
+        "hi": 0.0,
+        "conclusion": "inconclusive"
       }
     }
   }
