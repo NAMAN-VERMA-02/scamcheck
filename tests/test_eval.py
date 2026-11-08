@@ -9,7 +9,7 @@ import scamcheck.eval.baselines as baselines
 from scamcheck.data.io import load_items
 from scamcheck.data.split import check_leakage
 from scamcheck.eval.benchmark import run_benchmark
-from scamcheck.eval.metrics import Row, auc, bootstrap, paired_difference, summarise, wilson
+from scamcheck.eval.metrics import Row, auc, bootstrap, paired_difference, precision_f1, summarise, wilson
 
 ROOT = Path(__file__).parents[1]
 BENCH = ROOT / "benchmarks" / "synthetic"
@@ -150,3 +150,29 @@ def test_benchmark_reports_paired_comparisons_and_marks_missing_primary(bench):
     from scamcheck.eval.benchmark import to_markdown
     md = to_markdown(res)
     assert "B4-engine vs B3-llm (primary): not run" in md and "†" in md
+
+
+def test_precision_and_f1_hand_computed():
+    # 3 scams: 2 flagged, 1 unclear (a miss). 4 legitimate: 1 flagged (false alarm). 1 promotional flagged.
+    # 1 ambiguous flagged: must not count either way.
+    rs = rows([("scam", "otp", "english", "LIKELY_SCAM"), ("scam", "otp", "english", "LIKELY_SCAM"),
+               ("scam", "otp", "english", "UNCLEAR"),
+               ("legitimate", "bank", "english", "NO_STRONG_SIGNALS"), ("legitimate", "bank", "english", "LIKELY_SCAM"),
+               ("legitimate", "bank", "english", "UNCLEAR"), ("legitimate", "bank", "english", "NO_STRONG_SIGNALS"),
+               ("promotional", "promo", "english", "LIKELY_SCAM"),
+               ("ambiguous", None, "english", "LIKELY_SCAM")])
+    out = precision_f1(rs)
+    assert out["precision"]["k"] == 2 and out["precision"]["n"] == 4 and out["precision"]["rate"] == 0.5
+    assert out["f1"] == {"tp": 2, "fp": 2, "fn": 1, "value": round(4 / 7, 4)}
+
+
+def test_precision_and_f1_when_nothing_is_flagged():
+    out = precision_f1(rows([("scam", "otp", "english", "UNCLEAR"), ("legitimate", "bank", "english", "NO_STRONG_SIGNALS")]))
+    assert out["precision"]["rate"] is None
+    assert out["f1"]["value"] == 0.0 and out["f1"]["fn"] == 1
+
+
+def test_summary_carries_the_exploratory_block_without_touching_the_primary_metrics():
+    s = summarise(rows([("scam", "otp", "english", "LIKELY_SCAM"), ("legitimate", "bank", "english", "NO_STRONG_SIGNALS")]), 1)
+    assert set(s["overall"]["exploratory"]) == {"precision", "f1"}
+    assert s["overall"]["dangerous_miss_rate"]["k"] == 0

@@ -80,8 +80,27 @@ HEADLINE: dict[str, Callable[[list[Row]], tuple[int, int]]] = {
 }
 
 
+def precision_f1(rows: list[Row]) -> dict:
+    """Exploratory, not a protocol §2 primary metric. Positive = a LIKELY_SCAM verdict.
+
+    Rows labelled ambiguous are left out: neither verdict is wrong for them. A scam that got UNCLEAR or
+    NO_STRONG_SIGNALS is a miss; a legitimate or promotional message flagged LIKELY_SCAM is a false alarm.
+    Precision depends on how many legitimate messages the set contains, so on a synthetic, hand-balanced set it
+    says nothing about precision in real traffic, where scams are rare. F1 is a ratio of counts, so it has no
+    Wilson interval; read it with the counts.
+    """
+    scored = [r for r in rows if r.label != "ambiguous"]
+    tp = sum(r.verdict == "LIKELY_SCAM" for r in scored if _is_scam(r))
+    fn = sum(r.verdict != "LIKELY_SCAM" for r in scored if _is_scam(r))
+    fp = sum(r.verdict == "LIKELY_SCAM" for r in scored if not _is_scam(r))
+    f1_den = 2 * tp + fp + fn
+    return {"precision": wilson(tp, tp + fp),
+            "f1": {"tp": tp, "fp": fp, "fn": fn, "value": round(2 * tp / f1_den, 4) if f1_den else None}}
+
+
 def core(rows: list[Row]) -> dict:
     out = {name: wilson(*fn(rows)) for name, fn in HEADLINE.items()}
+    out["exploratory"] = precision_f1(rows)
     out["false_alarm_rate_promotional"] = _rate(rows, lambda r: r.label == "promotional", "LIKELY_SCAM")
     out["unclear_rate_by_label"] = {lab: _rate(rows, lambda r, lab=lab: r.label == lab, "UNCLEAR")
                                     for lab in sorted({r.label for r in rows})}

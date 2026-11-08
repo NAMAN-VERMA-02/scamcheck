@@ -284,6 +284,22 @@
             "hi": 1.0,
             "interpretable": false
           },
+          "exploratory": {
+            "precision": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": null,
+              "hi": null,
+              "interpretable": false
+            },
+            "f1": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 12,
+              "value": 0.0
+            }
+          },
           "false_alarm_rate_promotional": {
             "k": 0,
             "n": 2,
@@ -361,6 +377,22 @@
               "hi": 1.0,
               "interpretable": false
             },
+            "exploratory": {
+              "precision": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": null,
+                "hi": null,
+                "interpretable": false
+              },
+              "f1": {
+                "tp": 0,
+                "fp": 0,
+                "fn": 6,
+                "value": 0.0
+              }
+            },
             "false_alarm_rate_promotional": {
               "k": 0,
               "n": 1,
@@ -436,6 +468,22 @@
               "lo": 0.7719,
               "hi": 1.0,
               "interpretable": false
+            },
+            "exploratory": {
+              "precision": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": null,
+                "hi": null,
+                "interpretable": false
+              },
+              "f1": {
+                "tp": 0,
+                "fp": 0,
+                "fn": 6,
+                "value": 0.0
+              }
             },
             "false_alarm_rate_promotional": {
               "k": 0,
@@ -855,6 +903,22 @@
             "hi": 0.1287,
             "interpretable": false
           },
+          "exploratory": {
+            "precision": {
+              "k": 12,
+              "n": 26,
+              "rate": 0.4615,
+              "lo": 0.2876,
+              "hi": 0.6454,
+              "interpretable": false
+            },
+            "f1": {
+              "tp": 12,
+              "fp": 14,
+              "fn": 0,
+              "value": 0.6316
+            }
+          },
           "false_alarm_rate_promotional": {
             "k": 2,
             "n": 2,
@@ -932,6 +996,22 @@
               "hi": 0.2281,
               "interpretable": false
             },
+            "exploratory": {
+              "precision": {
+                "k": 6,
+                "n": 13,
+                "rate": 0.4615,
+                "lo": 0.2321,
+                "hi": 0.7086,
+                "interpretable": false
+              },
+              "f1": {
+                "tp": 6,
+                "fp": 7,
+                "fn": 0,
+                "value": 0.6316
+              }
+            },
             "false_alarm_rate_promotional": {
               "k": 1,
               "n": 1,
@@ -1007,6 +1087,22 @@
               "lo": 0.0,
               "hi": 0.2281,
               "interpretable": false
+            },
+            "exploratory": {
+              "precision": {
+                "k": 6,
+                "n": 13,
+                "rate": 0.4615,
+                "lo": 0.2321,
+                "hi": 0.7086,
+                "interpretable": false
+              },
+              "f1": {
+                "tp": 6,
+                "fp": 7,
+                "fn": 0,
+                "value": 0.6316
+              }
             },
             "false_alarm_rate_promotional": {
               "k": 1,
@@ -1426,6 +1522,22 @@
             "hi": 0.3353,
             "interpretable": false
           },
+          "exploratory": {
+            "precision": {
+              "k": 5,
+              "n": 5,
+              "rate": 1.0,
+              "lo": 0.5655,
+              "hi": 1.0,
+              "interpretable": false
+            },
+            "f1": {
+              "tp": 5,
+              "fp": 0,
+              "fn": 7,
+              "value": 0.5882
+            }
+          },
           "false_alarm_rate_promotional": {
             "k": 0,
             "n": 2,
@@ -1503,6 +1615,22 @@
               "hi": 0.4223,
               "interpretable": false
             },
+            "exploratory": {
+              "precision": {
+                "k": 2,
+                "n": 2,
+                "rate": 1.0,
+                "lo": 0.3424,
+                "hi": 1.0,
+                "interpretable": false
+              },
+              "f1": {
+                "tp": 2,
+                "fp": 0,
+                "fn": 4,
+                "value": 0.5
+              }
+            },
             "false_alarm_rate_promotional": {
               "k": 0,
               "n": 1,
@@ -1578,6 +1706,22 @@
               "lo": 0.0433,
               "hi": 0.4223,
               "interpretable": false
+            },
+            "exploratory": {
+              "precision": {
+                "k": 3,
+                "n": 3,
+                "rate": 1.0,
+                "lo": 0.4385,
+                "hi": 1.0,
+                "interpretable": false
+              },
+              "f1": {
+                "tp": 3,
+                "fp": 0,
+                "fn": 3,
+                "value": 0.6667
+              }
             },
             "false_alarm_rate_promotional": {
               "k": 0,
@@ -2003,6 +2147,22 @@
             "hi": 1.0,
             "interpretable": false
           },
+          "exploratory": {
+            "precision": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": null,
+              "hi": null,
+              "interpretable": false
+            },
+            "f1": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 12,
+              "value": 0.0
+            }
+          },
           "false_alarm_rate_promotional": {
             "k": 0,
             "n": 2,
@@ -2080,6 +2240,22 @@
               "hi": 1.0,
               "interpretable": false
             },
+            "exploratory": {
+              "precision": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": null,
+                "hi": null,
+                "interpretable": false
+              },
+              "f1": {
+                "tp": 0,
+                "fp": 0,
+                "fn": 6,
+                "value": 0.0
+              }
+            },
             "false_alarm_rate_promotional": {
               "k": 0,
               "n": 1,
@@ -2155,6 +2331,22 @@
               "lo": 0.7719,
               "hi": 1.0,
               "interpretable": false
+            },
+            "exploratory": {
+              "precision": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": null,
+                "hi": null,
+                "interpretable": false
+              },
+              "f1": {
+                "tp": 0,
+                "fp": 0,
+                "fn": 6,
+                "value": 0.0
+              }
             },
             "false_alarm_rate_promotional": {
               "k": 0,
@@ -2579,6 +2771,22 @@
             "hi": 0.8059,
             "interpretable": false
           },
+          "exploratory": {
+            "precision": {
+              "k": 9,
+              "n": 9,
+              "rate": 1.0,
+              "lo": 0.7009,
+              "hi": 1.0,
+              "interpretable": false
+            },
+            "f1": {
+              "tp": 9,
+              "fp": 0,
+              "fn": 3,
+              "value": 0.8571
+            }
+          },
           "false_alarm_rate_promotional": {
             "k": 0,
             "n": 2,
@@ -2656,6 +2864,22 @@
               "hi": 0.8732,
               "interpretable": false
             },
+            "exploratory": {
+              "precision": {
+                "k": 4,
+                "n": 4,
+                "rate": 1.0,
+                "lo": 0.5101,
+                "hi": 1.0,
+                "interpretable": false
+              },
+              "f1": {
+                "tp": 4,
+                "fp": 0,
+                "fn": 2,
+                "value": 0.8
+              }
+            },
             "false_alarm_rate_promotional": {
               "k": 0,
               "n": 1,
@@ -2731,6 +2955,22 @@
               "lo": 0.3552,
               "hi": 0.8229,
               "interpretable": false
+            },
+            "exploratory": {
+              "precision": {
+                "k": 5,
+                "n": 5,
+                "rate": 1.0,
+                "lo": 0.5655,
+                "hi": 1.0,
+                "interpretable": false
+              },
+              "f1": {
+                "tp": 5,
+                "fp": 0,
+                "fn": 1,
+                "value": 0.9091
+              }
             },
             "false_alarm_rate_promotional": {
               "k": 0,
